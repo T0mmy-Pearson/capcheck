@@ -1,0 +1,32 @@
+{
+    "user photos":[
+        {
+            "photo": "photo_url",
+            "photoId": 1,
+            "userId": 1,
+            "location": "n50 w40",
+            "mushroomId": 1
+        },
+          {
+            "photo": "photo2_url",
+            "photoId": 2,
+            "userId": 2,
+            "location": "n56 w41",
+            "mushroomId": 2
+        },
+          {
+            "photo": "photo3_url",
+            "photoId": 3,
+            "userId": 3,
+            "location": "n59 w12",
+            "mushroomId": 3
+          },
+          {
+            "photo": "photo5_url",
+            "photoId": 5,
+            "userId": 1,
+            "location": "n55 w46",
+            "mushroomId": 3
+          }
+    ]
+}
