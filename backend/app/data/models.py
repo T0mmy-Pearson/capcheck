@@ -14,7 +14,7 @@ class Mushroom(Base):
     endMonth = Column(String, nullable=False)
     capWidth = Column(String)
     capHeight = Column(String)
-    generalInfo = Column(Text)
+    
 
 class Users(Base):
     __tablename__ = "users"
@@ -28,6 +28,5 @@ class UserPhotos(Base):
     photo = Column(String)
     photoId = Column(Integer, primary_key=True)
     userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
-    username = Column(String)
     location = Column(String)
     mushroomId = Column(Integer, ForeignKey("mushroom.mushroomId", ondelete="CASCADE"))
