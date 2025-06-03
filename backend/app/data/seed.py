@@ -1,7 +1,7 @@
 import json 
 from sqlalchemy.orm import Session 
-from db import engine
-from models import Mushroom, Users, UserPhotos, Base
+from app.data.db import engine
+from app.data.models import Mushroom, Users, UserPhotos, Base
 from pathlib import Path
 
 
