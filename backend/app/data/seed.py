@@ -16,7 +16,7 @@ def seed_data():
     session = Session(bind=engine)
 
     
-    with open(BASE_DIR / "test_mushroom_data.json", "r") as file:
+    with open(BASE_DIR / "mushroom_db.json", "r") as file:
         mushroom_data = json.load(file)
 
     with open(BASE_DIR / "test_user_data.json", "r") as file:
@@ -25,18 +25,27 @@ def seed_data():
     with open(BASE_DIR / "test_userPhotos_data.json", "r") as file:
         user_photo_data = json.load(file) 
         
-    for data in mushroom_data["mushroom"]:
-        mushroom = Mushroom(
-            mushroomName=data["mushroomName"],
-            imgUrl=data["imgUrl"],
-            description=data["description"],
-            scientificName=data["scientificName"],
-            startMonth=data["startMonth"],
-            endMonth=data["endMonth"],
-            capWidth=data["capWidth"],
-            capHeight=data["capHeight"],
+    for data in mushroom_data["mushrooms"]:
+        mushrooms = Mushroom(
+            name=data.get("name"),
+            scientificName=data.get("scientificName"),
+            description=data.get("description"),
+            cap=data.get("Cap"),
+            stem=data.get("Stem"),
+            gills=data.get("Gills"),
+            pores=data.get("Pores"),
+            flesh=data.get("Flesh"),
+            habitat=data.get("Habitat"),
+            otherFacts=data.get("Other Facts"),
+            start=data.get("start"),
+            end=data.get("end"),
+            capHeight=data.get("capHeight"),
+            capWidth=data.get("capWidth"),
+            edible=data.get("edible"),
+            img_url=data.get("img_url")
         )
-        session.add(mushroom)
+        session.add(mushrooms)
+
     for data in user_data["users"]:
         user = Users(
             username=data["username"],

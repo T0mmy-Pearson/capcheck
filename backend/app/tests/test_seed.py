@@ -26,8 +26,8 @@ def test_mushroom_columns():
     columns = inspector.get_columns("mushroom")
     column_names = {col['name'] for col in columns}
     expected = {
-        "mushroomId", "mushroomName", "imgUrl", "description", "scientificName",
-        "startMonth", "endMonth", "capWidth", "capHeight"
+        "mushroomId", "name", "img_url", "description", "scientificName",
+        "start", "end", "capWidth", "capHeight", "cap", "stem", "gills", "pores", "flesh", "habitat", "otherFacts", "edible"
     }
     assert expected.issubset(column_names)
 
@@ -56,7 +56,7 @@ def test_mushroom_data_exists():
     session=Session(bind=engine)
     result=session.query(Mushroom).all()
     session.close()
-    assert len(result) == 3
+    assert len(result) == 257
 
 def test_users_data_exists():
     session=Session(bind=engine)
@@ -76,10 +76,9 @@ def test_nullable_mushroom_fields():
     session.close()
 
     for mushroom in result:
-        assert mushroom.mushroomName is not None
+        assert mushroom.name is not None
         assert mushroom.scientificName is not None
-        assert mushroom.endMonth is not None
-        assert mushroom.startMonth is not None
+      
 
 def test_nullable_user_fields():
     session=Session(bind=engine)
@@ -120,22 +119,40 @@ def test_mushrooms_column_types():
     for col in columns:
         if col["name"] == "mushroomId":
             assert isinstance(col["type"], Integer)
-        elif col["name"] == "mushroomName":
+        elif col["name"] == "name":
             assert isinstance(col["type"], String)
-        elif col["name"] == "imgUrl":
+        elif col["name"] == "img_url":
             assert isinstance(col["type"], String)
         elif col["name"] == "description":
             assert isinstance(col["type"], Text)
         elif col["name"] == "scientificName":
             assert isinstance(col["type"], String)
-        elif col["name"] == "startMonth":
+        elif col["name"] == "start":
             assert isinstance(col["type"], String)
-        elif col["name"] == "endMonth":
+        elif col["name"] == "end":
             assert isinstance(col["type"], String)
         elif col["name"] == "capWidth":
             assert isinstance(col["type"], String)
         elif col["name"] == "capHeight":
             assert isinstance(col["type"], String)
+        elif col["name"] == "cap":
+            assert isinstance(col["type"], String)
+        elif col["name"] == "stem":
+            assert isinstance(col["type"], String)
+        elif col["name"] == "gills":
+            assert isinstance(col["type"], String)
+        elif col["name"] == "pores":
+            assert isinstance(col["type"], String)
+        elif col["name"] == "flesh":
+            assert isinstance(col["type"], String)
+        elif col["name"] == "habitat":
+            assert isinstance(col["type"], String)
+        elif col["name"] == "otherFacts":
+            assert isinstance(col["type"], String)
+        elif col["name"] == "edible":
+            assert isinstance(col["type"], String)
+
+
 
 def test_userPhotos_column_types():
     inspector=inspect(engine)

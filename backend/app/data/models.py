@@ -6,15 +6,23 @@ Base = declarative_base()
 class Mushroom(Base):
     __tablename__ = "mushroom"
     mushroomId = Column(Integer, primary_key=True)
-    mushroomName = Column(String, nullable=False)
-    imgUrl = Column(String)
-    description = Column(Text)
+    name = Column(String, nullable=False)
     scientificName = Column(String, nullable=False)
-    startMonth = Column(String, nullable=False)
-    endMonth = Column(String, nullable=False)
-    capWidth = Column(String)
+    description = Column(Text)
+    cap = Column(String)
+    stem = Column(String)
+    gills = Column(String)
+    pores = Column(String)
+    flesh = Column(String)
+    habitat = Column(String)
+    otherFacts = Column(Text)
+    start = Column(String)
+    end = Column(String)
     capHeight = Column(String)
-    
+    capWidth = Column(String)
+    edible = Column(String)
+    img_url = Column(String)
+
 
 class Users(Base):
     __tablename__ = "users"
