@@ -22,7 +22,7 @@ def seed_data():
     with open(BASE_DIR / "test_user_data.json", "r") as file:
         user_data = json.load(file)
 
-    with open(BASE_DIR / "test_user_photo_data.json", "r") as file:
+    with open(BASE_DIR / "test_userPhotos_data.json", "r") as file:
         user_photo_data = json.load(file) 
         
     for data in mushroom_data["mushroom"]:
@@ -47,8 +47,6 @@ def seed_data():
         session.add(user)  
         session.commit()
 
-
-
     for data in user_photo_data["user photos"]:
          photo = UserPhotos(
               photoId=data["photoId"],
@@ -59,5 +57,6 @@ def seed_data():
          session.add(photo)
     session.commit()
     session.close()
-    if __name__ == "__main__":
-        seed_data()
+
+if __name__ == "__main__":
+    seed_data()

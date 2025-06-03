@@ -28,3 +28,11 @@ def test_mushroom_columns():
         "startMonth", "endMonth", "capWidth", "capHeight"
     }
     assert expected.issubset(column_names)
+
+def test_users_columns():
+    inspector = inspect(engine)
+    columns = inspector.get_columns("users")
+    column_names = {col["name"] for col in columns}
+    expected = {"userId", "username", "avatar", "score"}
+    assert expected.issubset(column_names)
+
