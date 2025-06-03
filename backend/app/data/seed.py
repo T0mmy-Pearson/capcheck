@@ -1,20 +1,31 @@
 import json 
 from sqlalchemy.orm import Session 
-from db import engine
-from models import Mushroom, Users, UserPhotos
+from app.data.db import engine
+from app.data.models import Mushroom, Users, UserPhotos, Base
+from pathlib import Path
 
-with open("test_mushroom_data.json", "r") as file:
-    mushroom_data = json.load(file) 
 
-with open("test_user_data.json", "r") as file:
-    user_data = json.load(file)
-
-with open("test_userPhotos_data.json", "r") as file:
-    user_photo_data = json.load(file)
+BASE_DIR = Path(__file__).resolve().parent
 
 def seed_data():
+    print("Resetting database...")
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    print("Tables dropped and recreated.")
+
     session = Session(bind=engine)
-    for data in mushroom_data["mushroom"]: 
+
+    
+    with open(BASE_DIR / "test_mushroom_data.json", "r") as file:
+        mushroom_data = json.load(file)
+
+    with open(BASE_DIR / "test_user_data.json", "r") as file:
+        user_data = json.load(file)
+
+    with open(BASE_DIR / "test_user_photo_data.json", "r") as file:
+        user_photo_data = json.load(file) 
+        
+    for data in mushroom_data["mushroom"]:
         mushroom = Mushroom(
             mushroomName=data["mushroomName"],
             imgUrl=data["imgUrl"],
