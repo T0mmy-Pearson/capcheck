@@ -44,14 +44,11 @@ def seed_data():
             avatar=data["avatar"],
             score=data["score"]
         )
-        session.add(user)
-    session.commit()
-    session.close() 
-    print("Seeding Successful")       
-seed_data()
+        session.add(user)  
+        session.commit()
 
-def seed_photo():
-    session = Session(bind=engine)
+
+
     for data in user_photo_data["user photos"]:
          photo = UserPhotos(
               photoId=data["photoId"],
@@ -62,4 +59,5 @@ def seed_photo():
          session.add(photo)
     session.commit()
     session.close()
-seed_photo()
+    if __name__ == "__main__":
+        seed_data()
