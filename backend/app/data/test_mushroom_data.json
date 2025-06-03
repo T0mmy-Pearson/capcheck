@@ -1,41 +1,40 @@
 {
-    "mushroom":[
-        {
-            "mushroomId": 1,
-             "mushroomName":"mushroom1",
-    "imgUrl":"a",
-    "description":"description",
-    "scientificName": "scientificName",
-    "startMonth":"startMonth",
-    "endMonth":"endMonth",
-    "capWidth":"capWidth",
-    "capHeight": "capHeight",
-    "generalInfo": "generalInfo"
-        },
-          {
-                       "mushroomId": 2,
-             "mushroomName":"mushroom2",
-    "imgUrl":"a2",
-    "description":"description2",
-    "scientificName": "scientificName2",
-    "startMonth":"startMonth2",
-    "endMonth":"endMonth2",
-    "capWidth":"capWidth2",
-    "capHeight": "capHeight2",
-    "generalInfo": "generalInfo2"
-        },
-          {
-                       "mushroomId": 3,
-             "mushroomName":"mushroom3",
-    "imgUrl":"a3",
-    "description":"description3",
-    "scientificName": "scientificName3",
-    "startMonth":"startMonth3",
-    "endMonth":"endMonth3",
-    "capWidth":"capWidth3",
-    "capHeight": "capHeight3",
-    "generalInfo": "generalInfo3"
-        }
-    ]
-    
+  "mushroom": [
+    {
+      "mushroomId": 1,
+      "mushroomName": "mushroom1",
+      "imgUrl": "a",
+      "description": "description",
+      "scientificName": "scientificName",
+      "startMonth": "startMonth",
+      "endMonth": "endMonth",
+      "capWidth": "capWidth",
+      "capHeight": "capHeight",
+      "generalInfo": "generalInfo"
+    },
+    {
+      "mushroomId": 2,
+      "mushroomName": "mushroom2",
+      "imgUrl": "a2",
+      "description": "description2",
+      "scientificName": "scientificName2",
+      "startMonth": "startMonth2",
+      "endMonth": "endMonth2",
+      "capWidth": "capWidth2",
+      "capHeight": "capHeight2",
+      "generalInfo": "generalInfo2"
+    },
+    {
+      "mushroomId": 3,
+      "mushroomName": "mushroom3",
+      "imgUrl": "a3",
+      "description": "description3",
+      "scientificName": "scientificName3",
+      "startMonth": "startMonth3",
+      "endMonth": "endMonth3",
+      "capWidth": "capWidth3",
+      "capHeight": "capHeight3",
+      "generalInfo": "generalInfo3"
+    }
+  ]
 }

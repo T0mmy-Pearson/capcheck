@@ -39,7 +39,6 @@ def seed_data():
         session.add(mushroom)
     for data in user_data["users"]:
         user = Users(
-            userId=data["userId"],
             username=data["username"],
             avatar=data["avatar"],
             score=data["score"]
@@ -49,10 +48,7 @@ def seed_data():
 
     for data in user_photo_data["user photos"]:
          photo = UserPhotos(
-              photoId=data["photoId"],
-              userId=data["userId"],
               location=data["location"],
-              mushroomId=data["mushroomId"]
         )
          session.add(photo)
     session.commit()
