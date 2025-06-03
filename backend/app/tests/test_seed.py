@@ -1,8 +1,8 @@
 import pytest
 from sqlalchemy import inspect
-from app.data.db import engine
-from app.data.models import Mushroom, Users, UserPhotos
-from app.data.seed import seed_data
+from data.db import engine
+from data.models import Mushroom, Users, UserPhotos
+from data.seed import seed_data
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_and_seed():
