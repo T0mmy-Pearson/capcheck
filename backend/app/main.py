@@ -21,7 +21,7 @@ async def fetch_mushrooms(edible: Union[str, None] = None):
     sql_str = "SELECT * FROM mushroom"
     sql_data = []
     if edible:
-        sql_str += " WHERE UPPER (edible) = UPPER ((%s));"
+        sql_str += " WHERE UPPER (edible) = UPPER (%s);"
         sql_data.append(edible)
     cur.execute(sql_str, sql_data)
     results=cur.fetchall()
@@ -33,3 +33,13 @@ async def fetch_mushrooms(edible: Union[str, None] = None):
         records.append(record)
     return { "mushrooms":records }
 
+@app.get("/api/mushroom/{mushroomId}")
+async def fetch_mushroom_by_Id(mushroomId: int):
+    sql_str = 'SELECT * FROM mushroom WHERE "mushroomId" = %s'
+    sql_data = [mushroomId]
+    cur.execute(sql_str, sql_data)
+    result=cur.fetchone()
+    record = {}
+    for i, column in enumerate(cur.description):
+        record[column.name] = result[i]
+    return { "mushroom": record}

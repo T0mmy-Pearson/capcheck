@@ -102,3 +102,7 @@ def test_get_inedible_mushrooms():
     assert response.status_code == 200
     assert response.json() == {"mushrooms": [mushroom_data["mushrooms"][2]]}
 
+def test_get_mushroom_by_Id():
+    response=client.get("/api/mushroom/1")
+    assert response.status_code == 200
+    assert response.json() == {"mushroom": mushroom_data["mushrooms"][0]}
