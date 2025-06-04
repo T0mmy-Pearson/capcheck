@@ -2,7 +2,7 @@
 get /api(returns api roots)
 
 get api/mushroom --> getting all of the mushrooms 
-get api/mushroom?edible=true --> getting an edible mushroom 
+get api/mushroom --> getting an edible mushroom 
 get api/mushroom?month=currentmonth --> getting mushroom by month
 get api/mushroom/mushroom_Id --> getting individual mushrooms by id
 get api/users --> getting all of the users
