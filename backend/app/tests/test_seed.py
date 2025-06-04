@@ -78,6 +78,7 @@ def test_nullable_mushroom_fields():
     for mushroom in result:
         assert mushroom.name is not None
         assert mushroom.scientificName is not None
+     
       
 
 def test_nullable_user_fields():
