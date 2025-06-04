@@ -87,4 +87,8 @@ def test_get_mushrooms():
     assert response.status_code == 200
     assert response.json() == mushroom_data
 
+def test_get_edible_mushrooms():
+    response=client.get("/api/mushroom?edible=edible")
+    assert response.status_code == 200
+    assert response.json() == {"mushrooms": [mushroom_data["mushrooms"][0]]}
 
