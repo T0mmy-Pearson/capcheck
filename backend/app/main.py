@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import psycopg2 
 import os
+from typing import Union
 
 
 app=FastAPI()
@@ -15,9 +16,14 @@ conn.autocommit = True
 
 cur = conn.cursor()
 
-@app.get("/api/mushroom")
-async def fetch_mushrooms():
-    cur.execute("SELECT * FROM mushroom")
+@app.get("/api/mushroom/")
+async def fetch_mushrooms(edible: Union[str, None] = None):
+    sql_str = "SELECT * FROM mushroom"
+    sql_data = []
+    if edible:
+        sql_str += " WHERE edible = (%s);"
+        sql_data.append(edible)
+    cur.execute(sql_str, sql_data)
     results=cur.fetchall()
     records = []
     for row in results:
@@ -26,3 +32,4 @@ async def fetch_mushrooms():
             record[column.name]=row[i]
         records.append(record)
     return { "mushrooms":records }
+
