@@ -10,8 +10,70 @@ from sqlalchemy.orm import Session
 from sqlalchemy import Integer, String, Text
 import json
 
-with open("app/data/test_mushroom_data.json", "r") as file:
-        mushroom_data = json.load(file)
+
+mushroom_data = {
+  "mushrooms": [
+    {
+      "name": "mushroom1",
+      "mushroomId": 1,
+      "imgUrl": "a",
+      "description": "This is a description",
+      "scientificName": "Interestigus Mushromgus",
+      "start": "June",
+      "end": "July",
+      "capWidth": "3mm",
+      "capHeight": "4mm",
+      "edible": "edible",
+      "cap": "brown cap thing",
+      "flesh": "flesh input",
+      "gills": "gills input",
+      "habitat": "the woods",
+      "otherFacts": "random info",
+      "pores": "porous info",
+      "stem": "stem info"
+    },
+    {
+      "name": "mushroom2",
+      "mushroomId": 2,
+      "imgUrl": "b",
+      "description": "This is a description",
+      "scientificName": "Interestigus Mushromgus",
+      "start": "all",
+      "end": "all",
+      "capWidth": "4mm",
+      "capHeight": "1mm",
+      "edible": "toxic",
+      "cap": "brown cap thing",
+      "flesh": "flesh input",
+      "gills": "gills input",
+      "habitat": "the woods",
+      "otherFacts": "random info",
+      "pores": "porous info",
+      "stem": "stem info"
+    },
+    {
+      "name": "mushroom3",
+      "mushroomId": 3,
+      "imgUrl": "c",
+      "description": "This is a description",
+      "scientificName": "Interestigus Mushromgus",
+      "start": "September",
+      "end": "December",
+      "capWidth": "2mm",
+      "capHeight": "1mm",
+      "edible": "inedible",
+      "cap": "brown cap thing",
+      "flesh": "flesh input",
+      "gills": "gills input",
+      "habitat": "the woods",
+      "otherFacts": "random info",
+      "pores": "porous info",
+      "stem": "stem info"
+    }
+  ]
+}
+
+
 
 client = TestClient(app)
 

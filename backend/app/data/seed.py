@@ -30,19 +30,19 @@ def seed_data():
             name=data.get("name"),
             scientificName=data.get("scientificName"),
             description=data.get("description"),
-            cap=data.get("Cap"),
-            stem=data.get("Stem"),
-            gills=data.get("Gills"),
-            pores=data.get("Pores"),
-            flesh=data.get("Flesh"),
-            habitat=data.get("Habitat"),
-            otherFacts=data.get("Other Facts"),
+            cap=data.get("cap"),
+            stem=data.get("stem"),
+            gills=data.get("gills"),
+            pores=data.get("pores"),
+            flesh=data.get("flesh"),
+            habitat=data.get("habitat"),
+            otherFacts=data.get("otherFacts"),
             start=data.get("start"),
             end=data.get("end"),
             capHeight=data.get("capHeight"),
             capWidth=data.get("capWidth"),
             edible=data.get("edible"),
-            img_url=data.get("img_url")
+            imgUrl=data.get("imgUrl")
         )
         session.add(mushrooms)
 
