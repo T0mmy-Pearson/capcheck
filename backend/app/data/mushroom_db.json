@@ -4487,9 +4487,10 @@
       "img": "https://www.wildfooduk.com/wp-content/uploads/2017/06/Pura-7-720x540.jpg",
       "img_url": "https://www.wildfooduk.com/wp-content/uploads/2017/06/Pura-7.jpg",
       "description": "This mushroom was once considered edible but contains small amounts of muscarine so is now off the menu.",
-      "start": "Nov",
-      "end": "10",
-      "capHeight": "5",
+      "start": "Jul",
+      "end": "Nov",
+      "capHeight": "10",
+      "capWidth": "5",
       "edible": "Poisonous",
       "season1": "Autumn",
       "season2": "Summer"
