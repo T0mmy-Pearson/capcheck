@@ -21,7 +21,7 @@ class Mushroom(Base):
     capHeight = Column(String)
     capWidth = Column(String)
     edible = Column(String)
-    img_url = Column(String)
+    imgUrl = Column(String)
 
 
 class Users(Base):
