@@ -1,19 +1,18 @@
-import MapView, { Marker, MapPressEvent } from "react-native-maps";
+import MapView, { Marker, MapPressEvent, Region } from "react-native-maps";
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert, Text} from "react-native";
 import * as Location from "expo-location"
 
 export default function MapScreen(){
-    const [region, setRegion] = useState<{
-        latitude: number;
-        longitude: number;
-        latitudeDelta: number;
-        longitudeDelta: number;
-    } | null>(null)
+    const [region, setRegion] = useState<{latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;} | null>(null)
     const [marker, setMarker] = useState<{latitude: number; longitude: number;} | null>(null)
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync()
+            console.log("Permission status:", status)
             if (status !== "granted"){
                 Alert.alert("access denied")
                 return;
@@ -25,15 +24,19 @@ export default function MapScreen(){
                 latitudeDelta: 0.01, 
                 longitudeDelta: 0.01
             })
-        })
+        })()
     },[])
     const handleMapPress = (event: MapPressEvent) => {
         const { coordinate } = event.nativeEvent
         setMarker(coordinate) 
     }
-    if (!region){
-        return null
-    }
+     if (!region) {
+    return (
+      <View style={styles.loading}>
+        <Text>Loading map...</Text>
+      </View>
+    );
+  }
     return (
         <MapView style={styles.map}
         region = { region }
