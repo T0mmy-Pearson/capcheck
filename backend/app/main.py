@@ -21,7 +21,7 @@ async def fetch_mushrooms(edible: Union[str, None] = None):
     sql_str = "SELECT * FROM mushroom"
     sql_data = []
     if edible:
-        sql_str += " WHERE edible = (%s);"
+        sql_str += " WHERE UPPER (edible) = UPPER ((%s));"
         sql_data.append(edible)
     cur.execute(sql_str, sql_data)
     results=cur.fetchall()

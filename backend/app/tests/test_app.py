@@ -42,7 +42,7 @@ mushroom_data = {
       "end": "all",
       "capWidth": "4mm",
       "capHeight": "1mm",
-      "edible": "toxic",
+      "edible": "Poisonous",
       "cap": "brown cap thing",
       "flesh": "flesh input",
       "gills": "gills input",
@@ -91,4 +91,14 @@ def test_get_edible_mushrooms():
     response=client.get("/api/mushroom?edible=edible")
     assert response.status_code == 200
     assert response.json() == {"mushrooms": [mushroom_data["mushrooms"][0]]}
+
+def test_get_poisonous_mushrooms():
+    response=client.get("/api/mushroom?edible=poisonous")
+    assert response.status_code == 200
+    assert response.json() == {"mushrooms": [mushroom_data["mushrooms"][1]]}
+
+def test_get_inedible_mushrooms():
+    response=client.get("/api/mushroom?edible=inedible")
+    assert response.status_code == 200
+    assert response.json() == {"mushrooms": [mushroom_data["mushrooms"][2]]}
 
