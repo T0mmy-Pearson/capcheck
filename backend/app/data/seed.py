@@ -16,7 +16,7 @@ def seed_data():
     session = Session(bind=engine)
 
     
-    with open(BASE_DIR / "mushroom_db.json", "r") as file:
+    with open(BASE_DIR / "test_mushroom_data.json", "r") as file:
         mushroom_data = json.load(file)
 
     with open(BASE_DIR / "test_user_data.json", "r") as file:
