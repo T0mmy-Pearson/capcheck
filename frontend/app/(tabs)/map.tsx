@@ -29,7 +29,7 @@ export default function MapScreen() {
 //         longitudeDelta: 0.01,
 //       });
 //     })();
-//   }, []);
+//   }, []); 
 //   const handleMapPress = (event: MapPressEvent) => {
 //     const { coordinate } = event.nativeEvent;
 //     setMarker(coordinate);
