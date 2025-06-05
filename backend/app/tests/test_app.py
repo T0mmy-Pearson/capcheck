@@ -18,7 +18,7 @@ mushroom_data = {
       "mushroomId": 1,
       "imgUrl": "a",
       "description": "This is a description",
-      "scientificName": "Interestigus Mushromgus",
+      "scientificName": "Abortiporus biennis",
       "start": "June",
       "end": "July",
       "capWidth": "3mm",
@@ -210,4 +210,11 @@ def test_get_photos_comments():
     assert response.status_code == 200 
     assert response.json() == {"usercomments": [user_comments["usercomments"][1],user_comments["usercomments"][2]]}
 
-    
+def test_get_mushroom_location():
+    response=client.get("/api/mushroom/1/location")
+    assert response.status_code == 200
+    for coord in response.json():
+        print(coord)
+        assert isinstance(coord[0], (str))
+        assert isinstance(coord[1], (str))
+
