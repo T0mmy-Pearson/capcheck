@@ -1,0 +1,24 @@
+{
+    "usercomments":[
+        {
+            "photoId": 2,
+            "userId": 1,
+            "body": "twelve" 
+        },
+          {
+            "photoId": 1,
+            "userId": 2,
+            "body": "albatross" 
+        },
+          {
+            "photoId": 1,
+            "userId": 2,
+            "body": "vapour" 
+          },
+          {
+            "photoId": 3,
+            "userId": 3,
+            "body": "throw" 
+          }
+    ]
+}

@@ -32,9 +32,16 @@ class Users(Base):
     score = Column(Integer, default=0)
 
 class UserPhotos(Base):
-    __tablename__ = "userPhotos"
+    __tablename__ = "userphotos"
     photo = Column(String)
     photoId = Column(Integer, primary_key=True)
     userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
     location = Column(String)
     mushroomId = Column(Integer, ForeignKey("mushroom.mushroomId", ondelete="CASCADE"))
+
+class UserComments(Base):
+    __tablename__ = "usercomments"
+    commentId = Column(Integer, primary_key=True)
+    photoId = Column(Integer, ForeignKey("userphotos.photoId", ondelete="CASCADE"))
+    userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
+    body = Column(Text)
