@@ -1,22 +1,26 @@
-import { Image } from 'react-native'; 
-import { StyleSheet } from "react-native";
+import { Image } from "expo-image";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import { Button } from "react-native";
-import { useState, useEffect } from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { Button } from "@react-navigation/elements";
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Appearance, StyleSheet, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserAvatar from "@/components/UserAvatar";
 import CheckBox from "@/components/CheckBox";
 
+/* const colorScheme = Appearance.getColorScheme();
+if (colorScheme === "dark") {
+
+} */
 
 
 export default function UserProfile() {
     const [bio, setBio] = useState("")
     const [editing, setEditing] = useState(false)
     const [bioInput, setBioInput] = useState("")
-
     const [mushroom, setMushroom] = useState(false);
+    
+    const colorScheme = useColorScheme();
 
     useEffect(() => {
         (async () => {
@@ -30,32 +34,36 @@ export default function UserProfile() {
         setEditing(false)
     }
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+    <View
+   /*    headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <Image
           source={require("@/assets/images/1000_F_370951245_vWF0oLH6WRDT5kb9Anvl4HbLCJBBX3XI.jpg")} // user  image carousel
           style={styles.reactLogo}
         />
-      }
+      } */
     >
-        <ThemedText type="title">Account Info 🍄</ThemedText>
-        {/* add avatar  */}
-        <UserAvatar /> {/* <Need to download npx expo install expo-image-picker for image uploads */}
+        <UserAvatar></UserAvatar>
         <View>
+        <ThemedText>USERNAME w/ score logo</ThemedText>
         {/* edit username */}
         {/* display email address */}
         {editing ? (
             <> <TextInput
+            style={{color: colorScheme === "dark" ? "#fff" : "#000"}}
             value={bioInput}
             onChangeText={setBioInput}
             placeholder="write your bio"/>
-            <Button onPress={handleSave} title="save"></Button></>
-        ) : (<><ThemedText>{bio || "no bio :("}</ThemedText>
-        <Button onPress={() => {setBioInput(bio); setEditing(true)}} title="edit bio"></Button>
+            <Button 
+            children="Save"
+            onPress={handleSave}
+            ></Button></>
+        ) : (<><ThemedText>{bio || "Write your bio here..."}</ThemedText>
+        <Button 
+        children="edit bio"
+        onPress={() => {setBioInput(bio); setEditing(true)}}></Button>
         </>)}
         </View>
-         <ThemedText>MUSHROOM SCORE COMPONENET</ThemedText>
         <ThemedText>Checklist/stats box links to other page</ThemedText>
         <ThemedText>Users Photos carousel links to all your photos</ThemedText>
         <ThemedText>post photo functionality</ThemedText>
@@ -68,7 +76,10 @@ export default function UserProfile() {
                 isChecked={mushroom}
               />
         </View>
-    </ParallaxScrollView>
+
+
+
+    </View>
   );
 }
 
