@@ -3,25 +3,29 @@
         {
             "photo": "photo_url",
             "userId": 1,
-            "location": "n50 w40",
+            "latitude": "54",
+            "longitude": "-4",
             "mushroomId": 1
         },
           {
             "photo": "photo2_url",
             "userId": 2,
-            "location": "n56 w41",
+            "latitude": "1",
+            "longitude": "1",
             "mushroomId": 2
         },
           {
             "photo": "photo3_url",
             "userId": 3,
-            "location": "n59 w12",
+            "latitude": "34",
+            "longitude": "8",
             "mushroomId": 3
           },
           {
             "photo": "photo5_url",
             "userId": 1,
-            "location": "n55 w46",
+            "latitude": "13",
+            "longitude": "47",
             "mushroomId": 3
           }
     ]

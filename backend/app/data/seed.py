@@ -60,7 +60,8 @@ def seed_data():
 
     for data in user_photo_data["userphotos"]:
          photo = UserPhotos(
-              location=data["location"],
+              latitude=data["latitude"],
+              longitude=data["longitude"],
               photo=data["photo"],
               userId=data["userId"],
               mushroomId=data["mushroomId"],

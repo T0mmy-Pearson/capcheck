@@ -36,7 +36,8 @@ class UserPhotos(Base):
     photo = Column(String)
     photoId = Column(Integer, primary_key=True)
     userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
-    location = Column(String)
+    latitude = Column(String)
+    longitude = Column(String)
     mushroomId = Column(Integer, ForeignKey("mushroom.mushroomId", ondelete="CASCADE"))
 
 class UserComments(Base):
