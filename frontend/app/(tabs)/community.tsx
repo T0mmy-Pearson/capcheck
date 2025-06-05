@@ -1,6 +1,5 @@
-import { Image } from "expo-image";
+import { Image, Text } from "react-native";
 import { Platform, StyleSheet, View } from "react-native";
-
 import { Collapsible } from "@/components/Collapsible";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
