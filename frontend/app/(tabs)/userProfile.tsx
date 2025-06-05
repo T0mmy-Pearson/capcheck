@@ -1,16 +1,13 @@
 import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
-
-import { Collapsible } from "@/components/Collapsible";
-import { ExternalLink } from "@/components/ExternalLink";
+import { StyleSheet } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Button } from "@react-navigation/elements";
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import UserAvatar from "@/components/UserAvatar";
+
 
 
 import CheckBox from "../checkBox";
@@ -40,18 +37,20 @@ export default function UserProfile() {
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <Image
-          source={require("@/assets/images/1000_F_370951245_vWF0oLH6WRDT5kb9Anvl4HbLCJBBX3XI.jpg")}
+          source={require("@/assets/images/1000_F_370951245_vWF0oLH6WRDT5kb9Anvl4HbLCJBBX3XI.jpg")} // user  image carousel
           style={styles.reactLogo}
         />
       }
     >
-        <ThemedText type="title">User Profile 🍄</ThemedText>
-
+        <ThemedText type="title">Account Info 🍄</ThemedText>
+        {/* add avatar  */}
+        <UserAvatar></UserAvatar>
         <View>
         <ThemedText>USERNAME w/ score logo</ThemedText>
-        <ThemedText>Bio box with edit function re renders page to edit and post</ThemedText>
+        {/* edit username */}
+        {/* display email address */}
         {editing ? (
-            <><TextInput
+            <> <TextInput
             value={bioInput}
             onChangeText={setBioInput}
             placeholder="write your bio"/>
@@ -59,7 +58,7 @@ export default function UserProfile() {
             children="Save"
             onPress={handleSave}
             ></Button></>
-        ) : (<><text>{bio || "no bio :("}</text>
+        ) : (<><ThemedText>{bio || "no bio :("}</ThemedText>
         <Button 
         children="edit bio"
         onPress={() => {setBioInput(bio); setEditing(true)}}></Button>
@@ -109,3 +108,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
       },
   });
+
+ 
