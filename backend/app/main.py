@@ -4,8 +4,23 @@ import os
 from typing import Union
 import requests
 import json
+from pydantic import BaseModel
+from app.data.db import engine
+from app.data.models import UserPhotos, UserComments
+from sqlalchemy.orm import Session
+
 
 app=FastAPI()
+
+class Photo(BaseModel):
+    photo: str
+    latitude: str
+    longitude: str
+    mushroomId: int
+
+class Comment(BaseModel):
+    body: str
+
 conn = psycopg2.connect(
     dbname = "test_capcheck_database", 
     user = os.getenv("PGUSER"),
@@ -113,4 +128,37 @@ async def fetch_mushroom_location(mushroomId: int):
     for result in location_data['results']:
         location_list.append([result["decimalLatitude"], result["decimalLongitude"]])
     return { "results": location_list}
-    
+
+@app.post("/api/users/{user_id}/userphotos", status_code = 201)
+async def post_user_photo(user_id: int,user_photos: Photo):
+    session = Session(bind=engine)
+    new_photo = UserPhotos(
+        photo = user_photos.photo,
+        userId = user_id,
+        latitude = user_photos.latitude,
+        longitude = user_photos.longitude,
+        mushroomId= user_photos.mushroomId,
+    )
+    session.add(new_photo)
+    session.commit()
+    return{"message": "photo added seccessfully"}
+
+@app.post("/api/users/{user_id}/userphotos/{photoId}", status_code = 201)
+async def post_photo_comment(user_id: int, photoId: int, photo_comment: Comment):
+    session = Session(bind=engine)
+    new_comment = UserComments(
+        body = photo_comment.body,
+        userId = user_id,
+        photoId = photoId,
+    )
+    session.add(new_comment)
+    session.commit()
+    return{"message": "comment added seccessfully"}
+
+@app.delete("/api/users/{user_id}/userphotos/{photoId}", status_code = 204)
+async def delete_user_photo(user_id: int, photoId: int):
+    session = Session(bind=engine)
+    photo = session.query(UserPhotos).filter_by(photoId = photoId).first()
+    session.delete(photo)
+    session.commit()
+    session.close()

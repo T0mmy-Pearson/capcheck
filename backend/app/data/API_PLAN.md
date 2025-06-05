@@ -19,7 +19,7 @@ post api/UserPhotos/UserPhotoId/comments
 patch api/users/user_id --> updating scrore, username and avatar
 
 delete api/UserPhotos --> delete a photo
-
+delete api/UserPhotos/UserPhotoId/comments
 
 
 

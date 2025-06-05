@@ -9,7 +9,7 @@ from app.data.models import Base
 from sqlalchemy.orm import Session
 from sqlalchemy import Integer, String, Text
 import json
-
+from app.data.create_db import create_data
 
 mushroom_data = {
   "mushrooms": [
@@ -99,31 +99,35 @@ user_data = {
 user_photos = {
     "userphotos":[
         {
-            "photo": "photo_url",
             "photoId": 1,
+            "photo": "photo_url",
             "userId": 1,
-            "location": "n50 w40",
+            "latitude": "54",
+            "longitude": "-4",
             "mushroomId": 1
         },
           {
-            "photo": "photo2_url",
             "photoId": 2,
+            "photo": "photo2_url",
             "userId": 2,
-            "location": "n56 w41",
+            "latitude": "1",
+            "longitude": "1",
             "mushroomId": 2
         },
           {
+            "photoId": 3,  
             "photo": "photo3_url",
-            "photoId": 3,
             "userId": 3,
-            "location": "n59 w12",
+            "latitude": "34",
+            "longitude": "8",
             "mushroomId": 3
           },
           {
+            "photoId": 4,  
             "photo": "photo5_url",
-            "photoId": 4,
             "userId": 1,
-            "location": "n55 w46",
+            "latitude": "13",
+            "longitude": "47",
             "mushroomId": 3
           }
     ]
@@ -162,6 +166,7 @@ client = TestClient(app)
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_and_seed():
+    create_data()
     seed_data()  
     yield
 
@@ -214,7 +219,39 @@ def test_get_mushroom_location():
     response=client.get("/api/mushroom/1/location")
     assert response.status_code == 200
     for coord in response.json():
-        print(coord)
         assert isinstance(coord[0], (str))
         assert isinstance(coord[1], (str))
 
+def test_post_user_photos():
+    payload={
+        'photo': "testphotourlmonkey",
+        'mushroomId': 1,
+        'latitude': "52",
+        'longitude': "-4"
+    }
+    response=client.post("/api/users/1/userphotos", json=payload)
+    assert response.status_code == 201
+    assert response.json() == {"message": "photo added seccessfully"}
+
+def test_post_photos_comments():
+    payload={
+        "body": "horse"
+    }
+    response=client.post("/api/users/1/userphotos/1", json=payload)
+    assert response.status_code == 201
+    assert response.json() == {"message": "comment added seccessfully"}
+
+def test_delete_photo():
+    payload={
+        'photo': "testphotourlmonkey",
+        'mushroomId': 1,
+        'latitude': "52",
+        'longitude': "-4"
+    }
+    response=client.post("/api/users/1/userphotos", json=payload)
+    assert response.status_code == 201
+    response=client.delete("/api/users/1/userphotos/5")
+    assert response.status_code == 204
+    response=client.get('/api/users/1/userphotos')
+    assert response.status_code == 200
+    assert len(response.json()["userphotos"]) == 2
