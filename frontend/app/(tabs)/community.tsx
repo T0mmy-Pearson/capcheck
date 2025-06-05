@@ -1,11 +1,9 @@
-import { Image, Text } from "react-native";
-import { Platform, StyleSheet, View } from "react-native";
-import { Collapsible } from "@/components/Collapsible";
+import { Image } from "react-native";
+import { StyleSheet, View } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { Button } from "@react-navigation/elements";
-import { red } from "react-native-reanimated/lib/typescript/Colors";
+
 
 export default function TabTwoScreen() {
   return (
@@ -71,7 +69,6 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   testBoxing: {
-    alignItems: "left",
     margin: 30,
     padding: 10,
     width: 500,

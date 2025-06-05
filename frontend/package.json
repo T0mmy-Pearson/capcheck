@@ -17,7 +17,7 @@
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
     "add": "^2.0.6",
-    "expo": "~53.0.9",
+    "expo": "~53.0.0",
     "expo-blur": "~14.1.4",
     "expo-constants": "~17.1.6",
     "expo-font": "~13.3.1",
@@ -36,23 +36,13 @@
     "react-native": "0.79.2",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.24.0",
-
-    "react-native-maps": "^1.20.1",
-
     "react-native-maps": "1.20.1",
-
-    "react-native-maps": "1.20.1",
-
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
     "react-native-web": "~0.20.0",
-
-    "react-native-webview": "13.13.5"
-
     "react-native-webview": "13.13.5",
-    "yarn": "^1.22.22"
-
+    "expo-image-picker": "~16.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -60,7 +50,8 @@
     "@types/react-native-maps": "^0.24.1",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "yarn": "^1.22.22"
   },
   "private": true
 }

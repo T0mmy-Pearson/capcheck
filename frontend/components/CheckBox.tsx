@@ -1,5 +1,4 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const CheckBox = (props) => {
@@ -17,8 +16,6 @@ const CheckBox = (props) => {
     );
 };
 
-export default CheckBox;
-
 const styles = StyleSheet.create({
     container: {
         justifyContent: "flex-start",
@@ -35,3 +32,6 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
 });
+
+export default CheckBox;
+
