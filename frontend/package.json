@@ -35,21 +35,23 @@
     "react-dom": "19.0.0",
     "react-native": "0.79.2",
     "react-native-gesture-handler": "~2.24.0",
-<<<<<<< HEAD
+
     "react-native-maps": "^1.20.1",
-=======
+
     "react-native-maps": "1.20.1",
->>>>>>> 39c6df101e63296791ebb0da34ebde53f15521d8
+
+    "react-native-maps": "1.20.1",
+
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
     "react-native-web": "~0.20.0",
-<<<<<<< HEAD
+
     "react-native-webview": "13.13.5"
-=======
+
     "react-native-webview": "13.13.5",
     "yarn": "^1.22.22"
->>>>>>> 39c6df101e63296791ebb0da34ebde53f15521d8
+
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

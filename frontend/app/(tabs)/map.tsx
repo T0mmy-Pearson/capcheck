@@ -1,6 +1,6 @@
 import MapView, { Marker, MapPressEvent, Region } from "react-native-maps";
 import React, { useState, useEffect } from "react";
-<<<<<<< HEAD
+
 import { StyleSheet, View, Alert, Text} from "react-native";
 import * as Location from "expo-location"
 
@@ -50,9 +50,14 @@ export default function MapScreen(){
             )}
         </MapView>
     )
-=======
+
 import { StyleSheet, View, Alert, Text } from "react-native";
 import * as Location from "expo-location";
+
+
+import { StyleSheet, View, Alert, Text } from "react-native";
+import * as Location from "expo-location";
+
 
 export default function MapScreen() {
 //   const [region, setRegion] = useState<{
@@ -108,7 +113,7 @@ export default function MapScreen() {
 //       )}
 //     </MapView>
 //   );
->>>>>>> 39c6df101e63296791ebb0da34ebde53f15521d8
+
 }
 
 const styles = StyleSheet.create({
