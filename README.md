@@ -19,6 +19,9 @@ DATABASE_URL=postgresql://{YOUR_PSQL_USERNAME}:{YOUR_PSQL_PASSWORD}@localhost:54
 PGUSER={YOUR_PSQL_USERNAME}
 PGPASSWORD={YOUR_PSQL_PASSWORD}
 
+To access all Libraries that we've imported:
+in the terminal --- > source venv/bin/activate --> to open the virtual environment and run any of the Pyton files. 
+
 To run a file:
 
 CD into backend/

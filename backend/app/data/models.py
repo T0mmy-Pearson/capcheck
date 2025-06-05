@@ -6,15 +6,23 @@ Base = declarative_base()
 class Mushroom(Base):
     __tablename__ = "mushroom"
     mushroomId = Column(Integer, primary_key=True)
-    mushroomName = Column(String, nullable=False)
-    imgUrl = Column(String)
-    description = Column(Text)
+    name = Column(String, nullable=False)
     scientificName = Column(String, nullable=False)
-    startMonth = Column(String, nullable=False)
-    endMonth = Column(String, nullable=False)
-    capWidth = Column(String)
+    description = Column(Text)
+    cap = Column(String)
+    stem = Column(String)
+    gills = Column(String)
+    pores = Column(String)
+    flesh = Column(String)
+    habitat = Column(String)
+    otherFacts = Column(Text)
+    start = Column(String)
+    end = Column(String)
     capHeight = Column(String)
-    
+    capWidth = Column(String)
+    edible = Column(String)
+    imgUrl = Column(String)
+
 
 class Users(Base):
     __tablename__ = "users"
@@ -24,9 +32,16 @@ class Users(Base):
     score = Column(Integer, default=0)
 
 class UserPhotos(Base):
-    __tablename__ = "userPhotos"
+    __tablename__ = "userphotos"
     photo = Column(String)
     photoId = Column(Integer, primary_key=True)
     userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
     location = Column(String)
     mushroomId = Column(Integer, ForeignKey("mushroom.mushroomId", ondelete="CASCADE"))
+
+class UserComments(Base):
+    __tablename__ = "usercomments"
+    commentId = Column(Integer, primary_key=True)
+    photoId = Column(Integer, ForeignKey("userphotos.photoId", ondelete="CASCADE"))
+    userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
+    body = Column(Text)

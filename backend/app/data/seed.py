@@ -1,7 +1,7 @@
 import json 
 from sqlalchemy.orm import Session 
 from app.data.db import engine
-from app.data.models import Mushroom, Users, UserPhotos, Base
+from app.data.models import Mushroom, Users, UserPhotos, UserComments, Base
 from pathlib import Path
 
 
@@ -24,19 +24,31 @@ def seed_data():
 
     with open(BASE_DIR / "test_userPhotos_data.json", "r") as file:
         user_photo_data = json.load(file) 
-        
-    for data in mushroom_data["mushroom"]:
-        mushroom = Mushroom(
-            mushroomName=data["mushroomName"],
-            imgUrl=data["imgUrl"],
-            description=data["description"],
-            scientificName=data["scientificName"],
-            startMonth=data["startMonth"],
-            endMonth=data["endMonth"],
-            capWidth=data["capWidth"],
-            capHeight=data["capHeight"],
+
+    with open(BASE_DIR / "test_comments_data.json", "r") as file:
+        comments_data = json.load(file)
+
+    for data in mushroom_data["mushrooms"]:
+        mushrooms = Mushroom(
+            name=data.get("name"),
+            scientificName=data.get("scientificName"),
+            description=data.get("description"),
+            cap=data.get("cap"),
+            stem=data.get("stem"),
+            gills=data.get("gills"),
+            pores=data.get("pores"),
+            flesh=data.get("flesh"),
+            habitat=data.get("habitat"),
+            otherFacts=data.get("otherFacts"),
+            start=data.get("start"),
+            end=data.get("end"),
+            capHeight=data.get("capHeight"),
+            capWidth=data.get("capWidth"),
+            edible=data.get("edible"),
+            imgUrl=data.get("imgUrl")
         )
-        session.add(mushroom)
+        session.add(mushrooms)
+
     for data in user_data["users"]:
         user = Users(
             username=data["username"],
@@ -46,11 +58,22 @@ def seed_data():
         session.add(user)  
         session.commit()
 
-    for data in user_photo_data["user photos"]:
+    for data in user_photo_data["userphotos"]:
          photo = UserPhotos(
               location=data["location"],
+              photo=data["photo"],
+              userId=data["userId"],
+              mushroomId=data["mushroomId"],
         )
          session.add(photo)
+    session.commit()
+    for data in comments_data["usercomments"]:
+        comment = UserComments(
+            photoId=data["photoId"],
+            userId=data["userId"],
+            body=data["body"],
+        )
+        session.add(comment)
     session.commit()
     session.close()
 
