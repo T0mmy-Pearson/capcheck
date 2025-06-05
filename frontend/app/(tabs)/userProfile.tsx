@@ -1,16 +1,13 @@
-import { Image } from "expo-image";
+import { Image } from 'react-native'; 
 import { StyleSheet } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@react-navigation/elements";
-import React, { useState, useEffect } from 'react';
+import { Button } from "react-native";
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserAvatar from "@/components/UserAvatar";
-
-
-
-import CheckBox from "../checkBox";
+import CheckBox from "@/components/CheckBox";
 
 
 
@@ -44,9 +41,8 @@ export default function UserProfile() {
     >
         <ThemedText type="title">Account Info 🍄</ThemedText>
         {/* add avatar  */}
-        <UserAvatar></UserAvatar>
+        <UserAvatar /> {/* <Need to download npx expo install expo-image-picker for image uploads */}
         <View>
-        <ThemedText>USERNAME w/ score logo</ThemedText>
         {/* edit username */}
         {/* display email address */}
         {editing ? (
@@ -54,16 +50,12 @@ export default function UserProfile() {
             value={bioInput}
             onChangeText={setBioInput}
             placeholder="write your bio"/>
-            <Button 
-            children="Save"
-            onPress={handleSave}
-            ></Button></>
+            <Button onPress={handleSave} title="save"></Button></>
         ) : (<><ThemedText>{bio || "no bio :("}</ThemedText>
-        <Button 
-        children="edit bio"
-        onPress={() => {setBioInput(bio); setEditing(true)}}></Button>
+        <Button onPress={() => {setBioInput(bio); setEditing(true)}} title="edit bio"></Button>
         </>)}
         </View>
+         <ThemedText>MUSHROOM SCORE COMPONENET</ThemedText>
         <ThemedText>Checklist/stats box links to other page</ThemedText>
         <ThemedText>Users Photos carousel links to all your photos</ThemedText>
         <ThemedText>post photo functionality</ThemedText>
@@ -76,9 +68,6 @@ export default function UserProfile() {
                 isChecked={mushroom}
               />
         </View>
-
-
-
     </ParallaxScrollView>
   );
 }
