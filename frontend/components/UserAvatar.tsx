@@ -1,57 +1,70 @@
 import { Avatar } from 'react-native-elements';
-import {StyleSheet, View, Text, Alert}  from "react-native";
+import * as ImagePicker from 'expo-image-picker'
+import { useState } from 'react'
+import { StyleSheet, View, Text, Alert, Image } from "react-native";
 
 const UserAvatar = () => {
-    const handleEditAvatar = () => {
-        Alert.alert("Edit Avatar", "Change Profile Picture")
+  const [avatar, setAvatar] = useState('https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg')
+  const handlePickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      const uri = result.assets[0].uri
+      setAvatar(uri)
     }
-    return (
-        <View style={styles.container}>
-            <Text style={styles.header}>Account Info</Text>
-                <Avatar
-                size="large"
-                rounded
-                source={{ uri:'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                }}
-                containerStyle={styles.avatar}
-                >
-                <Avatar.Accessory
-                size={30}
-                icon={{name: "edit", type: 'material', color: "white"}} 
-                onPress={handleEditAvatar}
-                />
-                </Avatar>
-            <Text style={styles.name}>John Doe</Text>
-            <Text style={styles.email}>johndoe@gmail.com</Text>
-        </View> 
-    )
+  };
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Account Info 🍄</Text>
+      <Avatar
+        size="large"
+        rounded
+        source={{ uri: avatar }}
+        containerStyle={styles.avatar}>
+             <Avatar.Accessory
+          size={30}
+          onPress={handlePickImage}
+        />
+      </Avatar>
+      <Text style={styles.name}>John Doe</Text>
+      <Text style={styles.email}>johndoe@example.com</Text>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
-      container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    padding: 20,
-  },
+    image: {
+
+    },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        padding: 20,
+    },
     header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  avatar: {
-    marginBottom: 20,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 10,
-  },
-  email: {
-    fontSize: 16,
-    color: 'gray',
-  }
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    avatar: {
+        marginBottom: 20,
+    },
+    name: {
+        fontSize: 18,
+        fontWeight: '600',
+        marginTop: 10,
+    },
+    email: {
+        fontSize: 16,
+        color: 'gray',
+    }
 })
+
 
 export default UserAvatar;
