@@ -1,11 +1,24 @@
 import json 
+import os
+from dotenv import load_dotenv
 from sqlalchemy.orm import Session 
 from app.data.db import engine
 from app.data.models import Mushroom, Users, UserPhotos, UserComments, Base
 from pathlib import Path
 
+# Load environment-specific .env file
+env = os.getenv("ENV", "test")
+env_file = f".env.{env}" if env != "production" else ".env.production"
+env_path = Path(__file__).resolve().parent / env_file
+load_dotenv(dotenv_path=env_path)
 
-BASE_DIR = Path(__file__).resolve().parent
+# Now load ENV again after .env is loaded
+env = os.getenv("ENV", "test")
+print(f"Seeding for environment: {env}")
+
+# Set path to data directory depending on environment
+data_folder = Path(__file__).resolve().parent / ("test_data" if env == "test" else "prod_data")
+
 
 def seed_data():
     print("Resetting database...")
@@ -16,16 +29,16 @@ def seed_data():
     session = Session(bind=engine)
 
     
-    with open(BASE_DIR / "test_mushroom_data.json", "r") as file:
+    with open(data_folder / "mushroom_data.json", "r") as file:
         mushroom_data = json.load(file)
 
-    with open(BASE_DIR / "test_user_data.json", "r") as file:
+    with open(data_folder / "user_data.json", "r") as file:
         user_data = json.load(file)
 
-    with open(BASE_DIR / "test_userPhotos_data.json", "r") as file:
+    with open(data_folder / "userPhotos_data.json", "r") as file:
         user_photo_data = json.load(file) 
 
-    with open(BASE_DIR / "test_comments_data.json", "r") as file:
+    with open(data_folder / "comments_data.json", "r") as file:
         comments_data = json.load(file)
 
     for data in mushroom_data["mushrooms"]:

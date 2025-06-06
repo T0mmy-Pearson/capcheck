@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 
-env = os.getenv("test","production")
+env = os.getenv("ENV","test")
 env_file = f".env.{env}" if env != "production" else ".env.production"
 env_path = Path(__file__).resolve().parent / env_file
 print(env_path)
