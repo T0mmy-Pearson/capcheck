@@ -5,8 +5,8 @@ from typing import Union
 import requests
 import json
 from pydantic import BaseModel
-from app.data.db import engine
-from app.data.models import UserPhotos, UserComments, Users
+from backend.app.data.db import engine
+from backend.app.data.models import UserPhotos, UserComments, Users
 from sqlalchemy.orm import Session
 
 
