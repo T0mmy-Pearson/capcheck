@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { Collapsible } from '@/components/Collapsible';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -21,10 +21,10 @@ export default function TabTwoScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Info 🍄</ThemedText>
       </ThemedView>
-      <ThemedText>introduction to the info section</ThemedText>
-<Button color="black">FORAGING INFORMATION</Button>
-<Button color="black">MUSHROOM PROFILE</Button>
-<Button color="black">WEATHER INFO</Button>
+      <ThemedText>Introduction to the info section</ThemedText>
+<Button color="white">FORAGING INFORMATION</Button>
+<Button color="white">MUSHROOM PROFILE</Button>
+<Button color="white">WEATHER INFO</Button>
 <Collapsible title="SAFETY INFO"><ThemedText>Don't be dumb, Don't eat it if it looks like this 🍄 <ThemedText type="defaultSemiBold">...and don't sue us</ThemedText></ThemedText></Collapsible>
 
 
@@ -34,7 +34,7 @@ export default function TabTwoScreen() {
 
 const styles = StyleSheet.create({
   headerImage: {
-    color: '#808080',
+    color: '#948781',
     bottom: -90,
     left: -35,
     position: 'absolute',
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   buttonTitle: {
-    color: '#808080',
+    color: '#948781',
   },
   reactLogo: {
     width: 630,

@@ -38,24 +38,22 @@ const UserAvatar = () => {
         console.error("Avatar not saved", error)
       }
     }
-  };
-
-
-
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Account Info 🍄</Text>
-      <Avatar
-        size="large"
-        rounded
-        source={{ uri: avatar }}
-        containerStyle={styles.avatar}>
-             <Avatar.Accessory
+      <View style={styles.avatar}>
+        <Avatar
+          size="large"
+          rounded
+          source={{ uri: avatar }}
+        />
+        <Avatar.Accessory
           size={30}
           onPress={handlePickImage}
         />
-      </Avatar>
+      </View>
       <Text style={styles.name}>John Doe</Text>
       <Text style={styles.email}>johndoe@example.com</Text>
     </View>
@@ -70,13 +68,14 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: 'black',
         padding: 20,
     },
     header: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
+        color: 'white',
     },
     avatar: {
         marginBottom: 20,
@@ -85,6 +84,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         marginTop: 10,
+        color: 'white',
     },
     email: {
         fontSize: 16,

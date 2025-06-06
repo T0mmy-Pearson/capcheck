@@ -48,17 +48,17 @@ export default function TabLayout() {
         }}
       />
         <Tabs.Screen
-        name="userProfile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <Ionicons name="person-circle-sharp" size={24} color="white" />,
-        }}
-      />
-        <Tabs.Screen
         name="general_info"
         options={{
           title: 'Info',
           tabBarIcon: ({ color }) => <MaterialCommunityIcons name="information-outline" size={24} color="white" />,
+        }}
+      />
+        <Tabs.Screen
+        name="userProfile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <Ionicons name="person-circle-sharp" size={24} color="white" />,
         }}
       />
     </Tabs>
