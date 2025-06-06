@@ -9,7 +9,7 @@ from app.data.models import Base
 from sqlalchemy.orm import Session
 from sqlalchemy import Integer, String, Text
 import json
-from app.data.create_db import create_data
+
 
 mushroom_data = {
   "mushrooms": [
@@ -164,9 +164,8 @@ user_comments = {
 
 client = TestClient(app)
 
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def setup_and_seed():
-    create_data()
     seed_data()  
     yield
 
