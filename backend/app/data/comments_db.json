@@ -1,0 +1,30 @@
+{
+    "usercomments":[
+        {
+            "photoId": 2,
+            "userId": 1,
+            "body": "Great mushroom" 
+        },
+          {
+            "photoId": 1,
+            "userId": 2,
+            "body": "Definitely fgoing to check this out" 
+        },
+          {
+            "photoId": 1,
+            "userId": 2,
+            "body": "Gotta catch em all ;)" 
+          },
+          {
+            "photoId": 3,
+            "userId": 3,
+            "body": "Damn son where'd you find this" 
+          },
+          {
+            "photoId": 5,
+            "userId": 5,
+            "body": "what are thoseee" 
+          }
+
+    ]
+}

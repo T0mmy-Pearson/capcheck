@@ -254,3 +254,17 @@ def test_delete_photo():
     response=client.get('/api/users/1/userphotos')
     assert response.status_code == 200
     assert len(response.json()["userphotos"]) == 2
+
+def test_patch_users():
+    payload={
+        'score': 90,
+        'username': 'updateduser',
+        'avatar': 'updatedavatar'
+    }
+    response=client.patch("/api/users/1", json=payload)
+    assert response.status_code == 200
+    data=response.json()
+    assert data['userId'] == 1 
+    assert data['score'] == 90 
+    assert data['username'] == 'updateduser'
+    assert data['avatar'] == 'updatedavatar'
