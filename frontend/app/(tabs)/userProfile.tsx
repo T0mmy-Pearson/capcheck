@@ -1,8 +1,8 @@
 import { Image } from "expo-image";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+import ParallaxScrollViewUserProfile from "@/components/ParallaxScrollViewUserProfile"
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@react-navigation/elements";
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, Appearance, StyleSheet, useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserAvatar from "@/components/UserAvatar";
@@ -34,34 +34,25 @@ export default function UserProfile() {
         setEditing(false)
     }
   return (
-    <ParallaxScrollView
+    <ParallaxScrollViewUserProfile
      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
-        <Image
-          source={require("@/assets/images/1000_F_370951245_vWF0oLH6WRDT5kb9Anvl4HbLCJBBX3XI.jpg")} // user  image carousel
-          style={styles.reactLogo}
-        />
+        <Image/>
       }
     >
         <UserAvatar></UserAvatar>
         <View>
-        <ThemedText>USERNAME w/ score logo</ThemedText>
+        <ThemedText>POINTS SCORE</ThemedText>
         {/* edit username */}
         {/* display email address */}
         {editing ? (
             <> <TextInput
-            style={{color: colorScheme === "dark" ? "#fff" : "#000"}}
+            style={{color: 'white'}}
             value={bioInput}
             onChangeText={setBioInput}
             placeholder="write your bio"/>
-            <Button 
-            children="Save"
-            onPress={handleSave}
-            ></Button></>
-        ) : (<><ThemedText>{bio || "Write your bio here..."}</ThemedText>
-        <Button 
-        children="edit bio"
-        onPress={() => {setBioInput(bio); setEditing(true)}}></Button>
+            <Button style={styles.button} onPress={handleSave}><Text style={styles.text}>Save</Text></Button></>) : (<><ThemedText>{bio || "Write your bio here..."}</ThemedText>
+            <Button style={styles.button} onPress={() => {setBioInput(bio); setEditing(true)}}><Text style={styles.text}>Edit Bio ✏️</Text></Button>
         </>)}
         </View>
         <ThemedText>Checklist/stats box links to other page</ThemedText>
@@ -76,11 +67,8 @@ export default function UserProfile() {
                 isChecked={mushroom}
               />
         </View>
-
-
-
-    </ParallaxScrollView>
-  );
+    </ParallaxScrollViewUserProfile>
+  )
 }
 
 
@@ -89,6 +77,13 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8,
+    },
+    button: {
+      color: 'white',
+      backgroundColor: '#948781'
+    },
+    text: {
+      color: 'white',
     },
     stepContainer: {
       gap: 8,
