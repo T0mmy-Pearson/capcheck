@@ -9,6 +9,8 @@ from app.data.models import Base
 from sqlalchemy.orm import Session
 from sqlalchemy import Integer, String, Text
 import json
+import os
+os.environ["ENV"] = "test"
 
 
 mushroom_data = {

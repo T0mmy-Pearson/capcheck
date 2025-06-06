@@ -3,15 +3,28 @@ import psycopg2
 import os
 from typing import Union
 import requests
-import json
 from pydantic import BaseModel
 from app.data.db import engine
 from app.data.models import UserPhotos, UserComments, Users
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+from pathlib import Path
 
 
+env = os.getenv("ENV", "production")
+env_file = f".env.{env}" if env != "production" else ".env.production"
+env_path = Path(__file__).resolve().parent / "data" / env_file
+load_dotenv(dotenv_path=env_path)
 
-app=FastAPI()
+app = FastAPI()
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"]
+# )
 
 class Photo(BaseModel):
     photo: str
@@ -29,11 +42,11 @@ class UpdateUser(BaseModel):
 
 
 conn = psycopg2.connect(
-    dbname = "test_capcheck_database", 
+    dbname = os.getenv("PGNAME"), 
     user = os.getenv("PGUSER"),
     password = os.getenv("PGPASSWORD"),
-    host = "localhost",
-    port = 5432
+    host = os.getenv("PGHOST"),
+    port = os.getenv("PGPORT")
 )
 conn.autocommit = True
 
