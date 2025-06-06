@@ -2,8 +2,8 @@ import json
 import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session 
-from backend.app.data.db import engine
-from backend.app.data.models import Mushroom, Users, UserPhotos, UserComments, Base
+from app.data.db import engine
+from app.data.models import Mushroom, Users, UserPhotos, UserComments, Base
 from pathlib import Path
 
 # Load environment-specific .env file
