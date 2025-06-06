@@ -3,15 +3,20 @@ import psycopg2
 import os
 from typing import Union
 import requests
-import json
 from pydantic import BaseModel
 from app.data.db import engine
 from app.data.models import UserPhotos, UserComments, Users
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+from pathlib import Path
 
 
+env = os.getenv("ENV", "production")
+env_file = f".env.{env}" if env != "production" else ".env.production"
+env_path = Path(__file__).resolve().parent / "data" / env_file
+load_dotenv(dotenv_path=env_path)
 
-app=FastAPI()
+app = FastAPI()
 
 # app.add_middleware(
 #     CORSMiddleware,

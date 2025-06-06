@@ -6,17 +6,11 @@ from app.data.db import engine
 from app.data.models import Mushroom, Users, UserPhotos, UserComments, Base
 from pathlib import Path
 
-# Load environment-specific .env file
 env = os.getenv("ENV", "production")
 env_file = f".env.{env}" if env != "production" else ".env.production"
-env_path = Path(__file__).resolve().parent / env_file
+env_path = Path(__file__).resolve().parent / "data" / env_file
 load_dotenv(dotenv_path=env_path)
 
-# Now load ENV again after .env is loaded
-env = os.getenv("ENV", "production")
-print(f"Seeding for environment: {env}")
-
-# Set path to data directory depending on environment
 data_folder = Path(__file__).resolve().parent / ("test_data" if env == "test" else "prod_data")
 
 
