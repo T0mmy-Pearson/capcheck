@@ -6,8 +6,9 @@ import requests
 import json
 from pydantic import BaseModel
 from app.data.db import engine
-from app.data.models import UserPhotos, UserComments
+from app.data.models import UserPhotos, UserComments, Users
 from sqlalchemy.orm import Session
+
 
 
 app=FastAPI()
@@ -20,6 +21,12 @@ class Photo(BaseModel):
 
 class Comment(BaseModel):
     body: str
+
+class UpdateUser(BaseModel):
+    score: Union[int, None] = None
+    username: Union[str, None] = None
+    avatar: Union[str, None] = None
+
 
 conn = psycopg2.connect(
     dbname = "test_capcheck_database", 
@@ -162,3 +169,22 @@ async def delete_user_photo(user_id: int, photoId: int):
     session.delete(photo)
     session.commit()
     session.close()
+
+@app.patch("/api/users/{user_id}")
+async def update_user(user_id: int, new_user: UpdateUser):
+    session = Session(bind=engine)
+    user=session.get(Users, user_id)
+    if new_user.score is not None: 
+        user.score=new_user.score
+    if new_user.avatar is not None:
+        user.avatar=new_user.avatar
+    if new_user.username is not None:
+        user.username=new_user.username
+    session.commit()
+    session.refresh(user)
+    return {
+        'userId': user.userId, 
+        'username': user.username,
+        'avatar': user.avatar,
+        'score': user.score,
+    }
