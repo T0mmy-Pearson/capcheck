@@ -34,14 +34,14 @@ export default function UserProfile() {
         setEditing(false)
     }
   return (
-    <View
-   /*    headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+    <ParallaxScrollView
+     headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <Image
           source={require("@/assets/images/1000_F_370951245_vWF0oLH6WRDT5kb9Anvl4HbLCJBBX3XI.jpg")} // user  image carousel
           style={styles.reactLogo}
         />
-      } */
+      }
     >
         <UserAvatar></UserAvatar>
         <View>
@@ -79,7 +79,7 @@ export default function UserProfile() {
 
 
 
-    </View>
+    </ParallaxScrollView>
   );
 }
 
