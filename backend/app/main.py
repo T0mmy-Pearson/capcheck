@@ -13,6 +13,14 @@ from sqlalchemy.orm import Session
 
 app=FastAPI()
 
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"]
+# )
+
 class Photo(BaseModel):
     photo: str
     latitude: str
@@ -29,11 +37,11 @@ class UpdateUser(BaseModel):
 
 
 conn = psycopg2.connect(
-    dbname = "test_capcheck_database", 
+    dbname = os.getenv("PGNAME"), 
     user = os.getenv("PGUSER"),
     password = os.getenv("PGPASSWORD"),
-    host = "localhost",
-    port = 5432
+    host = os.getenv("PGHOST"),
+    port = os.getenv("PGPORT")
 )
 conn.autocommit = True
 

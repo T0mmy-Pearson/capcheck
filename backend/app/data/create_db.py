@@ -5,8 +5,8 @@ conn = psycopg2.connect(
     dbname = "postgres", 
     user = os.getenv("PGUSER"),
     password = os.getenv("PGPASSWORD"),
-    host = "localhost",
-    port = 5432
+    host = os.getenv("PGHOST"),
+    port = os.getenv("PGPORT")
 )
 
 conn.autocommit = True
