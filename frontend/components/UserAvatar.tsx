@@ -1,10 +1,27 @@
 import { Avatar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, Alert, Image } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserAvatar = () => {
+  
   const [avatar, setAvatar] = useState('https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg')
+
+  useEffect(() => {
+    const loadAvatar = async() => {
+      try {
+        const savedAvatar = await AsyncStorage.getItem("userAvatar")
+        if (savedAvatar) {
+          setAvatar(savedAvatar)
+        }
+      } catch (error) {
+        console.error("Avatar not loaded", error)
+      }
+    }
+  loadAvatar()
+  }, [])
+  
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: 'images',
@@ -15,8 +32,17 @@ const UserAvatar = () => {
     if (!result.canceled) {
       const uri = result.assets[0].uri
       setAvatar(uri)
+      try {
+        await AsyncStorage.setItem("userAvatar", uri)
+      } catch(error) {
+        console.error("Avatar not saved", error)
+      }
     }
   };
+
+
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Account Info 🍄</Text>
