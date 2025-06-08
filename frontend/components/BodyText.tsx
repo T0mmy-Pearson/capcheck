@@ -2,7 +2,7 @@ import { StyleSheet, Text, type TextProps } from 'react-native';
 
 import { useThemeColor } from '@/hooks/useThemeColor';
 
-export type ThemedTextProps = TextProps & {
+export type BodyTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
   type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
@@ -14,7 +14,7 @@ export function BodyText({
   darkColor,
   type = 'default',
   ...rest
-}: ThemedTextProps) {
+}: BodyTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
   return (
