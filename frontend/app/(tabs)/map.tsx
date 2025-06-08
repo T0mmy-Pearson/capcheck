@@ -2,6 +2,8 @@ import MapView, { Marker, MapPressEvent, Region, Geojson, UrlTile } from "react-
 import { useState, useEffect } from "react";
 import { StyleSheet, View, Alert, Text } from "react-native";
 import * as Location from "expo-location"
+import { HelloWave } from "@/components/WaveText";
+
 
 
 export default function MapScreen() {
@@ -65,6 +67,7 @@ export default function MapScreen() {
     flipY={false}
   />
     </MapView>
+
   )
 }
 
