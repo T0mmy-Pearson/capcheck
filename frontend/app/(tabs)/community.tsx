@@ -1,9 +1,3 @@
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@react-navigation/elements";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -12,7 +6,14 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
+import { Button } from "@react-navigation/elements";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
 import CommunityPost, { Post } from "@/components/CommunityPost";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchPhotos } from "../../utils/api";
 
 // Define RootStackParamList or import it from your navigation types file
 type RootStackParamList = {
@@ -27,17 +28,31 @@ export default function TabTwoScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userId = 1; // Replace with logged-in user ID later when user profile is set up
-    fetch(`https://capcheck.onrender.com/api/userphotos?user_id=${userId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data.userphotos);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const setup = async () => {
+      await AsyncStorage.setItem("userId", "1");
+    };
+    setup();
+  }, []);
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem("userId");
+        if (!storedUserId) {
+          console.warn("No userId found in AsyncStorage");
+          return;
+        }
+
+        const res = await fetchPhotos({ userId: Number(storedUserId) });
+        setPosts(res.data.userphotos);
+      } catch (err) {
         console.error("Error loading posts:", err);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    loadPosts();
   }, []);
 
   return (
@@ -76,18 +91,23 @@ export default function TabTwoScreen() {
 }
 
 const styles = StyleSheet.create({
-  intro: {
-    marginVertical: 16,
-  },
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    backgroundColor: "#f5f5f5",
+  },
+  intro: {
+    marginVertical: 12,
+    fontSize: 16,
+    color: "#555",
+    textAlign: "center",
   },
   reactLogo: {
-    width: 630,
-    height: 300,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+    width: "100%",
+    height: 220,
+    resizeMode: "cover",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
 });
