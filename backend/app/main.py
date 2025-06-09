@@ -106,47 +106,53 @@ async def fetch_users():
         records.append(record)
     return { "users": records }
 
+
 @app.get("/api/userphotos")
 async def fetch_user_photos():
-    sql = """
-    SELECT 
-      p.photoId,
-      p.photo,
-      p.latitude,
-      p.longitude,
-      p.mushroomId,
-      u.id AS user_id,
-      u.username,
-      u.avatar_url
-    FROM userphotos p
-    JOIN users u ON u.id = p.userId;
-    """
-    cur.execute(sql)
-    results = cur.fetchall()
+    try:
+        sql = """
+        SELECT 
+            p.photoId,
+            p.photo,
+            p.latitude,
+            p.longitude,
+            p.mushroomId,
+            u.id AS user_id,
+            u.username,
+            u.avatar_url
+        FROM userphotos p
+        JOIN users u ON u.id = p.userId;
+        """
+        cur.execute(sql)
+        results = cur.fetchall()
+
+        records = []
+        for row in results:
+            record = {}
+            for i, column in enumerate(cur.description):
+                record[column.name] = row[i]
+            records.append({
+                "id": record["photoId"],
+                "photoUrl": record["photo"],
+                "user": {
+                    "username": record["username"],
+                    "avatarUrl": record["avatar_url"]
+                },
+                "caption": f"Mushroom ID: {record['mushroomId']}",
+                "latitude": record["latitude"],
+                "longitude": record["longitude"],
+                "mushroomId": record["mushroomId"],
+                "likes": 0,
+                "liked": False,
+                "timestamp": "Just now",
+                "comments": []
+            })
+
+        return {"userphotos": records}
     
-    records = []
-    for row in results:
-        record = {}
-        for i, column in enumerate(cur.description):
-            record[column.name] = row[i]
-        records.append({
-            "id": record["photoId"],
-            "photoUrl": record["photo"],
-            "user": {
-                "username": record["username"],
-                "avatarUrl": record["avatar_url"]
-            },
-            "caption": f"Mushroom ID: {record['mushroomId']}",
-            "latitude": record["latitude"],
-            "longitude": record["longitude"],
-            "mushroomId": record["mushroomId"],
-            "likes": 0,
-            "liked": False,
-            "timestamp": "Just now",
-            "comments": []  
-        })
-    
-    return {"userphotos": records}
+    except Exception as e:
+        print("Error in /api/userphotos:", e)
+        return {"error": "Failed to load user photos"}
 
 @app.get("/api/users/{userId}")
 async def fetch_user_by_id(userId: int):
