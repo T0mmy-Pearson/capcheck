@@ -129,7 +129,7 @@ async def fetch_user_photos(user_id: int = Query(...)):
             ) AS liked
         FROM userphotos p
         JOIN users u ON u."userId" = p."userId"
-        JOIN mushrooms m ON m.id = p."mushroomId"
+        JOIN mushroom m ON m.id = p."mushroomId"
         LEFT JOIN likes l ON l."photoId" = p."photoId"
         GROUP BY p."photoId", m.name, u."userId", u.username, u.avatar, p.photo, p.latitude, p.longitude, p."mushroomId";
         """
