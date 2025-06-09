@@ -112,17 +112,18 @@ async def fetch_user_photos():
     try:
         sql = """
         SELECT 
-            p.photoId,
+            p."photoId",
             p.photo,
             p.latitude,
             p.longitude,
-            p.mushroomId,
-            u.userId AS user_id,
+            p."mushroomId",
+            u."userId" AS user_id,
             u.username,
             u.avatar AS avatar_url
         FROM userphotos p
-        JOIN users u ON u.userId = p.userId;
+        JOIN users u ON u."userId" = p."userId";
         """
+
         cur.execute(sql)
         results = cur.fetchall()
 
@@ -131,6 +132,7 @@ async def fetch_user_photos():
             record = {}
             for i, column in enumerate(cur.description):
                 record[column.name] = row[i]
+
             records.append({
                 "id": record["photoId"],
                 "photoUrl": record["photo"],
@@ -152,7 +154,7 @@ async def fetch_user_photos():
     
     except Exception as e:
         print("Error in /api/userphotos:", e)
-        import traceback; traceback.print_exc()
+        traceback.print_exc()
         return {"error": "Failed to load user photos"}
 
 @app.get("/api/users/{userId}")
