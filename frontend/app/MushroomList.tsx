@@ -16,12 +16,13 @@ import formatSeasonValue from "@/utils/formatSeasonValue";
 import edibleIcon from "@/utils/edibleIcons";
 import SearchBar from "@/components/SearchBar";
 
-const FILTERS = ["All", "Edible", "Inedible", "Poisonous"];
+
 
 export default function MushroomList() {
   const [mushrooms, setMushrooms] = useState([]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
+  const [monthFilter, setMonthFilter] = useState<string | null>(null);
   const navigation = useNavigation<any>();
 
   useEffect(() => {
@@ -30,12 +31,42 @@ export default function MushroomList() {
       .then((data) => setMushrooms(data.mushrooms));
   }, []);
 
+  const FILTERS = ["All", "Edible", "Inedible", "Poisonous", "In Season"];
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const currentMonth = new Date().toLocaleString("default", { month: "short" });
+
   const filteredMushrooms = mushrooms.filter((item: any) => {
     const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
-    const matchesFilter =
-      filter === "All" ? true : item.edible === filter;
+    let matchesFilter = true;
+
+    if (monthFilter) {
+      matchesFilter = isInSeason(item.start, item.end, monthFilter);
+    } else if (filter === "In Season") {
+      matchesFilter = isInSeason(item.start, item.end, currentMonth);
+    } else if (filter !== "All") {
+      matchesFilter = item.edible === filter;
+    }
+
     return matchesSearch && matchesFilter;
   });
+
+
+  function isInSeason(start: string, end: string, month: string) {
+    if (start === "All" || end === "All") return true;
+    const startIdx = MONTHS.indexOf(start);
+    const endIdx = MONTHS.indexOf(end);
+    const monthIdx = MONTHS.indexOf(month);
+
+    if (startIdx === -1 || endIdx === -1 || monthIdx === -1) return false;
+
+    if (startIdx <= endIdx) {
+      // e.g. Mar to Oct
+      return monthIdx >= startIdx && monthIdx <= endIdx;
+    } else {
+      // e.g. Nov to Feb (wraps around year)
+      return monthIdx >= startIdx || monthIdx <= endIdx;
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -68,6 +99,60 @@ export default function MushroomList() {
             </Text>
           </Pressable>
         ))}
+      </View>
+      {/* Filter by season Bar */}
+      <View style={{ flexDirection: "row", marginBottom: 8, marginTop: 4, flexWrap: "wrap" }}>
+        <Pressable
+          style={[
+            styles.filterButton,
+            monthFilter === null && filter !== "In Season" && styles.filterButtonActive,
+          ]}
+          onPress={() => setMonthFilter(null)}
+        >
+          <Text style={[
+            styles.filterButtonText,
+            monthFilter === null && filter !== "In Season" && styles.filterButtonTextActive,
+          ]}>
+            All Months
+          </Text>
+        </Pressable>
+        {MONTHS.map((m) => (
+          <Pressable
+            key={m}
+            style={[
+              styles.filterButton,
+              monthFilter === m && styles.filterButtonActive,
+            ]}
+            onPress={() => {
+              setMonthFilter(m);
+              setFilter("All");
+            }}
+          >
+            <Text style={[
+              styles.filterButtonText,
+              monthFilter === m && styles.filterButtonTextActive,
+            ]}>
+              {m}
+            </Text>
+          </Pressable>
+        ))}
+        <Pressable
+          style={[
+            styles.filterButton,
+            filter === "In Season" && monthFilter === null && styles.filterButtonActive,
+          ]}
+          onPress={() => {
+            setFilter("In Season");
+            setMonthFilter(null);
+          }}
+        >
+          <Text style={[
+            styles.filterButtonText,
+            filter === "In Season" && monthFilter === null && styles.filterButtonTextActive,
+          ]}>
+            Currently In Season
+          </Text>
+        </Pressable>
       </View>
       {/* Mushroom List */}
       <FlatList
