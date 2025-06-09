@@ -24,23 +24,18 @@ export default function RootLayout() {
 
   return (
 
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-        <Stack.Screen name="MushroomList" options={{ title: 'Mushroom List' }} />
-        <Stack.Screen name="MushroomProfile" options={{ title: 'Mushroom Profile' }} />
-      </Stack>
-      <StatusBar style="auto" />
 
-    
+
+
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SessionProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+          <Stack.Screen name="MushroomList" options={{ title: 'Mushroom List' }} />
+          <Stack.Screen name="MushroomProfile" options={{ title: 'Mushroom Profile' }} />
+        </Stack>
+        <StatusBar style="auto" />
       </SessionProvider>
 
     </ThemeProvider>

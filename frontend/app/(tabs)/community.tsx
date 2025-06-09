@@ -58,7 +58,6 @@ export default function TabTwoScreen() {
     }
   };
 
-  useEffect(() => {
 
   useEffect(() => {
     const loadPosts = async () => {
