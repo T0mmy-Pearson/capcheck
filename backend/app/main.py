@@ -1,4 +1,4 @@
-import traceback
+
 from fastapi import FastAPI
 import psycopg2 
 import os
@@ -10,6 +10,7 @@ from app.data.models import UserPhotos, UserComments, Users, UserLikes
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
 
 
 env = os.getenv("ENV", "production")
@@ -19,13 +20,15 @@ load_dotenv(dotenv_path=env_path)
 
 app = FastAPI()
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"]
-# )
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins, 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Photo(BaseModel):
     photo: str
