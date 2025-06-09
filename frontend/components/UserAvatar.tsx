@@ -6,8 +6,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+interface UserObject{
+  avatar: string;
+  username: string;
+  userId: number;
+  score: number;
+}
 
-const UserAvatar = () => {
+const UserAvatar = ( userObject: UserObject ) => {
   
   const [avatar, setAvatar] = useState('https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg')
 
@@ -24,6 +30,11 @@ const UserAvatar = () => {
     }
   loadAvatar()
   }, [])
+
+  useEffect(() => {
+    console.log(userObject)
+    setAvatar(userObject.avatar)
+  }, [userObject])
   
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
