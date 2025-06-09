@@ -109,7 +109,7 @@ async def fetch_users():
 
 
 @app.get("/api/userphotos")
-async def fetch_user_photos(user_id: int = Query(...)):
+async def fetch_user_photos(user_id: int = Query(1)):
     try:
         sql = """
         SELECT 
