@@ -9,18 +9,40 @@ import UserAvatar from "@/components/UserAvatar";
 import CheckBox from "@/components/CheckBox";
 import { Ionicons } from '@expo/vector-icons';
 import PhotoCarousel from "@/components/PhotoCarousel";
-import { useRouter } from "expo-router";  // <-- add this
+import { useRouter } from "expo-router";  
+import { SessionContext } from "../contexts/SessionContext";
+import { useContext } from "react";
+import { fetchUserById } from "@/utils/api";
+
+
+interface UserObject{
+  avatar: string;
+  username: string;
+  userId: number;
+  score: number;
+}
 
 export default function UserProfile() {
-    const [bio, setBio] = useState("")
-    const [editing, setEditing] = useState(false)
-    const [bioInput, setBioInput] = useState("")
+    const {defaultValue: userId} = useContext(SessionContext);
+    const [userObject, setUserObject] = useState({});
+    const [bio, setBio] = useState("");
+    const [editing, setEditing] = useState(false);
+    const [bioInput, setBioInput] = useState("");
     const [mushroom, setMushroom] = useState(false);
 
     const colorScheme = useColorScheme();
-    const router = useRouter();  // <-- add this
+    const router = useRouter();  
 
     useEffect(() => {
+      setUserObject(() => {
+      fetchUserById(userId)
+      .then(res => {
+        const newUserObject = res
+        console.log(newUserObject)
+        return newUserObject
+      })
+      });
+
         (async () => {
             const savedBio = await AsyncStorage.getItem("userBio")
             if (savedBio) setBio(savedBio)
@@ -40,10 +62,10 @@ export default function UserProfile() {
                 <Image />
             }
         >
-            <UserAvatar />
+            <UserAvatar userObject = {userObject} />
             <Pressable
                 style={styles.rowLink}
-                onPress={() => router.push("EditAccountInfoPage")} // use router instead of navigation
+                onPress={() => router.push("EditAccountInfoPage")} 
             >
                 <Text style={styles.linkText}>Edit Account Info</Text>
                 <Ionicons name="chevron-forward" size={20} color="white" />
@@ -76,8 +98,8 @@ export default function UserProfile() {
 
             <ThemedText>post photo functionality</ThemedText>
 
-            <Button title="🧺 View Found Mushrooms" onPress={() => router.push("/AddMushroom")} />
-            <Button title="➕ Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
+            <Button title="View Found Mushrooms" onPress={() => router.push("/AddMushroom")} />
+            <Button title="Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
 
             <View style={styles.container}>
                 <CheckBox
