@@ -3,9 +3,10 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator, ScrollView, TouchableOpacity } from "react-native";
 import fixImgUrl from "@/utils/fixImgUrl";
 import { useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function MushroomProfile() {
   const route = useRoute();
@@ -13,6 +14,8 @@ export default function MushroomProfile() {
 
   const [mushroom, setMushroom] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     fetch(`https://capcheck.onrender.com/api/mushroom/${mushroomId}`)
@@ -43,6 +46,9 @@ export default function MushroomProfile() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: "#000000", padding: 20 }}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Text style={{ color: "white" }}>← Back</Text>
+              </TouchableOpacity>
        <Image
           source={{ uri: correctedImgUrl }}
           style={styles.image}
