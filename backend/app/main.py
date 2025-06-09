@@ -52,6 +52,19 @@ conn.autocommit = True
 
 cur = conn.cursor()
 
+
+@app.get("/api")
+async def root():
+    return {
+        "message": "Welcome to the Mushroom Community API",
+        "endpoints": {
+            "users": "/api/users",
+            "userphotos": "/api/userphotos",
+            "mushrooms": "/api/mushrooms",
+            "comments": "/api/comments"
+        }
+    }
+
 @app.get("/api/mushroom/")
 async def fetch_mushrooms(edible: Union[str, None] = None):
     sql_str = "SELECT * FROM mushroom"
@@ -92,6 +105,19 @@ async def fetch_users():
             record[column.name]=row[i]
         records.append(record)
     return { "users": records }
+
+@app.get("/api/userphotos")
+async def fetch_user_photos():
+    sql_str = "SELECT * FROM userphotos"
+    cur.execute(sql_str)
+    results = cur.fetchall()
+    records = []
+    for row in results:
+        record = {}
+        for i, column in enumerate(cur.description):
+            record[column.name] = row[i]
+        records.append(record)
+    return { "userphotos": records }
 
 @app.get("/api/users/{userId}")
 async def fetch_user_by_id(userId: int):
