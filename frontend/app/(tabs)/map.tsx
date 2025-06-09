@@ -12,7 +12,7 @@ export default function MapScreen() {
     longitudeDelta: number;
   } | null>(null)
   const [marker, setMarker] = useState<{ latitude: number; longitude: number; } | null>(null)
-  const [showRain, setShowRain] = useState(true); // <-- add toggle state
+  const [showRain, setShowRain] = useState(true); 
 
   useEffect(() => {
     (async () => {
