@@ -3,6 +3,9 @@ import * as ImagePicker from 'expo-image-picker'
 import { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, Alert, Image } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+
 
 const UserAvatar = () => {
   
@@ -53,6 +56,7 @@ const UserAvatar = () => {
           size={30}
           onPress={handlePickImage}
         />
+        
       </View>
       <Text style={styles.name}>John Doe</Text>
       <Text style={styles.email}>johndoe@example.com</Text>
@@ -68,7 +72,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'black',
+        backgroundColor: '#121212',
         padding: 20,
     },
     header: {
