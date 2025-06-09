@@ -43,7 +43,7 @@ export default function MushroomList() {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={{ color: "white", fontSize: "24", paddingBottom: "20" }}>← Back</Text>
+        <Text style={{ color: "white", fontSize: "36", paddingBottom: "20", paddingLeft: 10, }}>←</Text>
       </TouchableOpacity>
       <FlatList
         contentContainerStyle={{ paddingBottom: 20, }}
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
-    paddingTop: 40,
+    paddingTop: 10,
     paddingHorizontal: 10,
   },
   name: {
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontStyle: "italic",
     fontSize: 13,
-    marginBottom: 4,
+    textAlign: "left",
   },
   seasons: {
     color: "#ffffff",
@@ -111,11 +111,11 @@ const styles = StyleSheet.create({
     padding: 10,
     marginHorizontal: 10,
     paddingLeft: 20,
-    marginTop: 5,
+    marginTop: 9,
     marginBottom: 10,
     flexDirection: "row",
     alignItems: "flex-start",
-    height: 120,
+    height: 130,
 
   },
   image: {
