@@ -7,11 +7,9 @@ import { View, Text, TextInput, Appearance, StyleSheet, useColorScheme } from 'r
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserAvatar from "@/components/UserAvatar";
 import CheckBox from "@/components/CheckBox";
-
-/* const colorScheme = Appearance.getColorScheme();
-if (colorScheme === "dark") {
-
-} */
+import { Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import  PhotoCarousel  from "@/components/PhotoCarousel"
 
 
 export default function UserProfile() {
@@ -40,11 +38,15 @@ export default function UserProfile() {
         <Image/>
       }
     >
-        <UserAvatar></UserAvatar>
+        <UserAvatar/>
+          <Pressable
+          style={styles.rowLink}
+          onPress={() => navigation.navigate("EditAccountInfoPage")}>
+        <Text style={styles.linkText}>Edit Account Info</Text>
+        <Ionicons name="chevron-forward" size={20} color="white" />
+        </Pressable>
         <View>
         <ThemedText>POINTS SCORE</ThemedText>
-        {/* edit username */}
-        {/* display email address */}
         {editing ? (
             <> <TextInput
             style={{color: 'white'}}
@@ -56,7 +58,7 @@ export default function UserProfile() {
         </>)}
         </View>
         <ThemedText>Checklist/stats box links to other page</ThemedText>
-        <ThemedText>Users Photos carousel links to all your photos</ThemedText>
+        <PhotoCarousel></PhotoCarousel>
         <ThemedText>post photo functionality</ThemedText>
 
         
@@ -102,6 +104,19 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
       },
+      rowLink: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: '#444',
+      paddingHorizontal: 10,
+    },
+      linkText: {
+      color: 'white',
+      fontSize: 16,
+    },
   });
 
  
