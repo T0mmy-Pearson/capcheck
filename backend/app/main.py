@@ -291,3 +291,29 @@ async def unlike_photo(photoId: int, user_id: int = Query(...)):
         session.delete(like)
         session.commit()
     session.close()
+
+@app.get("/api/userphotos/{photoId}/likes")
+async def get_photo_likes(photoId: int):
+    session = Session(bind=engine)
+    like_count = session.query(UserLikes).filter_by(photoId=photoId).count()
+    liked_users = (
+        session.query(Users.userId, Users.username, Users.avatar)
+        .join(UserLikes, Users.userId == UserLikes.userId)
+        .filter(UserLikes.photoId == photoId)
+        .all()
+    )
+
+    users_list = []
+    for user in liked_users:
+        users_list.append({
+            "userId": user.userId,
+            "username": user.username,
+            "avatar": user.avatar
+        })
+
+    session.close()
+    return {
+        "photoId": photoId,
+        "likeCount": like_count,
+        "likedBy": users_list
+    }
