@@ -7,10 +7,13 @@ import { ThemedView } from '@/components/ThemedView';
 import { Button } from '@react-navigation/elements';
 import { HelloWave } from '@/components/WaveText';
 import { BodyText } from '@/components/BodyText';
+import { useNavigation } from '@react-navigation/native';
 
 
 
 export default function TabTwoScreen() {
+
+  const navigation = useNavigation<any>();
 
   return (
     <ParallaxScrollView
@@ -29,6 +32,7 @@ export default function TabTwoScreen() {
       <Collapsible title="Safety"><BodyText>When foraging, safety is essential. Always positively identify any plant or mushroom before consuming—many edible species have toxic lookalikes. Use reputable field guides or apps, and never rely on a single characteristic for identification. Forage with experienced friends when possible, and avoid areas that may be contaminated by pesticides, pollution, or animal waste. Only harvest what you need, leaving enough for wildlife and future growth. Wash all finds thoroughly before eating. If you’re unsure about something, don’t eat it. Finally, let someone know your foraging plans and location, and carry a phone or map for emergencies. Stay curious, but cautious!🍄 <ThemedText type="defaultSemiBold">...and don't sue us</ThemedText></BodyText></Collapsible>
       <Collapsible title="Foraging Information"><ThemedText>Foraging is a timeless adventure that connects us deeply with nature. Wandering through forests, fields, or coastlines, we discover edible treasures—wild mushrooms, berries, herbs, and nuts—each offering unique flavors and nutritional benefits. Foraging encourages mindfulness, as we learn to identify plants and fungi, respect ecosystems, and harvest sustainably. It fosters curiosity, self-reliance, and a sense of stewardship for the land. Sharing foraged finds with friends or family creates lasting memories and delicious meals. Whether you're seeking wild garlic in spring or blackberries in autumn, foraging transforms a simple walk into a journey of discovery, wonder, and gratitude.</ThemedText></Collapsible>
       <Button color="white">WEATHER INFO</Button>
+      <Button color="white" onPress={() => navigation.navigate("MushroomList")}>links to mushroomlist</Button>
 
 
 

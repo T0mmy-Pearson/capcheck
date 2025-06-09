@@ -4,7 +4,10 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
+
+
 import { SessionProvider } from './contexts/SessionContext';
+
 
 
 
@@ -20,6 +23,16 @@ export default function RootLayout() {
   }
 
   return (
+
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="MushroomList" options={{ title: 'Mushroom List' }} />
+        <Stack.Screen name="MushroomProfile" options={{ title: 'Mushroom Profile' }} />
+      </Stack>
+      <StatusBar style="auto" />
+
     
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SessionProvider>
@@ -29,6 +42,7 @@ export default function RootLayout() {
       </Stack>
       <StatusBar style="auto" />
       </SessionProvider>
+
     </ThemeProvider>
   );
 }
