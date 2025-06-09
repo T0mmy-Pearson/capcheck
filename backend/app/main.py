@@ -1,4 +1,4 @@
-import traceback
+
 from fastapi import FastAPI
 import psycopg2 
 import os
@@ -10,6 +10,7 @@ from app.data.models import UserPhotos, UserComments, Users, UserLikes
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
 
 
 env = os.getenv("ENV", "production")
@@ -19,13 +20,15 @@ load_dotenv(dotenv_path=env_path)
 
 app = FastAPI()
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"]
-# )
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins, 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Photo(BaseModel):
     photo: str
@@ -109,7 +112,7 @@ async def fetch_users():
 
 
 @app.get("/api/userphotos")
-async def fetch_user_photos(user_id: int = Query(...)):
+async def fetch_user_photos(user_id: int = Query(1)):
     try:
         sql = """
         SELECT 
@@ -118,6 +121,7 @@ async def fetch_user_photos(user_id: int = Query(...)):
             p.latitude,
             p.longitude,
             p."mushroomId",
+            m.name AS mushroom_name,
             u."userId" AS user_id,
             u.username,
             u.avatar AS avatar_url,
@@ -128,8 +132,9 @@ async def fetch_user_photos(user_id: int = Query(...)):
             ) AS liked
         FROM userphotos p
         JOIN users u ON u."userId" = p."userId"
+        JOIN mushroom m ON m."mushroomId" = p."mushroomId"
         LEFT JOIN likes l ON l."photoId" = p."photoId"
-        GROUP BY p."photoId", u."userId", u.username, u.avatar, p.photo, p.latitude, p.longitude, p."mushroomId";
+        GROUP BY p."photoId", m.name, u."userId", u.username, u.avatar, p.photo, p.latitude, p.longitude, p."mushroomId";
         """
         cur.execute(sql, (user_id,))
         results = cur.fetchall()
@@ -145,7 +150,7 @@ async def fetch_user_photos(user_id: int = Query(...)):
                     "username": record["username"],
                     "avatarUrl": record["avatar_url"]
                 },
-                "caption": f"Mushroom ID: {record['mushroomId']}",
+                "caption": record["mushroom_name"],  
                 "latitude": record["latitude"],
                 "longitude": record["longitude"],
                 "mushroomId": record["mushroomId"],

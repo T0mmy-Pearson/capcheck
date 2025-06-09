@@ -16,7 +16,9 @@ import { ThemedText } from "@/components/ThemedText";
 import CommunityPost, { Post } from "@/components/CommunityPost";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchPhotos } from "../../utils/api";
+
 import * as ImagePicker from "expo-image-picker";
+
 
 type RootStackParamList = {
   UploadPost: undefined;
@@ -38,6 +40,7 @@ export default function TabTwoScreen() {
     setup();
   }, []);
 
+
   const loadPosts = async () => {
     try {
       const storedUserId = await AsyncStorage.getItem("userId");
@@ -56,6 +59,25 @@ export default function TabTwoScreen() {
   };
 
   useEffect(() => {
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem("userId");
+        if (!storedUserId) {
+          console.warn("No userId found in AsyncStorage");
+          return;
+        }
+
+        const res = await fetchPhotos({ userId: Number(storedUserId) });
+        setPosts(res.data.userphotos);
+      } catch (err) {
+        console.error("Error loading posts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadPosts();
   }, []);
 
@@ -177,6 +199,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+
   },
   uploadSection: {
     marginTop: 20,
@@ -194,5 +217,6 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
     marginVertical: 10,
+
   },
 });
