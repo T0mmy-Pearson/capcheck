@@ -1,4 +1,4 @@
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import { useRef, useState } from 'react';
 import {
@@ -9,8 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-export default function App() {
+export default function CameraScreen() {
+  const navigation = useNavigation();
   const [facing, setFacing] = useState<'front' | 'back'>('back');
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
@@ -22,11 +24,16 @@ export default function App() {
   if (!cameraPermission.granted || !mediaPermission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to use the camera and save photos.</Text>
-        <Button onPress={() => {
-          requestCameraPermission();
-          requestMediaPermission();
-        }} title="Grant Permissions" />
+        <Text style={styles.message}>
+          We need your permission to use the camera and save photos.
+        </Text>
+        <Button
+          onPress={() => {
+            requestCameraPermission();
+            requestMediaPermission();
+          }}
+          title="Grant Permissions"
+        />
       </View>
     );
   }
@@ -64,18 +71,19 @@ export default function App() {
 
       if (response.ok) {
         console.log('Photo uploaded successfully');
-      } else {
-        console.error('Upload failed');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
+      } 
+    }  finally {
       setUploading(false);
     }
   }
 
   return (
     <View style={styles.container}>
+      {/* 🔙 Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Text style={styles.backButtonText}>← Back</Text>
+      </TouchableOpacity>
+
       <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
@@ -86,6 +94,7 @@ export default function App() {
           </TouchableOpacity>
         </View>
       </CameraView>
+
       {uploading && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#fff" />
@@ -130,5 +139,18 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
   },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    zIndex: 10,
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 8,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
-
