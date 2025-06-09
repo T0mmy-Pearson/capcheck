@@ -30,20 +30,7 @@ export default function TabTwoScreen() {
     fetch("https://capcheck.onrender.com/api/userphotos")
       .then((res) => res.json())
       .then((data) => {
-        const enriched = data.userphotos.map((item: any) => ({
-          id: item.photoId,
-          user: {
-            username: `User ${item.userId}`,
-            avatarUrl: `https://i.pravatar.cc/100?u=${item.userId}`,
-          },
-          photoUrl: item.photo,
-          caption: `Mushroom ID: ${item.mushroomId}`,
-          likes: Math.floor(Math.random() * 100),
-          liked: false,
-          timestamp: "1h ago",
-          comments: [],
-        }));
-        setPosts(enriched);
+        setPosts(data.userphotos);
         setLoading(false);
       })
       .catch((err) => {
