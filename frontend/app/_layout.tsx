@@ -21,6 +21,8 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="MushroomList" options={{ title: 'Mushroom List' }} />
+        <Stack.Screen name="MushroomProfile" options={{ title: 'Mushroom Profile' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
