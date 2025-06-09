@@ -51,6 +51,10 @@ def seed_data():
             end=data.get("end"),
             capHeight=data.get("capHeight"),
             capWidth=data.get("capWidth"),
+            frequency=data.get("frequency"),
+            skirt=data.get("skirt"),
+            tasteSmell=data.get("tasteSmell"),
+            possibleConfusion=data.get("possibleConfusion"),
             edible=data.get("edible"),
             imgUrl=data.get("imgUrl")
         )

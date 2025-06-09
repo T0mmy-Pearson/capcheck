@@ -47,7 +47,7 @@ export default function MushroomProfile() {
     <ScrollView
       style={{ flex: 1, backgroundColor: "#000000", padding: 20 }}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Text style={{ color: "white" }}>← Back</Text>
+                <Text style={{ color: "white", fontSize: "36", paddingBottom: "20" }}>←</Text>
               </TouchableOpacity>
        <Image
           source={{ uri: correctedImgUrl }}
@@ -68,10 +68,56 @@ export default function MushroomProfile() {
           <BodyText style={styles.text}>{mushroom.description}</BodyText>
         </>
       )}
+       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5, border: "1px solid #000", borderRadius: 10 }}>
+        {mushroom.capHeight && (
+          <>
+            <BodyText style={styles.label}>Cap Height(cm):</BodyText>
+            <BodyText style={styles.text}>{mushroom.capHeight}</BodyText>
+          </>
+        )}
+        {mushroom.capWidth && (
+          <>
+            <BodyText style={styles.label}>Cap Width(cm):</BodyText>
+            <BodyText style={styles.text}>{mushroom.capWidth}</BodyText>
+          </>
+        )}
+        <BodyText style={styles.label}>Habitat:</BodyText>
+      <BodyText style={styles.text}>{mushroom.habitat}</BodyText>
+       {mushroom.frequency && (
+          <>
+            <BodyText style={styles.label}>Frequency:</BodyText>
+            <BodyText style={styles.text}>{mushroom.frequency}</BodyText>
+          </>
+        )}
+       {mushroom.tasteSmell && (
+          <>
+            <BodyText style={styles.label}>Taste & Smell:</BodyText>
+            <BodyText style={styles.text}>{mushroom.tasteSmell}</BodyText>
+          </>
+        )}
+        {mushroom.possibleConfusion && (
+          <>
+            <BodyText style={styles.label}>Confusion:</BodyText>
+            <BodyText style={styles.text}>{mushroom.possibleConfusion}</BodyText>
+          </>
+        )}
+        {mushroom.cap && (
+          <>
+            <BodyText style={styles.label}>Cap:</BodyText>
+            <BodyText style={styles.text}>{mushroom.cap}</BodyText>
+          </>
+        )}
+      </View>
       {mushroom.stem && (
         <>
           <BodyText style={styles.label}>Stem:</BodyText>
           <BodyText style={styles.text}>{mushroom.stem}</BodyText>
+        </>
+      )}
+      {mushroom.skirt && (
+        <>
+          <BodyText style={styles.label}>skirt:</BodyText>
+          <BodyText style={styles.text}>{mushroom.skirt}</BodyText>
         </>
       )}
 
@@ -91,28 +137,12 @@ export default function MushroomProfile() {
       )}
       <BodyText style={styles.label}>Flesh:</BodyText>
       <BodyText style={styles.text}>{mushroom.flesh}</BodyText>
-      <BodyText style={styles.label}>Habitat:</BodyText>
-      <BodyText style={styles.text}>{mushroom.habitat}</BodyText>
       {mushroom.otherFacts && (
         <>
           <BodyText style={styles.label}>Facts:</BodyText>
           <BodyText style={styles.text}>{mushroom.otherFacts}</BodyText>
         </>
       )}
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
-        {mushroom.capHeight && (
-          <>
-            <BodyText style={styles.label}>Cap Height(CM):</BodyText>
-            <BodyText style={styles.text}>{mushroom.capHeight}</BodyText>
-          </>
-        )}
-        {mushroom.capWidth && (
-          <>
-            <BodyText style={styles.label}>Cap Width(CM):</BodyText>
-            <BodyText style={styles.text}>{mushroom.capWidth}</BodyText>
-          </>
-        )}
-      </View>
     </ScrollView>
   );
 }
@@ -122,6 +152,6 @@ const styles = StyleSheet.create({
   title: { fontSize: 34, fontWeight: "bold", color: "#ffffff", gap: 10, },
   scientific: { fontSize: 24, fontStyle: "italic", color: "#666", marginBottom: 12 },
   image: { width: "100%", height: 270, borderRadius: 10, marginBottom: 16 },
-  label: { fontWeight: "bold", marginTop: 2, paddingBottom: 10, color: "#ffffff" },
+  label: { fontWeight: "bold", textDecorationLine: "underline", marginTop: 2, paddingBottom: 10, color: "#ffffff" },
   text: { fontSize: 16, marginTop: 2, paddingBottom: 10, color: "#ffffff" },
 });
