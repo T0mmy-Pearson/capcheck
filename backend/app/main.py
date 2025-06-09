@@ -6,7 +6,7 @@ from typing import Union
 from fastapi import requests, Query
 from pydantic import BaseModel
 from app.data.db import engine
-from app.data.models import UserPhotos, UserComments, Users
+from app.data.models import UserPhotos, UserComments, Users, Likes
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from pathlib import Path
@@ -269,3 +269,25 @@ async def update_user(user_id: int, new_user: UpdateUser):
         'avatar': user.avatar,
         'score': user.score,
     }
+
+@app.post("/api/userphotos/{photoId}/like", status_code=201)
+async def like_photo(photoId: int, user_id: int = Query(...)):
+    session = Session(bind=engine)
+    existing_like = session.query(Likes).filter_by(userId=user_id, photoId=photoId).first()
+    if existing_like:
+        return {"message": "Photo already liked"}
+
+    new_like = Likes(userId=user_id, photoId=photoId)
+    session.add(new_like)
+    session.commit()
+    session.close()
+    return {"message": "Photo liked successfully"}
+
+@app.delete("/api/userphotos/{photoId}/like", status_code=204)
+async def unlike_photo(photoId: int, user_id: int = Query(...)):
+    session = Session(bind=engine)
+    like = session.query(Likes).filter_by(userId=user_id, photoId=photoId).first()
+    if like:
+        session.delete(like)
+        session.commit()
+    session.close()
