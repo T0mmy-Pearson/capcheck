@@ -121,6 +121,7 @@ async def fetch_user_photos(user_id: int = Query(1)):
             p.latitude,
             p.longitude,
             p."mushroomId",
+            m.name AS mushroom_name,
             u."userId" AS user_id,
             u.username,
             u.avatar AS avatar_url,
@@ -131,8 +132,9 @@ async def fetch_user_photos(user_id: int = Query(1)):
             ) AS liked
         FROM userphotos p
         JOIN users u ON u."userId" = p."userId"
+        JOIN mushroom m ON m."mushroomId" = p."mushroomId"
         LEFT JOIN likes l ON l."photoId" = p."photoId"
-        GROUP BY p."photoId", u."userId", u.username, u.avatar, p.photo, p.latitude, p.longitude, p."mushroomId";
+        GROUP BY p."photoId", m.name, u."userId", u.username, u.avatar, p.photo, p.latitude, p.longitude, p."mushroomId";
         """
         cur.execute(sql, (user_id,))
         results = cur.fetchall()
@@ -148,7 +150,7 @@ async def fetch_user_photos(user_id: int = Query(1)):
                     "username": record["username"],
                     "avatarUrl": record["avatar_url"]
                 },
-                "caption": f"Mushroom ID: {record['mushroomId']}",
+                "caption": record["mushroom_name"],  
                 "latitude": record["latitude"],
                 "longitude": record["longitude"],
                 "mushroomId": record["mushroomId"],
