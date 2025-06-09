@@ -108,16 +108,45 @@ async def fetch_users():
 
 @app.get("/api/userphotos")
 async def fetch_user_photos():
-    sql_str = "SELECT * FROM userphotos"
-    cur.execute(sql_str)
+    sql = """
+    SELECT 
+      p.photoId,
+      p.photo,
+      p.latitude,
+      p.longitude,
+      p.mushroomId,
+      u.id AS user_id,
+      u.username,
+      u.avatar_url
+    FROM userphotos p
+    JOIN users u ON u.id = p.userId;
+    """
+    cur.execute(sql)
     results = cur.fetchall()
+    
     records = []
     for row in results:
         record = {}
         for i, column in enumerate(cur.description):
             record[column.name] = row[i]
-        records.append(record)
-    return { "userphotos": records }
+        records.append({
+            "id": record["photoId"],
+            "photoUrl": record["photo"],
+            "user": {
+                "username": record["username"],
+                "avatarUrl": record["avatar_url"]
+            },
+            "caption": f"Mushroom ID: {record['mushroomId']}",
+            "latitude": record["latitude"],
+            "longitude": record["longitude"],
+            "mushroomId": record["mushroomId"],
+            "likes": 0,
+            "liked": False,
+            "timestamp": "Just now",
+            "comments": []  
+        })
+    
+    return {"userphotos": records}
 
 @app.get("/api/users/{userId}")
 async def fetch_user_by_id(userId: int):

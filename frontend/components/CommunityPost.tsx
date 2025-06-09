@@ -4,19 +4,19 @@ import { FontAwesome } from "@expo/vector-icons";
 
 export interface Post {
   id: number;
+  photoUrl: string;
   user: {
     username: string;
     avatarUrl: string;
   };
-  photoUrl: string;
   caption: string;
+  latitude: string;
+  longitude: string;
+  mushroomId: number;
   likes: number;
   liked: boolean;
   timestamp: string;
-  comments: {
-    id: number;
-    text: string;
-  }[];
+  comments: { id: number; text: string }[];
 }
 
 interface Props {
