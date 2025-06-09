@@ -28,24 +28,28 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
   const [likesCount, setLikesCount] = useState(post.likes);
 
   const toggleLike = () => {
-    setLiked((prev) => !prev);
-    setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
-    // TODO: Optionally call your backend here
+    const userId = 1; // 🔐 Replace with logged-in user ID later
+    const method = liked ? "DELETE" : "POST";
+    const url = `https://capcheck.onrender.com/api/userphotos/${post.id}/like?user_id=${userId}`;
+
+    fetch(url, { method })
+      .then(() => {
+        setLiked((prev) => !prev);
+        setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
+      })
+      .catch((err) => console.error("Error toggling like:", err));
   };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Image source={{ uri: post.user.avatarUrl }} style={styles.avatar} />
         <Text style={styles.username}>{post.user.username}</Text>
         <Text style={styles.timestamp}> · {post.timestamp}</Text>
       </View>
 
-      {/* Photo */}
       <Image source={{ uri: post.photoUrl }} style={styles.photo} />
 
-      {/* Actions */}
       <View style={styles.actions}>
         <TouchableOpacity onPress={toggleLike}>
           <FontAwesome
@@ -59,13 +63,9 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Caption */}
       <Text style={styles.caption}>{post.caption}</Text>
-
-      {/* Like count */}
       <Text style={styles.likes}>{likesCount} likes</Text>
 
-      {/* View Comments */}
       <TouchableOpacity>
         <Text style={styles.viewComments}>
           View all {post.comments.length} comments
@@ -77,54 +77,64 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#fff",
     marginVertical: 10,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
+    padding: 12,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 6,
+    marginBottom: 8,
   },
   avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginRight: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 10,
   },
   username: {
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 15,
+    color: "#333",
   },
   timestamp: {
     fontSize: 12,
-    color: "gray",
+    color: "#888",
+    marginLeft: 6,
   },
   photo: {
     width: "100%",
-    height: 300,
-    borderRadius: 8,
-    marginVertical: 6,
+    height: 240,
+    borderRadius: 10,
+    marginVertical: 8,
   },
   actions: {
     flexDirection: "row",
-    marginBottom: 4,
-    gap: 16,
+    alignItems: "center",
+    marginBottom: 6,
   },
   commentIcon: {
     marginLeft: 16,
   },
   caption: {
-    marginBottom: 2,
     fontSize: 14,
+    color: "#444",
+    marginBottom: 4,
   },
   likes: {
     fontWeight: "bold",
     fontSize: 14,
+    color: "#222",
   },
   viewComments: {
-    color: "gray",
+    marginTop: 4,
+    color: "#777",
     fontSize: 13,
   },
 });

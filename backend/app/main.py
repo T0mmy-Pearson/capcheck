@@ -1,14 +1,16 @@
+
 from fastapi import FastAPI
 import psycopg2 
 import os
 from typing import Union
-import requests
+from fastapi import requests, Query
 from pydantic import BaseModel
 from app.data.db import engine
-from app.data.models import UserPhotos, UserComments, Users
+from app.data.models import UserPhotos, UserComments, Users, UserLikes
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
 
 
 env = os.getenv("ENV", "production")
@@ -18,13 +20,15 @@ load_dotenv(dotenv_path=env_path)
 
 app = FastAPI()
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"]
-# )
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins, 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Photo(BaseModel):
     photo: str
@@ -106,47 +110,61 @@ async def fetch_users():
         records.append(record)
     return { "users": records }
 
+
 @app.get("/api/userphotos")
-async def fetch_user_photos():
-    sql = """
-    SELECT 
-      p.photoId,
-      p.photo,
-      p.latitude,
-      p.longitude,
-      p.mushroomId,
-      u.id AS user_id,
-      u.username,
-      u.avatar_url
-    FROM userphotos p
-    JOIN users u ON u.id = p.userId;
-    """
-    cur.execute(sql)
-    results = cur.fetchall()
-    
-    records = []
-    for row in results:
-        record = {}
-        for i, column in enumerate(cur.description):
-            record[column.name] = row[i]
-        records.append({
-            "id": record["photoId"],
-            "photoUrl": record["photo"],
-            "user": {
-                "username": record["username"],
-                "avatarUrl": record["avatar_url"]
-            },
-            "caption": f"Mushroom ID: {record['mushroomId']}",
-            "latitude": record["latitude"],
-            "longitude": record["longitude"],
-            "mushroomId": record["mushroomId"],
-            "likes": 0,
-            "liked": False,
-            "timestamp": "Just now",
-            "comments": []  
-        })
-    
-    return {"userphotos": records}
+async def fetch_user_photos(user_id: int = Query(1)):
+    try:
+        sql = """
+        SELECT 
+            p."photoId",
+            p.photo,
+            p.latitude,
+            p.longitude,
+            p."mushroomId",
+            m.name AS mushroom_name,
+            u."userId" AS user_id,
+            u.username,
+            u.avatar AS avatar_url,
+            COUNT(l."likeId") AS likes,
+            EXISTS (
+                SELECT 1 FROM likes l2
+                WHERE l2."photoId" = p."photoId" AND l2."userId" = %s
+            ) AS liked
+        FROM userphotos p
+        JOIN users u ON u."userId" = p."userId"
+        JOIN mushroom m ON m."mushroomId" = p."mushroomId"
+        LEFT JOIN likes l ON l."photoId" = p."photoId"
+        GROUP BY p."photoId", m.name, u."userId", u.username, u.avatar, p.photo, p.latitude, p.longitude, p."mushroomId";
+        """
+        cur.execute(sql, (user_id,))
+        results = cur.fetchall()
+
+        records = []
+        for row in results:
+            record = {column.name: row[i] for i, column in enumerate(cur.description)}
+
+            records.append({
+                "id": record["photoId"],
+                "photoUrl": record["photo"],
+                "user": {
+                    "username": record["username"],
+                    "avatarUrl": record["avatar_url"]
+                },
+                "caption": record["mushroom_name"],  
+                "latitude": record["latitude"],
+                "longitude": record["longitude"],
+                "mushroomId": record["mushroomId"],
+                "likes": record["likes"],
+                "liked": record["liked"],
+                "timestamp": "Just now",
+                "comments": []
+            })
+
+        return {"userphotos": records}
+
+    except Exception as e:
+        print("Error in /api/userphotos:", e)
+        return {"error": "Failed to load user photos"}
 
 @app.get("/api/users/{userId}")
 async def fetch_user_by_id(userId: int):
@@ -255,4 +273,52 @@ async def update_user(user_id: int, new_user: UpdateUser):
         'username': user.username,
         'avatar': user.avatar,
         'score': user.score,
+    }
+
+@app.post("/api/userphotos/{photoId}/like", status_code=201)
+async def like_photo(photoId: int, user_id: int = Query(...)):
+    session = Session(bind=engine)
+    existing_like = session.query(UserLikes).filter_by(userId=user_id, photoId=photoId).first()
+    if existing_like:
+        return {"message": "Photo already liked"}
+
+    new_like = UserLikes(userId=user_id, photoId=photoId)
+    session.add(new_like)
+    session.commit()
+    session.close()
+    return {"message": "Photo liked successfully"}
+
+@app.delete("/api/userphotos/{photoId}/like", status_code=204)
+async def unlike_photo(photoId: int, user_id: int = Query(...)):
+    session = Session(bind=engine)
+    like = session.query(UserLikes).filter_by(userId=user_id, photoId=photoId).first()
+    if like:
+        session.delete(like)
+        session.commit()
+    session.close()
+
+@app.get("/api/userphotos/{photoId}/likes")
+async def get_photo_likes(photoId: int):
+    session = Session(bind=engine)
+    like_count = session.query(UserLikes).filter_by(photoId=photoId).count()
+    liked_users = (
+        session.query(Users.userId, Users.username, Users.avatar)
+        .join(UserLikes, Users.userId == UserLikes.userId)
+        .filter(UserLikes.photoId == photoId)
+        .all()
+    )
+
+    users_list = []
+    for user in liked_users:
+        users_list.append({
+            "userId": user.userId,
+            "username": user.username,
+            "avatar": user.avatar
+        })
+
+    session.close()
+    return {
+        "photoId": photoId,
+        "likeCount": like_count,
+        "likedBy": users_list
     }

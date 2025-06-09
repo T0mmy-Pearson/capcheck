@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, UniqueConstraint
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -46,3 +46,12 @@ class UserComments(Base):
     photoId = Column(Integer, ForeignKey("userphotos.photoId", ondelete="CASCADE"))
     userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
     body = Column(Text)
+
+class UserLikes(Base):
+    __tablename__ = "likes"
+    likeId = Column(Integer, primary_key=True)
+    userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
+    photoId = Column(Integer, ForeignKey("userphotos.photoId", ondelete="CASCADE"))
+    __table_args__ = (
+        UniqueConstraint("userId", "photoId", name="unique_user_photo_like"),
+    )

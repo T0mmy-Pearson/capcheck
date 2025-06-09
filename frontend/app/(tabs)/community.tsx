@@ -1,9 +1,3 @@
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@react-navigation/elements";
-import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -11,13 +5,23 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
+  TextInput,
+  Alert,
 } from "react-native";
+import { Button } from "@react-navigation/elements";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
 import CommunityPost, { Post } from "@/components/CommunityPost";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchPhotos } from "../../utils/api";
 
-// Define RootStackParamList or import it from your navigation types file
+import * as ImagePicker from "expo-image-picker";
+
+
 type RootStackParamList = {
   UploadPost: undefined;
-  // Add other routes here as needed
 };
 
 export default function TabTwoScreen() {
@@ -26,18 +30,107 @@ export default function TabTwoScreen() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [caption, setCaption] = useState("");
+
   useEffect(() => {
-    fetch("https://capcheck.onrender.com/api/userphotos")
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data.userphotos);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error loading posts:", err);
-        setLoading(false);
-      });
+    const setup = async () => {
+      await AsyncStorage.setItem("userId", "1");
+    };
+    setup();
   }, []);
+
+
+  const loadPosts = async () => {
+    try {
+      const storedUserId = await AsyncStorage.getItem("userId");
+      if (!storedUserId) {
+        console.warn("No userId found in AsyncStorage");
+        return;
+      }
+
+      const res = await fetchPhotos({ userId: Number(storedUserId) });
+      setPosts(res.data.userphotos);
+    } catch (err) {
+      console.error("Error loading posts:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem("userId");
+        if (!storedUserId) {
+          console.warn("No userId found in AsyncStorage");
+          return;
+        }
+
+        const res = await fetchPhotos({ userId: Number(storedUserId) });
+        setPosts(res.data.userphotos);
+      } catch (err) {
+        console.error("Error loading posts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPosts();
+  }, []);
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.7,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!imageUri || !caption) {
+      Alert.alert("Missing fields", "Please select an image and add a caption.");
+      return;
+    }
+
+    const storedUserId = await AsyncStorage.getItem("userId");
+
+    const formData = new FormData();
+    formData.append("photo", {
+      uri: imageUri,
+      name: "upload.jpg",
+      type: "image/jpeg",
+    } as any);
+    formData.append("caption", caption);
+    formData.append("userId", storedUserId || "1");
+
+    try {
+      const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (res.ok) {
+        Alert.alert("Success", "Photo uploaded!");
+        setImageUri(null);
+        setCaption("");
+        loadPosts(); 
+      } else {
+        Alert.alert("Upload failed", "Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Something went wrong.");
+    }
+  };
 
   return (
     <ParallaxScrollView
@@ -51,12 +144,25 @@ export default function TabTwoScreen() {
     >
       <View style={styles.container}>
         <Button color="black" onPress={() => navigation.navigate("UploadPost")}>
-          Post Photo
+          Take Photo
         </Button>
 
+        <View style={styles.uploadSection}>
+          <Button onPress={pickImage}>Choose Image</Button>
+          {imageUri && <Image source={{ uri: imageUri }} style={styles.preview} />}
+          <TextInput
+            placeholder="Enter caption..."
+            value={caption}
+            onChangeText={setCaption}
+            style={styles.input}
+          />
+          <Button onPress={handleUpload} disabled={!imageUri || !caption}>
+            Upload
+          </Button>
+        </View>
+
         <ThemedText style={styles.intro}>
-          Welcome to the community! Like, comment, and explore mushrooms found
-          by others.
+          Welcome to the community! Like, comment, and explore mushrooms found by others.
         </ThemedText>
 
         {loading ? (
@@ -75,63 +181,42 @@ export default function TabTwoScreen() {
 }
 
 const styles = StyleSheet.create({
-  intro: {
-    marginVertical: 16,
-  },
-  footer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    padding: 10,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderTopColor: "#ccc",
-  },
-  scrollcontainer: {
-    paddingBottom: 80,
-  },
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    backgroundColor: "#f5f5f5",
   },
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
-  },
-  titleContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  buttonTitle: {
-    color: "#808080",
-    position: "absolute",
-    bottom: 0,
+  intro: {
+    marginVertical: 12,
+    fontSize: 16,
+    color: "#555",
+    textAlign: "center",
   },
   reactLogo: {
-    width: 630,
-    height: 300,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
+    width: "100%",
+    height: 220,
+    resizeMode: "cover",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+
   },
-  testBoxing: {
-    margin: 30,
-    padding: 10,
-    width: 500,
-    height: 450,
-    borderColor: "black",
-    borderWidth: 3,
-    borderRadius: 10,
+  uploadSection: {
+    marginTop: 20,
+    gap: 10,
   },
-  testBoxing2: {
-    alignItems: "center",
-    margin: 30,
-    padding: 10,
-    width: 250,
-    borderColor: "black",
-    borderWidth: 3,
+  input: {
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 8,
+    backgroundColor: "#fff",
+  },
+  preview: {
+    width: "100%",
+    height: 200,
     borderRadius: 10,
+    marginVertical: 10,
+
   },
 });
