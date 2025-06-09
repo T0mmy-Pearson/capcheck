@@ -3,7 +3,7 @@ from fastapi import FastAPI
 import psycopg2 
 import os
 from typing import Union
-import requests
+from fastapi import requests, Query
 from pydantic import BaseModel
 from app.data.db import engine
 from app.data.models import UserPhotos, UserComments, Users
@@ -109,7 +109,7 @@ async def fetch_users():
 
 
 @app.get("/api/userphotos")
-async def fetch_user_photos():
+async def fetch_user_photos(user_id: int = Query(...)):
     try:
         sql = """
         SELECT 
@@ -120,19 +120,23 @@ async def fetch_user_photos():
             p."mushroomId",
             u."userId" AS user_id,
             u.username,
-            u.avatar AS avatar_url
+            u.avatar AS avatar_url,
+            COUNT(l."likeId") AS likes,
+            EXISTS (
+                SELECT 1 FROM likes l2
+                WHERE l2."photoId" = p."photoId" AND l2."userId" = %s
+            ) AS liked
         FROM userphotos p
-        JOIN users u ON u."userId" = p."userId";
+        JOIN users u ON u."userId" = p."userId"
+        LEFT JOIN likes l ON l."photoId" = p."photoId"
+        GROUP BY p."photoId", u."userId", u.username, u.avatar, p.photo, p.latitude, p.longitude, p."mushroomId";
         """
-
-        cur.execute(sql)
+        cur.execute(sql, (user_id,))
         results = cur.fetchall()
 
         records = []
         for row in results:
-            record = {}
-            for i, column in enumerate(cur.description):
-                record[column.name] = row[i]
+            record = {column.name: row[i] for i, column in enumerate(cur.description)}
 
             records.append({
                 "id": record["photoId"],
@@ -145,17 +149,16 @@ async def fetch_user_photos():
                 "latitude": record["latitude"],
                 "longitude": record["longitude"],
                 "mushroomId": record["mushroomId"],
-                "likes": 0,
-                "liked": False,
+                "likes": record["likes"],
+                "liked": record["liked"],
                 "timestamp": "Just now",
                 "comments": []
             })
 
         return {"userphotos": records}
-    
+
     except Exception as e:
         print("Error in /api/userphotos:", e)
-        traceback.print_exc()
         return {"error": "Failed to load user photos"}
 
 @app.get("/api/users/{userId}")
