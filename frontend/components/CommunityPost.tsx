@@ -28,24 +28,28 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
   const [likesCount, setLikesCount] = useState(post.likes);
 
   const toggleLike = () => {
-    setLiked((prev) => !prev);
-    setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
-    // TODO: Optionally call your backend here
+    const userId = 1; // 🔐 Replace with logged-in user ID later
+    const method = liked ? "DELETE" : "POST";
+    const url = `https://capcheck.onrender.com/api/userphotos/${post.id}/like?user_id=${userId}`;
+
+    fetch(url, { method })
+      .then(() => {
+        setLiked((prev) => !prev);
+        setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
+      })
+      .catch((err) => console.error("Error toggling like:", err));
   };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Image source={{ uri: post.user.avatarUrl }} style={styles.avatar} />
         <Text style={styles.username}>{post.user.username}</Text>
         <Text style={styles.timestamp}> · {post.timestamp}</Text>
       </View>
 
-      {/* Photo */}
       <Image source={{ uri: post.photoUrl }} style={styles.photo} />
 
-      {/* Actions */}
       <View style={styles.actions}>
         <TouchableOpacity onPress={toggleLike}>
           <FontAwesome
@@ -59,13 +63,9 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Caption */}
       <Text style={styles.caption}>{post.caption}</Text>
-
-      {/* Like count */}
       <Text style={styles.likes}>{likesCount} likes</Text>
 
-      {/* View Comments */}
       <TouchableOpacity>
         <Text style={styles.viewComments}>
           View all {post.comments.length} comments

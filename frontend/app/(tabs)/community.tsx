@@ -27,7 +27,8 @@ export default function TabTwoScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://capcheck.onrender.com/api/userphotos")
+    const userId = 1; // Replace with logged-in user ID later when user profile is set up
+    fetch(`https://capcheck.onrender.com/api/userphotos?user_id=${userId}`)
       .then((res) => res.json())
       .then((data) => {
         setPosts(data.userphotos);
@@ -78,36 +79,9 @@ const styles = StyleSheet.create({
   intro: {
     marginVertical: 16,
   },
-  footer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    padding: 10,
-    backgroundColor: "#fff",
-    borderTopWidth: 1,
-    borderTopColor: "#ccc",
-  },
-  scrollcontainer: {
-    paddingBottom: 80,
-  },
   container: {
     flex: 1,
     padding: 16,
-  },
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
-  },
-  titleContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  buttonTitle: {
-    color: "#808080",
-    position: "absolute",
-    bottom: 0,
   },
   reactLogo: {
     width: 630,
@@ -115,23 +89,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: "absolute",
-  },
-  testBoxing: {
-    margin: 30,
-    padding: 10,
-    width: 500,
-    height: 450,
-    borderColor: "black",
-    borderWidth: 3,
-    borderRadius: 10,
-  },
-  testBoxing2: {
-    alignItems: "center",
-    margin: 30,
-    padding: 10,
-    width: 250,
-    borderColor: "black",
-    borderWidth: 3,
-    borderRadius: 10,
   },
 });
