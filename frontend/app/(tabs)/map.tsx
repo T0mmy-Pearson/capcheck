@@ -1,8 +1,9 @@
 import MapView, { Marker, MapPressEvent, Region, Geojson, UrlTile } from "react-native-maps";
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Alert, Text, Switch } from "react-native"; // <-- import Switch
+import { StyleSheet, View, Alert, Text, Switch, Button } from "react-native";
 import * as Location from "expo-location"
-import { HelloWave } from "@/components/WaveText";
+
+
 
 export default function MapScreen() {
   const [region, setRegion] = useState<{
@@ -12,7 +13,8 @@ export default function MapScreen() {
     longitudeDelta: number;
   } | null>(null)
   const [marker, setMarker] = useState<{ latitude: number; longitude: number; } | null>(null)
-  const [showRain, setShowRain] = useState(true); 
+  const [showRain, setShowRain] = useState(true);
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -26,11 +28,21 @@ export default function MapScreen() {
       setRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01
+        latitudeDelta: 20.9,
+        longitudeDelta: 20.9
       })
     })()
   }, [])
+
+ const onToggle = (val: boolean) => {
+    if (pending) return;
+    setPending(true);
+    setShowRain(val);
+    // give tiles a moment to unload before next toggle
+    setTimeout(() => setPending(false), 500);
+  };
+
+
 
   const handleMapPress = (event: MapPressEvent) => {
     const { coordinate } = event.nativeEvent
@@ -48,13 +60,10 @@ export default function MapScreen() {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.toggleContainer}>
-        <Text>Show Rainfall</Text>
-        <Switch
-          value={showRain}
-          onValueChange={setShowRain}
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={showRain ? '#f5dd4b' : '#f4f3f4'}
-          ios_backgroundColor="#3e3e3f"
+        <Button
+          color={showRain ? "black" : "gray"}
+          title={showRain ? 'Show Rain' : 'Show Rain'}
+          onPress={() => setShowRain(prev => !prev)}
         />
       </View>
       <MapView
@@ -71,12 +80,41 @@ export default function MapScreen() {
         )}
         {showRain && (
           <UrlTile
-            urlTemplate="https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=cede26dda2a03494927af0171d3c0b2a"
+            key={String(showRain)}
+            urlTemplate={"https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=cede26dda2a03494927af0171d3c0b2a"}
             zIndex={1}
             maximumZ={19}
             flipY={false}
+            opacity={1}
           />
-        )}
+       )}
+        {showRain && (
+          <UrlTile
+            urlTemplate={"https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=cede26dda2a03494927af0171d3c0b2a"}
+            zIndex={1}
+            maximumZ={19}
+            flipY={false}
+            opacity={1}
+          />
+       )}
+       {showRain && (
+          <UrlTile
+            urlTemplate={"https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=cede26dda2a03494927af0171d3c0b2a"}
+            zIndex={1}
+            maximumZ={19}
+            flipY={false}
+            opacity={1}
+          />
+       )}
+       {showRain && (
+          <UrlTile
+            urlTemplate={"https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=cede26dda2a03494927af0171d3c0b2a"}
+            zIndex={1}
+            maximumZ={19}
+            flipY={false}
+            opacity={1}
+          />
+       )}
       </MapView>
     </View>
   )
@@ -95,11 +133,13 @@ const styles = StyleSheet.create({
   },
   toggleContainer: {
     flexDirection: "row",
+    color: "#000",
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 33,
     padding: 10,
     bottom: 100,
-    left: 200,
+    left: 250,
     backgroundColor: "#fff",
     gap: 10,
     position: "absolute",
