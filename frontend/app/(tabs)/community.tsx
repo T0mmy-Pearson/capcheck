@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -52,15 +54,22 @@ export default function CommunityScreen() {
   };
 
   const pickImage = async () => {
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: "images", 
+    quality: 0.7,
+  });
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
       quality: 0.7,
     });
 
-    if (!result.canceled && result.assets.length > 0) {
-      setImageUri(result.assets[0].uri);
-    }
-  };
+
+  if (!result.canceled && result.assets.length > 0) {
+    setImageUri(result.assets[0].uri);
+  }
+};
 
   const handleUpload = async () => {
     if (!imageUri) {
@@ -71,10 +80,23 @@ export default function CommunityScreen() {
     const formData = new FormData();
     const userId = (await AsyncStorage.getItem("userId")) || "1";
 
+
+    formData.append("photo", {
+  uri: imageUri,
+  type: "image/jpeg",
+  name: "upload.jpg",
+} as any);
+
+    formData.append("caption", caption);
+
+    const filename = imageUri.split("/").pop() || "upload.jpg";
+    const match = /\.(\w+)$/.exec(filename);
+    const type = match ? `image/${match[1]}` : "image/jpeg";
     // File data
     const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
     const filetype =
       filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
+
 
     formData.append("photo", {
       uri: imageUri,
@@ -88,6 +110,42 @@ export default function CommunityScreen() {
     formData.append("latitude", "0"); // Default - replace with real GPS later
     formData.append("longitude", "0"); // Default
     formData.append("mushroomId", "1"); // Default mushroom ID
+
+
+    formData.append("userId", storedUserId || "1");
+
+    try {
+      const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
+        method: "POST",
+        body: formData,
+
+        // DO NOT manually set Content-Type!
+
+
+      });
+
+      const response = await res.json();
+
+      if (res.ok) {
+        Alert.alert("Success", response.message || "Photo uploaded!");
+        setImageUri(null);
+        loadPosts();
+      } else {
+
+        const errorText = await res.text();
+        console.error("Upload failed:", errorText);
+        Alert.alert("Upload failed", "Server rejected the upload.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      Alert.alert("Error", "Something went wrong during upload.");
+
+        Alert.alert("Error", response.error || "Upload failed");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      Alert.alert("Error", "Network request failed");
+
 
     try {
       const response = await fetch(
@@ -110,11 +168,16 @@ export default function CommunityScreen() {
       loadPosts(); // Refresh the feed
     } catch (error) {
       console.error("Upload error:", error);
+
       const message =
         error && typeof error === "object" && "message" in error
           ? (error as { message?: string }).message
           : "Failed to upload photo";
       Alert.alert("Error", message || "Failed to upload photo");
+
+      Alert.alert("Error", error.message || "Failed to upload photo");
+
+
     }
   };
 
@@ -251,3 +314,4 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
 });
+
