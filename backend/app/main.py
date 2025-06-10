@@ -12,8 +12,9 @@ from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import UploadFile, File, Form
+from fastapi import UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
+import uuid
 
 
 env = os.getenv("ENV", "production")
@@ -331,28 +332,44 @@ async def get_photo_likes(photoId: int):
     }
 
 @app.post("/api/userphotos", status_code=201)
-async def post_user_photo_direct(
+async def create_user_photo(
     photo: UploadFile = File(...),
-    mushroomId: int = Form(...),
-    userId: int = Form(...)
+    userId: int = Form(...),
+    caption: str = Form(None),  # Make optional
+    latitude: str = Form("0"),  # Default value
+    longitude: str = Form("0"), # Default value
+    mushroomId: int = Form(1)   # Default value
 ):
     try:
-        photo_url = f"https://capcheck.onrender.com/static/uploads/{photo.filename}" 
-        save_path = f"static/uploads/{photo.filename}"
+        # Generate unique filename
+        file_ext = photo.filename.split(".")[-1]
+        unique_filename = f"{uuid.uuid4()}.{file_ext}"
+        photo_url = f"https://capcheck.onrender.com/static/uploads/{unique_filename}"
+        save_path = f"static/uploads/{unique_filename}"
+        
+        # Save file
         with open(save_path, "wb") as f:
             f.write(await photo.read())
 
+        # Create database record
         session = Session(bind=engine)
         new_photo = UserPhotos(
             photo=photo_url,
+            caption=caption,  # Now stored in DB
+            latitude=latitude,
+            longitude=longitude,
             mushroomId=mushroomId,
             userId=userId
         )
         session.add(new_photo)
         session.commit()
-        session.close()
-
-        return {"message": "Photo uploaded successfully"}
+        return {
+            "message": "Photo uploaded successfully",
+            "photo_url": photo_url,
+            "photo_id": new_photo.id
+        }
     except Exception as e:
-        print("Upload error:", e)
-        return JSONResponse(status_code=500, content={"error": "Upload failed"})
+        session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        session.close()

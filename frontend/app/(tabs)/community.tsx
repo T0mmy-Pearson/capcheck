@@ -64,45 +64,53 @@ export default function CommunityScreen() {
 
   const handleUpload = async () => {
     if (!imageUri) {
-      Alert.alert("Missing image", "Please select an image first.");
+      Alert.alert("Error", "Please select an image first");
       return;
     }
 
-    const storedUserId = await AsyncStorage.getItem("userId");
     const formData = new FormData();
+    const userId = (await AsyncStorage.getItem("userId")) || "1";
 
     // File data
-    const filename = imageUri.split("/").pop() || "upload.jpg";
-    const match = /\.(\w+)$/.exec(filename);
-    const type = match ? `image/${match[1]}` : "image/jpeg";
+    const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
+    const filetype =
+      filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
 
     formData.append("photo", {
       uri: imageUri,
       name: filename,
-      type,
+      type: filetype,
     } as any);
 
+    // Required fields with defaults
+    formData.append("userId", userId);
+    formData.append("caption", caption); // Now supported by backend
+    formData.append("latitude", "0"); // Default - replace with real GPS later
+    formData.append("longitude", "0"); // Default
     formData.append("mushroomId", "1"); // Default mushroom ID
-    formData.append("userId", storedUserId || "1");
 
     try {
-      const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://capcheck.onrender.com/api/userphotos",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-      const response = await res.json();
+      const data = await response.json();
 
-      if (res.ok) {
-        Alert.alert("Success", response.message || "Photo uploaded!");
-        setImageUri(null);
-        loadPosts();
-      } else {
-        Alert.alert("Error", response.error || "Upload failed");
+      if (!response.ok) {
+        throw new Error(data.detail || "Upload failed");
       }
-    } catch (err) {
-      console.error("Upload error:", err);
-      Alert.alert("Error", "Network request failed");
+
+      Alert.alert("Success", data.message);
+      setImageUri(null);
+      setCaption("");
+      loadPosts(); // Refresh the feed
+    } catch (error) {
+      console.error("Upload error:", error);
+      Alert.alert("Error", error.message || "Failed to upload photo");
     }
   };
 
