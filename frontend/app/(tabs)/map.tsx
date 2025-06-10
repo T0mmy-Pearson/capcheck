@@ -1,3 +1,4 @@
+
 import MapView, { Marker, MapPressEvent, UrlTile } from "react-native-maps";
 import { useState, useEffect } from "react";
 import { StyleSheet, View, Alert, Text, Button, TextInput, FlatList, TouchableOpacity } from "react-native";
@@ -55,11 +56,13 @@ export default function MapScreen() {
       });
   }, []);
 
+
   const filteredSuggestions = search.length === 0
     ? []
     : allMushrooms.filter(m =>
       (m.name || "Mushroom").toLowerCase().includes(search.toLowerCase())
     );
+
 
   // Fetch and transform markers ON LOADING, could be random number 1-257
  useEffect(() => {
@@ -101,16 +104,6 @@ export default function MapScreen() {
   }, [search, mushroomMarkers]);
 
 
-  if (!region) {
-    return (
-      <View style={styles.loading}>
-        <Text>Loading map...</Text>
-      </View>
-    );
-  }
-
-  // if suggestions is true, 
-  // user selects mushroom from suggestions,
 
   return (
     <>
@@ -296,3 +289,4 @@ const styles = StyleSheet.create({
     borderBottomColor: "#eee",
   },
 });
+

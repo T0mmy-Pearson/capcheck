@@ -1,8 +1,9 @@
 import { Image } from 'expo-image';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import Randomiser from '@/components/Randomiser';
 
 export default function HomeScreen() {
   return (
@@ -22,8 +23,10 @@ export default function HomeScreen() {
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">community based pop feature</ThemedText>
-        <ThemedText type="subtitle">optional other featuree... can scroll, mushroom fact randomiser?</ThemedText>
       </ThemedView>
+      <View style={styles.mushroomFact}>
+      <Randomiser/>
+      </View>
     </ParallaxScrollView>
   );
 }
@@ -37,6 +40,9 @@ const styles = StyleSheet.create({
   stepContainer: {
     gap: 8,
     marginBottom: 8,
+  },
+  mushroomFact: {
+    alignItems: 'center'
   },
   reactLogo: {
     width: 630,

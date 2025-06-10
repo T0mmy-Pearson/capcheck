@@ -13,42 +13,36 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import CommunityPost, { Post } from "@/components/CommunityPost";
+import CommunityPost from "@/components/CommunityPost";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchPhotos } from "../../utils/api";
-
 import * as ImagePicker from "expo-image-picker";
-
+import { fetchPhotos } from "../../utils/api";
 
 type RootStackParamList = {
   UploadPost: undefined;
 };
 
-export default function TabTwoScreen() {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function CommunityScreen() {
 
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [caption, setCaption] = useState("");
 
   useEffect(() => {
     const setup = async () => {
       await AsyncStorage.setItem("userId", "1");
+      await loadPosts();
     };
     setup();
   }, []);
 
-
   const loadPosts = async () => {
     try {
       const storedUserId = await AsyncStorage.getItem("userId");
-      if (!storedUserId) {
-        console.warn("No userId found in AsyncStorage");
-        return;
-      }
-
+      if (!storedUserId) return;
       const res = await fetchPhotos({ userId: Number(storedUserId) });
       setPosts(res.data.userphotos);
     } catch (err) {
@@ -57,28 +51,6 @@ export default function TabTwoScreen() {
       setLoading(false);
     }
   };
-
-
-  useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem("userId");
-        if (!storedUserId) {
-          console.warn("No userId found in AsyncStorage");
-          return;
-        }
-
-        const res = await fetchPhotos({ userId: Number(storedUserId) });
-        setPosts(res.data.userphotos);
-      } catch (err) {
-        console.error("Error loading posts:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadPosts();
-  }, []);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -93,18 +65,26 @@ export default function TabTwoScreen() {
 
   const handleUpload = async () => {
     if (!imageUri || !caption) {
-      Alert.alert("Missing fields", "Please select an image and add a caption.");
+      Alert.alert(
+        "Missing fields",
+        "Please select an image and add a caption."
+      );
       return;
     }
 
     const storedUserId = await AsyncStorage.getItem("userId");
-
     const formData = new FormData();
+
+    // Get the filename from the URI
+    const filename = imageUri.split("/").pop() || "upload.jpg";
+    const type = "image/jpeg"; // Force JPEG type to simplify
+
     formData.append("photo", {
       uri: imageUri,
-      name: "upload.jpg",
-      type: "image/jpeg",
+      name: filename,
+      type,
     } as any);
+
     formData.append("caption", caption);
     formData.append("userId", storedUserId || "1");
 
@@ -112,22 +92,36 @@ export default function TabTwoScreen() {
       const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
         method: "POST",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       });
+
+      // First read as text to handle both JSON and non-JSON responses
+      const responseText = await res.text();
+
+      // Try to parse as JSON if possible
+      let responseData;
+      try {
+        responseData = responseText ? JSON.parse(responseText) : {};
+      } catch (e) {
+        responseData = { message: responseText };
+      }
 
       if (res.ok) {
         Alert.alert("Success", "Photo uploaded!");
         setImageUri(null);
         setCaption("");
-        loadPosts(); 
+        loadPosts();
       } else {
-        Alert.alert("Upload failed", "Please try again.");
+        Alert.alert(
+          "Upload failed",
+          responseData.message || "Please try again."
+        );
       }
     } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Something went wrong.");
+      console.error("Upload error:", err);
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Something went wrong."
+      );
     }
   };
 
@@ -142,15 +136,24 @@ export default function TabTwoScreen() {
       }
     >
       <View style={styles.container}>
-        <Button color="black" onPress={() => navigation.navigate("UploadPost")}>
-          Take Photo
-        </Button>
+        <View style={styles.greybutton}>
+          <Button
+            color="black"
+            onPress={() => navigation.navigate("UploadPost")}
+          >
+            Go to Upload Page
+          </Button>
+        </View>
 
         <View style={styles.uploadSection}>
-          <View  style={styles.greybutton}>
-            <Button color="black" onPress={pickImage}>Choose Image</Button>
+          <View style={styles.greybutton}>
+            <Button color="black" onPress={pickImage}>
+              Choose Image
+            </Button>
           </View>
-          {imageUri && <Image source={{ uri: imageUri }} style={styles.preview} />}
+          {imageUri && (
+            <Image source={{ uri: imageUri }} style={styles.preview} />
+          )}
           <TextInput
             placeholder="Enter caption..."
             placeholderTextColor="#666"
@@ -159,26 +162,31 @@ export default function TabTwoScreen() {
             style={styles.input}
           />
           <View style={styles.greybutton}>
-            <Button color="black" onPress={handleUpload} disabled={!imageUri || !caption}>
+            <Button
+              color="black"
+              onPress={handleUpload}
+              disabled={!imageUri || !caption}
+            >
               Upload
             </Button>
           </View>
         </View>
 
         <ThemedText style={styles.intro}>
-          Welcome to the community! Like, comment, and explore mushrooms found by others.
+          Welcome to the community! Like, comment, and explore mushrooms found
+          by others.
         </ThemedText>
 
         {loading ? (
           <ActivityIndicator size="large" style={{ marginTop: 30 }} />
         ) : (
           <View style={styles.shadow}>
-          <FlatList
-            data={posts}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => <CommunityPost post={item} />}
-            contentContainerStyle={{ paddingBottom: 100 }}
-          />
+            <FlatList
+              data={posts}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => <CommunityPost post={item} />}
+              contentContainerStyle={{ paddingBottom: 100 }}
+            />
           </View>
         )}
       </View>
@@ -191,10 +199,10 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginBottom: 20,
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: "#4e5249",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
+    shadowOpacity: 5.4,
+    shadowRadius: 10,
   },
   container: {
     flex: 1,
@@ -214,12 +222,10 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-
   },
   uploadSection: {
-     marginTop: 20,
+    marginTop: 20,
     padding: 16,
-    gap: 10,
     backgroundColor: "#f5f5f5",
     borderRadius: 16,
     shadowColor: "#000",
@@ -228,30 +234,41 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   input: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
     backgroundColor: "#fff",
-    color: "#222222",             
-    fontSize: 16,              
-    fontWeight: "500", 
+    color: "#222222",
+    fontSize: 16,
+    fontWeight: "500",
+    marginTop: 10,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
   },
   preview: {
     width: "100%",
     height: 200,
     borderRadius: 10,
     marginVertical: 10,
-    backgroundColor: "#ccc"
+    backgroundColor: "#ccc",
   },
   buttonTitle: {
-    color: "#f5f5f5"
+    color: "#f5f5f5",
   },
   greybutton: {
-    backgroundColor: "#f5f5f5"
-  }
+    marginVertical: 6,
+    shadowColor: "#000",
+    shadowOpacity: 2.5,
+    shadowRadius: 20,
+    borderColor: "#000",
+    borderWidth: 0.4,
+    borderRadius: 120
+  },
 });
+
+
+

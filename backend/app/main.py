@@ -1,16 +1,21 @@
-
+import os
+os.makedirs("static/uploads", exist_ok=True)
 from fastapi import FastAPI
 import psycopg2 
-import os
+import requests
 from typing import Union
-from fastapi import requests, Query
+from fastapi import Query
 from pydantic import BaseModel
 from app.data.db import engine
 from app.data.models import UserPhotos, UserComments, Users, UserLikes
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from dotenv import load_dotenv
 from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import UploadFile, File, Form, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+import uuid
 
 
 env = os.getenv("ENV", "production")
@@ -29,6 +34,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+Session = sessionmaker(bind=engine)
 
 class Photo(BaseModel):
     photo: str
@@ -220,10 +228,11 @@ async def fetch_mushroom_location(mushroomId: int):
         record[column.name] = result[i]
     scientific_name = "%20".join(record["scientificName"].split(" "))
     species_code = requests.get("https://api.gbif.org/v1/species/match?scientificName=%s"%scientific_name).json()
-    location_data = requests.get("https://api.gbif.org/v1/occurrence/search?taxonKey=%s&country=GB"%species_code["usageKey"]).json()
+    location_data = requests.get("https://api.gbif.org/v1/occurrence/search?taxonKey=%s&country=GB&limit=300"%species_code["usageKey"]).json()
     location_list = []
     for result in location_data['results']:
-        location_list.append([result["decimalLatitude"], result["decimalLongitude"]])
+        if "decimalLatitude" in result and "decimalLongitude" in result:
+            location_list.append([result["decimalLatitude"], result["decimalLongitude"]])
     return { "results": location_list}
 
 @app.post("/api/users/{user_id}/userphotos", status_code = 201)
@@ -326,3 +335,47 @@ async def get_photo_likes(photoId: int):
         "likeCount": like_count,
         "likedBy": users_list
     }
+
+@app.post("/api/userphotos", status_code=201)
+async def create_user_photo(
+    photo: UploadFile = File(...),
+    userId: int = Form(...),
+    caption: str = Form(None),
+    latitude: str = Form("0"),
+    longitude: str = Form("0"),
+    mushroomId: int = Form(1)
+):
+    try:
+        file_ext = photo.filename.split(".")[-1]
+        unique_filename = f"{uuid.uuid4()}.{file_ext}"
+        file_path = f"static/uploads/{unique_filename}"
+        photo_url = f"https://capcheck.onrender.com/{file_path}"
+
+        with open(file_path, "wb") as f:
+            f.write(await photo.read())
+
+        # Save metadata to DB
+        session = Session()
+        new_photo = UserPhotos(
+            userId=userId,
+            photo=photo_url,
+            caption=caption,
+            latitude=latitude,
+            longitude=longitude,
+            mushroomId=mushroomId
+        )
+        session.add(new_photo)
+        session.commit()
+        session.refresh(new_photo)
+
+        return {
+            "message": "Photo uploaded successfully",
+            "photo_url": photo_url,
+            "photo_id": new_photo.photoId
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        session.close()

@@ -32,7 +32,11 @@ mushroom_data = {
       "habitat": "the woods",
       "otherFacts": "random info",
       "pores": "porous info",
-      "stem": "stem info"
+      "stem": "stem info",
+      "frequency": "None",
+      "possibleConfusion": "None",
+      "skirt": "None",
+      "tasteSmell":"None"
     },
     {
       "name": "mushroom2",
@@ -51,7 +55,11 @@ mushroom_data = {
       "habitat": "the woods",
       "otherFacts": "random info",
       "pores": "porous info",
-      "stem": "stem info"
+      "stem": "stem info",
+      "frequency": "None",
+      "possibleConfusion": "None",
+      "skirt": "None",
+      "tasteSmell":"None"
     },
     {
       "name": "mushroom3",
@@ -70,7 +78,11 @@ mushroom_data = {
       "habitat": "the woods",
       "otherFacts": "random info",
       "pores": "porous info",
-      "stem": "stem info"
+      "stem": "stem info",
+      "frequency": "None",
+      "possibleConfusion": "None",
+      "skirt": "None",
+      "tasteSmell":"None"
     }
   ]
 }
