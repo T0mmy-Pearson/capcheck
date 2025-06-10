@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -52,15 +54,15 @@ export default function CommunityScreen() {
   };
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
-    });
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: "images", // updated
+    quality: 0.7,
+  });
 
-    if (!result.canceled && result.assets.length > 0) {
-      setImageUri(result.assets[0].uri);
-    }
-  };
+  if (!result.canceled && result.assets.length > 0) {
+    setImageUri(result.assets[0].uri);
+  }
+};
 
   const handleUpload = async () => {
     if (!imageUri || !caption) {
@@ -73,11 +75,13 @@ export default function CommunityScreen() {
 
     const storedUserId = await AsyncStorage.getItem("userId");
     const formData = new FormData();
+
     formData.append("photo", {
-      uri: imageUri,
-      name: "upload.jpg",
-      type: "image/jpeg",
-    } as any);
+  uri: imageUri,
+  type: "image/jpeg",
+  name: "upload.jpg",
+} as any);
+
     formData.append("caption", caption);
     formData.append("userId", storedUserId || "1");
 
@@ -85,9 +89,7 @@ export default function CommunityScreen() {
       const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
         method: "POST",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        // DO NOT manually set Content-Type!
       });
 
       if (res.ok) {
@@ -96,11 +98,13 @@ export default function CommunityScreen() {
         setCaption("");
         loadPosts();
       } else {
-        Alert.alert("Upload failed", "Please try again.");
+        const errorText = await res.text();
+        console.error("Upload failed:", errorText);
+        Alert.alert("Upload failed", "Server rejected the upload.");
       }
     } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Something went wrong.");
+      console.error("Upload error:", err);
+      Alert.alert("Error", "Something went wrong during upload.");
     }
   };
 
@@ -237,3 +241,4 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
 });
+
