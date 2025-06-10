@@ -1,46 +1,46 @@
 {
-    "userphotos":[
-        {
-            "photo": "photo_url",
-            "userId": 1,
-            "latitude": "53.38176",
-            "longitude": "-1.71751",
-            "mushroomId": 2
-        },
-          {
-            "photo": "photo2_url",
-            "userId": 2,
-            "latitude": "53.46",
-            "longitude": "2.00",
-            "mushroomId": 89
-        },
-          {
-            "photo": "photo3_url",
-            "userId": 3,
-            "latitude": "2.43",
-            "longitude": "53.12",
-            "mushroomId": 75
-          },
-          {
-            "photo": "photo5_url",
-            "userId": 4,
-            "latitude": "-2.17°",
-            "longitude": "53.78",
-            "mushroomId": 9
-          },
-          {
-            "photo": "photo5_url",
-            "userId": 5,
-            "latitude": "54.39996",
-            "longitude": "-2.96216",
-            "mushroomId": 27
-          },
-          {
-            "photo": "photo5_url",
-            "userId": 6,
-            "latitude": "54.39996",
-            "longitude": "-2.96216",
-            "mushroomId": 38
-          }
-    ]
+  "userphotos": [
+    {
+      "photo": "photo_url",
+      "userId": 1,
+      "latitude": "53.38176",
+      "longitude": "-1.71751",
+      "mushroomId": 2
+    },
+    {
+      "photo": "photo2_url",
+      "userId": 2,
+      "latitude": "53.46",
+      "longitude": "2.00",
+      "mushroomId": 89
+    },
+    {
+      "photo": "photo3_url",
+      "userId": 3,
+      "latitude": "2.43",
+      "longitude": "53.12",
+      "mushroomId": 75
+    },
+    {
+      "photo": "photo5_url",
+      "userId": 4,
+      "latitude": "-2.17°",
+      "longitude": "53.78",
+      "mushroomId": 9
+    },
+    {
+      "photo": "photo5_url",
+      "userId": 5,
+      "latitude": "54.39996",
+      "longitude": "-2.96216",
+      "mushroomId": 27
+    },
+    {
+      "photo": "https://www.wildfooduk.com/wp-content/uploads/2018/01/Boletus-Albidus-1.jpg",
+      "userId": 6,
+      "latitude": "54.39996",
+      "longitude": "-2.96216",
+      "mushroomId": 38
+    }
+  ]
 }
