@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Modal,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -43,6 +44,7 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
   const [likesCount, setLikesCount] = useState(post.likes);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleToggleLike = async () => {
     const userId = await AsyncStorage.getItem("userId");
@@ -104,16 +106,19 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
             color="red"
           />
         </TouchableOpacity>
-        <FontAwesome name="comment-o" size={22} style={styles.commentIcon} />
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <FontAwesome name="comment-o" size={22} style={styles.commentIcon} />
+        </TouchableOpacity>
       </View>
       <Text style={styles.caption}>{post.caption}</Text>
       <Text style={styles.likes}>{likesCount} likes</Text>
-      {comments.map((c) => (
-        <Text key={c.commentId} style={styles.commentLine}>
-          <Text style={styles.commentUser}>{c.username}: </Text>
-          {c.text}
+
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <Text style={styles.viewComments}>
+          View all {comments.length} comments
         </Text>
-      ))}
+      </TouchableOpacity>
+
       <View style={styles.commentForm}>
         <TextInput
           value={newComment}
@@ -125,6 +130,25 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
           <Text style={styles.commentButton}>Post</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Comments</Text>
+          <TouchableOpacity onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalClose}>Close</Text>
+          </TouchableOpacity>
+          {comments.map((c) => (
+            <Text key={c.commentId} style={styles.commentLine}>
+              <Text style={styles.commentUser}>{c.username}: </Text>
+              {c.text}
+            </Text>
+          ))}
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -145,6 +169,7 @@ const styles = StyleSheet.create({
   commentIcon: { marginLeft: 16 },
   caption: { fontSize: 14, color: "#444" },
   likes: { fontWeight: "bold", fontSize: 14, color: "#222" },
+  viewComments: { color: "#007AFF", marginTop: 6, fontSize: 13 },
   commentLine: { fontSize: 13, color: "#333", marginTop: 4 },
   commentUser: { fontWeight: "bold" },
   commentForm: { flexDirection: "row", alignItems: "center", marginTop: 8 },
@@ -158,6 +183,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   commentButton: { color: "#007AFF", fontWeight: "bold" },
+  modalContainer: { flex: 1, padding: 20, backgroundColor: "#fff" },
+  modalTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 12 },
+  modalClose: { color: "#007AFF", marginBottom: 12 },
 });
 
 export default CommunityPost;
