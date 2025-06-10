@@ -227,7 +227,8 @@ async def fetch_mushroom_location(mushroomId: int):
     location_data = requests.get("https://api.gbif.org/v1/occurrence/search?taxonKey=%s&country=GB&limit=300"%species_code["usageKey"]).json()
     location_list = []
     for result in location_data['results']:
-        location_list.append([result["decimalLatitude"], result["decimalLongitude"]])
+        if "decimalLatitude" in result and "decimalLongitude" in result:
+            location_list.append([result["decimalLatitude"], result["decimalLongitude"]])
     return { "results": location_list}
 
 @app.post("/api/users/{user_id}/userphotos", status_code = 201)
