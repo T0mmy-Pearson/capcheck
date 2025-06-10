@@ -22,8 +22,9 @@ type RootStackParamList = {
   UploadPost: undefined;
 };
 
-eexport default function CommunityScreen() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+export default function CommunityScreen() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -68,11 +69,12 @@ eexport default function CommunityScreen() {
     }
 
     const formData = new FormData();
-    const userId = await AsyncStorage.getItem("userId") || "1";
+    const userId = (await AsyncStorage.getItem("userId")) || "1";
 
     // File data
     const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
-    const filetype = filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
+    const filetype =
+      filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
 
     formData.append("photo", {
       uri: imageUri,
@@ -88,10 +90,13 @@ eexport default function CommunityScreen() {
     formData.append("mushroomId", "1"); // Default mushroom ID
 
     try {
-      const response = await fetch("https://capcheck.onrender.com/api/userphotos", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://capcheck.onrender.com/api/userphotos",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 
@@ -105,7 +110,8 @@ eexport default function CommunityScreen() {
       loadPosts(); // Refresh the feed
     } catch (error) {
       console.error("Upload error:", error);
-      const message = error instanceof Error ? error.message : "Failed to upload photo";
+      const message =
+        error instanceof Error ? error.message : "Failed to upload photo";
       Alert.alert("Error", message);
     }
   };
