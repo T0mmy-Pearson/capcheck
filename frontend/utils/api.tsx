@@ -31,10 +31,10 @@ export const fetchMushroomById = (mushroomId: Number) => {
 };
 
 export const fetchPhotosById = (userId: Number) => {
-    return capCheckApi.get(`/users/${userId}/userphotos`).then((res) => {
-      return res.data.userphotos;
-    });
-  };
+  return capCheckApi.get(`/users/${userId}/userphotos`).then((res) => {
+    return res.data.userphotos;
+  });
+};
 
 export const fetchPhotos = async ({ userId }: { userId: number }) => {
   return axios.get("https://capcheck.onrender.com/api/userphotos", {
@@ -43,23 +43,41 @@ export const fetchPhotos = async ({ userId }: { userId: number }) => {
 };
 
 export const fetchComments = async (photoId: number) => {
-  return axios.get("https://capcheck.onrender.com/api/comments", {
-    params: { photoId },
-  });
+  return axios.get(
+    `https://capcheck.onrender.com/api/userphotos/userphotos/${photoId}/usercomments`
+  );
 };
 
 export const postComment = async ({
-  photoId,
   userId,
+  photoId,
   comment,
 }: {
-  photoId: number;
   userId: number;
+  photoId: number;
   comment: string;
 }) => {
-  return axios.post("https://capcheck.onrender.com/api/comments", {
-    photoId,
-    userId,
-    comment,
+  return axios.post(
+    `https://capcheck.onrender.com/api/users/${userId}/userphotos/${photoId}`,
+    {
+      body: comment,
+    }
+  );
+};
+
+export const toggleLike = async ({
+  userId,
+  photoId,
+  liked,
+}: {
+  userId: number;
+  photoId: number;
+  liked: boolean;
+}) => {
+  const method = liked ? "DELETE" : "POST";
+  return axios({
+    method,
+    url: `https://capcheck.onrender.com/api/userphotos/${photoId}/like`,
+    params: { user_id: userId },
   });
 };

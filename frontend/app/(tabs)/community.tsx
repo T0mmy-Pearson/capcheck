@@ -143,9 +143,9 @@
 //     borderRadius: 10,
 //     padding: 10,
 //     backgroundColor: "#fff",
-//     color: "#222222",             
-//     fontSize: 16,              
-//     fontWeight: "500", 
+//     color: "#222222",
+//     fontSize: 16,
+//     fontWeight: "500",
 //   },
 //   preview: {
 //     width: "100%",
@@ -160,7 +160,7 @@
 //   greybutton: {
 //     backgroundColor: "#f5f5f5"
 //   }
-// });  
+// });
 
 // import React, { useEffect, useState } from "react";
 // import {
@@ -441,8 +441,6 @@
 //   },
 // });
 
-
-
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -460,46 +458,18 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import CommunityPost from "@/components/CommunityPost";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchPhotos } from "../../utils/api";
 import * as ImagePicker from "expo-image-picker";
+import { fetchPhotos } from "../../utils/api";
 
 type RootStackParamList = {
   UploadPost: undefined;
 };
 
-export type Post = {
-  id: number;
-  photoUrl: string;
-  user: {
-    id: number;
-    username: string;
-    avatar_url: string;
-  };
-  caption: string;
-  timestamp: string;
-  comments: Array<{
-    id: number;
-    user: {
-      id: number;
-      username: string;
-      avatar_url: string;
-    };
-    text: string;
-    timestamp: string;
-  }>;
-  latitude: string;
-  longitude: string;
-  mushroomId: number;
-  likes: number;
-  liked: boolean;
-};
-
-export default function TabTwoScreen() {
+export default function CommunityScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [caption, setCaption] = useState("");
 
@@ -514,34 +484,9 @@ export default function TabTwoScreen() {
   const loadPosts = async () => {
     try {
       const storedUserId = await AsyncStorage.getItem("userId");
-      if (!storedUserId) {
-        console.warn("No userId found in AsyncStorage");
-        return;
-      }
-
+      if (!storedUserId) return;
       const res = await fetchPhotos({ userId: Number(storedUserId) });
-
-      setPosts(
-        res.data.userphotos.map((item: any) => ({
-          id: item.photoId,
-          photoUrl: item.photo,
-          user: {
-            username: item.username,
-            avatar_url: item.avatar_url,
-          },
-          caption: item.caption,
-          timestamp: item.timestamp || new Date().toISOString(),
-          comments: (item.comments || []).map((comment: any) => ({
-            id: comment.id,
-            text: comment.text,
-          })),
-          latitude: item.latitude,
-          longitude: item.longitude,
-          mushroomId: item.mushroomId,
-          likes: item.likes,
-          liked: item.liked,
-        }))
-      );
+      setPosts(res.data.userphotos);
     } catch (err) {
       console.error("Error loading posts:", err);
     } finally {
@@ -562,12 +507,14 @@ export default function TabTwoScreen() {
 
   const handleUpload = async () => {
     if (!imageUri || !caption) {
-      Alert.alert("Missing fields", "Please select an image and add a caption.");
+      Alert.alert(
+        "Missing fields",
+        "Please select an image and add a caption."
+      );
       return;
     }
 
     const storedUserId = await AsyncStorage.getItem("userId");
-
     const formData = new FormData();
     formData.append("photo", {
       uri: imageUri,
@@ -612,7 +559,10 @@ export default function TabTwoScreen() {
     >
       <View style={styles.container}>
         <View style={styles.greybutton}>
-          <Button color="black" onPress={() => navigation.navigate("UploadPost")}>
+          <Button
+            color="black"
+            onPress={() => navigation.navigate("UploadPost")}
+          >
             Go to Upload Page
           </Button>
         </View>
@@ -623,7 +573,9 @@ export default function TabTwoScreen() {
               Choose Image
             </Button>
           </View>
-          {imageUri && <Image source={{ uri: imageUri }} style={styles.preview} />}
+          {imageUri && (
+            <Image source={{ uri: imageUri }} style={styles.preview} />
+          )}
           <TextInput
             placeholder="Enter caption..."
             placeholderTextColor="#666"
@@ -632,14 +584,19 @@ export default function TabTwoScreen() {
             style={styles.input}
           />
           <View style={styles.greybutton}>
-            <Button color="black" onPress={handleUpload} disabled={!imageUri || !caption}>
+            <Button
+              color="black"
+              onPress={handleUpload}
+              disabled={!imageUri || !caption}
+            >
               Upload
             </Button>
           </View>
         </View>
 
         <ThemedText style={styles.intro}>
-          Welcome to the community! Like, comment, and explore mushrooms found by others.
+          Welcome to the community! Like, comment, and explore mushrooms found
+          by others.
         </ThemedText>
 
         {loading ? (
@@ -723,7 +680,3 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
 });
-
-
-
-
