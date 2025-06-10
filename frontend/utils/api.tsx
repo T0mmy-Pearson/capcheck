@@ -44,7 +44,7 @@ export const fetchPhotos = async ({ userId }: { userId: number }) => {
 
 export const fetchComments = async (photoId: number) => {
   return axios.get(
-    `https://capcheck.onrender.com/api/userphotos/userphotos/${photoId}/usercomments`
+    `https://capcheck.onrender.com/api/userphotos/${photoId}/usercomments`
   );
 };
 
