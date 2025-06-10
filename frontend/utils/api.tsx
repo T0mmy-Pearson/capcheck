@@ -30,6 +30,12 @@ export const fetchMushroomById = (mushroomId: Number) => {
   });
 };
 
+export const fetchPhotosById = (userId: Number) => {
+    return capCheckApi.get(`/users/${userId}/userphotos`).then((res) => {
+      return res.data.userphotos;
+    });
+  };
+
 export const fetchPhotos = async ({ userId }: { userId: number }) => {
   return axios.get("https://capcheck.onrender.com/api/userphotos", {
     params: { user_id: userId },
