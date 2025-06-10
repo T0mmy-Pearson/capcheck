@@ -1,7 +1,7 @@
-
+import os
+os.makedirs("static/uploads", exist_ok=True)
 from fastapi import FastAPI
 import psycopg2 
-import os
 import requests
 from typing import Union
 from fastapi import Query
@@ -346,7 +346,6 @@ async def create_user_photo(
     mushroomId: int = Form(1)
 ):
     try:
-        os.makedirs("static/uploads", exist_ok=True)
         file_ext = photo.filename.split(".")[-1]
         unique_filename = f"{uuid.uuid4()}.{file_ext}"
         file_path = f"static/uploads/{unique_filename}"
