@@ -28,8 +28,7 @@ export default function UserProfile() {
     userId: 0,
     score: 0,
   });
-    // const {defaultValue: userId} = useContext(SessionContext);
-    // const [userObject, setUserObject] = useState({});
+
     const [bio, setBio] = useState("");
     const [editing, setEditing] = useState(false);
     const [bioInput, setBioInput] = useState("");
@@ -66,13 +65,6 @@ export default function UserProfile() {
             }
         >
             <UserAvatar {...userObject} />
-            <Pressable
-                style={styles.rowLink}
-                onPress={() => router.push("/EditAccountInfoPage")}
-            >
-                <Text style={styles.linkText}>Edit Account Info</Text>
-                <Ionicons name="chevron-forward" size={20} color="white" />
-            </Pressable>
             <View>
                 <ThemedText>POINTS SCORE</ThemedText>
                 {editing ? (
@@ -89,7 +81,7 @@ export default function UserProfile() {
                     <>
                         <ThemedText>{bio || "Write your bio here..."}</ThemedText>
                         <Button style={styles.button} onPress={() => { setBioInput(bio); setEditing(true) }}>
-                            <Text style={styles.text}>Edit Bio :pencil2:</Text>
+                            <Text style={styles.text}>Edit Bio</Text>
                         </Button>
                     </>
                 )}

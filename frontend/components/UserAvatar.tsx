@@ -1,8 +1,9 @@
 import { Avatar } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker'
 import { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Alert, Image } from "react-native";
+import { StyleSheet, View, Text, Alert, Image, Pressable } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 
 
 interface UserObject{
@@ -60,6 +61,9 @@ const UserAvatar = ({ avatar, username, score }: UserObject) => {
         />
       </View>
       <Text style={styles.name}>{username}</Text>
+      <Pressable onPress={() => router.push("/EditAccountInfoPage")}>
+      <Text style={styles.editLink}>Edit Account Info</Text>
+      </Pressable>
     </View>
   )
 }
@@ -92,6 +96,11 @@ const styles = StyleSheet.create({
     email: {
         fontSize: 16,
         color: 'gray',
+    },
+    editLink: {
+        color: '#4F8EF7',
+        fontSize: 16,
+        marginTop: 10,
     }
 })
 
