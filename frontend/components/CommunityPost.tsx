@@ -9,19 +9,22 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchComments, postComment } from "../utils/api"; // adjust path if needed
+import { fetchComments, postComment } from "../utils/api";
 export interface Post {
-  photoId: number;
-  photo: string;
-  userId: number;
-  username: string;
-  avatar_url: string;
-  caption: string;
-  latitude: number;
-  longitude: number;
+  id: number;
+  photoUrl: string;
+  user: {
+    username: string;
+    avatar_url: string;
+  };
+  caption: string; 
+  latitude: string;
+  longitude: string;
   mushroomId: number;
   likes: number;
   liked: boolean;
+  timestamp: string;
+  comments: { id: number; text: string }[];
 }
 interface Comment {
   commentId: number;
@@ -36,33 +39,31 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
   const [likesCount, setLikesCount] = useState(post.likes);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const toggleLike = async () => {
-    const userId = 1; // :closed_lock_with_key: Replace with real user ID from context
+  const toggleLike = () => {
+    const userId = 1;
     const method = liked ? "DELETE" : "POST";
-    const url = `https://capcheck.onrender.com/api/userphotos/${post.photoId}/like?user_id=${userId}`;
-    try {
-      await fetch(url, { method });
-      setLiked((prev) => !prev);
-      setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
-    } catch (err) {
-      console.error("Error toggling like:", err);
-    }
+    const url = `https://capcheck.onrender.com/api/userphotos/${post.id}/like?user_id=${userId}`;
+    fetch(url, { method })
+      .then(() => {
+        setLiked((prev) => !prev);
+        setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
+      })
+      .catch((err) => console.error("Error toggling like:", err));
   };
   const loadComments = async () => {
     try {
-      const res = await fetchComments(post.photoId);
+      const res = await fetchComments(post.id);
       setComments(res.data.comments);
     } catch (err) {
-      console.error("Error fetching comments:", err);
+      console.error("Error loading comments:", err);
     }
   };
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
     const userId = await AsyncStorage.getItem("userId");
-    if (!userId) return;
     try {
       await postComment({
-        photoId: post.photoId,
+        photoId: post.id,
         userId: Number(userId),
         comment: newComment.trim(),
       });
@@ -77,14 +78,12 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
   }, []);
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
-        <Image source={{ uri: post.avatar_url }} style={styles.avatar} />
-        <Text style={styles.username}>{post.username}</Text>
+        <Image source={{ uri: post.user.avatar_url }} style={styles.avatar} />
+        <Text style={styles.username}>{post.user.username}</Text>
+        <Text style={styles.timestamp}> · {post.timestamp}</Text>
       </View>
-      {/* Photo */}
-      <Image source={{ uri: post.photo }} style={styles.photo} />
-      {/* Actions */}
+      <Image source={{ uri: post.photoUrl }} style={styles.photo} />
       <View style={styles.actions}>
         <TouchableOpacity onPress={toggleLike}>
           <FontAwesome
@@ -93,21 +92,23 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
             color="red"
           />
         </TouchableOpacity>
-        <FontAwesome name="comment-o" size={22} style={styles.commentIcon} />
+        <TouchableOpacity onPress={() => console.log("Open comments")}>
+          <FontAwesome name="comment-o" size={22} style={styles.commentIcon} />
+        </TouchableOpacity>
       </View>
-      {/* Caption */}
       <Text style={styles.caption}>{post.caption}</Text>
       <Text style={styles.likes}>{likesCount} likes</Text>
-      {/* Comments List */}
-      <View style={styles.comments}>
-        {comments.map((c) => (
-          <Text key={c.commentId} style={styles.commentText}>
-            <Text style={styles.commentUser}>{c.username}: </Text>
-            {c.comment}
-          </Text>
-        ))}
-      </View>
-      {/* Add New Comment */}
+      <TouchableOpacity>
+        <Text style={styles.viewComments}>
+          View all {comments.length} comments
+        </Text>
+      </TouchableOpacity>
+      {comments.map((c) => (
+        <Text key={c.commentId} style={styles.commentLine}>
+          <Text style={styles.commentUser}>{c.username}: </Text>
+          {c.comment}
+        </Text>
+      ))}
       <View style={styles.commentForm}>
         <TextInput
           value={newComment}
@@ -150,6 +151,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#333",
   },
+  timestamp: {
+    fontSize: 12,
+    color: "#888",
+    marginLeft: 6,
+  },
   photo: {
     width: "100%",
     height: 240,
@@ -174,13 +180,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#222",
   },
-  comments: {
-    marginTop: 8,
+  viewComments: {
+    marginTop: 4,
+    color: "#777",
+    fontSize: 13,
   },
-  commentText: {
+  commentLine: {
     fontSize: 13,
     color: "#333",
-    marginBottom: 4,
+    marginTop: 4,
   },
   commentUser: {
     fontWeight: "bold",
@@ -188,20 +196,21 @@ const styles = StyleSheet.create({
   commentForm: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 8,
   },
   commentInput: {
     flex: 1,
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 6,
     padding: 6,
-    marginRight: 10,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#F2F2F2",
+    marginRight: 8,
   },
   commentButton: {
     color: "#007AFF",
     fontWeight: "bold",
   },
 });
+
 export default CommunityPost;
