@@ -52,10 +52,15 @@ export default function CommunityScreen() {
   };
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.7,
-    });
+
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: "images", 
+    quality: 0.7,
+  });
+
+   
+
 
     if (!result.canceled && result.assets.length > 0) {
       setImageUri(result.assets[0].uri);
@@ -68,8 +73,58 @@ export default function CommunityScreen() {
       return;
     }
 
-    const formData = new FormData();
-    const userId = (await AsyncStorage.getItem("userId")) || "1";
+const formData = new FormData();
+const userId = (await AsyncStorage.getItem("userId")) || "1";
+
+
+const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
+const filetype =
+  filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
+
+formData.append("photo", {
+  uri: imageUri,
+  name: filename,
+  type: filetype,
+} as any);
+
+formData.append("userId", userId);
+formData.append("caption", caption); // Now supported by backend
+formData.append("latitude", "0"); // Default - replace with real GPS later
+formData.append("longitude", "0"); // Default
+formData.append("mushroomId", "1"); // Default mushroom ID
+
+    try {
+      const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
+        method: "POST",
+        body: formData,
+
+        // DO NOT manually set Content-Type!
+
+
+      });
+
+      const response = await res.json();
+
+      if (res.ok) {
+        Alert.alert("Success", response.message || "Photo uploaded!");
+        setImageUri(null);
+        loadPosts();
+      } else {
+
+        const errorText = await res.text();
+        console.error("Upload failed:", errorText);
+        Alert.alert("Upload failed", "Server rejected the upload.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      Alert.alert("Error", "Something went wrong during upload.");
+
+        Alert.alert("Error", response.error || "Upload failed");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      Alert.alert("Error", "Network request failed");
+
 
     // File data
     const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
@@ -88,6 +143,7 @@ export default function CommunityScreen() {
     formData.append("latitude", "0"); // Default - replace with real GPS later
     formData.append("longitude", "0"); // Default
     formData.append("mushroomId", "1"); // Default mushroom ID
+
 
     try {
       const response = await fetch(
