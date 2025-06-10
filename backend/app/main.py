@@ -56,16 +56,20 @@ conn.autocommit = True
 
 cur = conn.cursor()
 
+@app.get("/")
+def read_root():
+    return {"message": "API root"}
 
 @app.get("/api")
 async def root():
     return {
-        "message": "Welcome to the Mushroom Community API",
+        "message": "Welcome to the Mushroom foraging Community API",
         "endpoints": {
             "users": "/api/users",
             "userphotos": "/api/userphotos",
             "mushrooms": "/api/mushrooms",
-            "comments": "/api/comments"
+            "comments": "/api/comments",
+            "likes": "/api/userphotos/photoid/likes"
         }
     }
 
