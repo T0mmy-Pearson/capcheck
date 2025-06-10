@@ -60,17 +60,19 @@ export default function MushroomList() {
     if (startIdx === -1 || endIdx === -1 || monthIdx === -1) return false;
 
     if (startIdx <= endIdx) {
-      // e.g. Mar to Oct
+
       return monthIdx >= startIdx && monthIdx <= endIdx;
     } else {
-      // e.g. Nov to Feb (wraps around year)
+
       return monthIdx >= startIdx || monthIdx <= endIdx;
     }
   }
 
   return (
     <View style={styles.container}>
-      <Text style={{ color: "white", fontSize: 36, paddingBottom: 20, paddingLeft: 10 }}>←</Text>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <Text style={{ color: "white", fontSize: "36", paddingBottom: "20" }}>←</Text>
+                    </TouchableOpacity>
       {/* Search Bar */}
       <SearchBar
         value={search}
@@ -98,24 +100,11 @@ export default function MushroomList() {
               {type}
             </Text>
           </Pressable>
+          
         ))}
       </View>
       {/* Filter by season Bar */}
       <View style={{ flexDirection: "row", marginBottom: 8, marginTop: 4, flexWrap: "wrap" }}>
-        <Pressable
-          style={[
-            styles.filterButton,
-            monthFilter === null && filter !== "In Season" && styles.filterButtonActive,
-          ]}
-          onPress={() => setMonthFilter(null)}
-        >
-          <Text style={[
-            styles.filterButtonText,
-            monthFilter === null && filter !== "In Season" && styles.filterButtonTextActive,
-          ]}>
-            All Months
-          </Text>
-        </Pressable>
         {MONTHS.map((m) => (
           <Pressable
             key={m}
@@ -136,23 +125,6 @@ export default function MushroomList() {
             </Text>
           </Pressable>
         ))}
-        <Pressable
-          style={[
-            styles.filterButton,
-            filter === "In Season" && monthFilter === null && styles.filterButtonActive,
-          ]}
-          onPress={() => {
-            setFilter("In Season");
-            setMonthFilter(null);
-          }}
-        >
-          <Text style={[
-            styles.filterButtonText,
-            filter === "In Season" && monthFilter === null && styles.filterButtonTextActive,
-          ]}>
-            Currently In Season
-          </Text>
-        </Pressable>
       </View>
       {/* Mushroom List */}
       <FlatList
@@ -200,8 +172,8 @@ const styles = StyleSheet.create({
   },
   filterBar: {
     flexDirection: "row",
-    justifyContent: "center",
-    width: "90%",
+    flexWrap: "wrap",
+    width: "100%",
     marginBottom: 8,
     marginTop: 8,
     gap: 8,
