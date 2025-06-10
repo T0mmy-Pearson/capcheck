@@ -63,56 +63,64 @@ export default function CommunityScreen() {
   };
 
   const handleUpload = async () => {
-    if (!imageUri) {
-      Alert.alert("Error", "Please select an image first");
+    if (!imageUri || !caption) {
+      Alert.alert(
+        "Missing fields",
+        "Please select an image and add a caption."
+      );
       return;
     }
 
+    const storedUserId = await AsyncStorage.getItem("userId");
     const formData = new FormData();
-    const userId = (await AsyncStorage.getItem("userId")) || "1";
 
-    // File data
-    const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
-    const filetype =
-      filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
+    // Get the filename from the URI
+    const filename = imageUri.split("/").pop() || "upload.jpg";
+    const type = "image/jpeg"; // Force JPEG type to simplify
 
     formData.append("photo", {
       uri: imageUri,
       name: filename,
-      type: filetype,
+      type,
     } as any);
 
-    // Required fields with defaults
-    formData.append("userId", userId);
     formData.append("caption", caption);
-    formData.append("latitude", "0"); // Default - replace with real GPS later
-    formData.append("longitude", "0"); // Default
-    formData.append("mushroomId", "1"); // Default mushroom ID
+    formData.append("userId", storedUserId || "1");
 
     try {
-      const response = await fetch(
-        "https://capcheck.onrender.com/api/userphotos",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
+        method: "POST",
+        body: formData,
+      });
 
-      const data = await response.json();
+      // First read as text to handle both JSON and non-JSON responses
+      const responseText = await res.text();
 
-      if (!response.ok) {
-        throw new Error(data.detail || "Upload failed");
+      // Try to parse as JSON if possible
+      let responseData;
+      try {
+        responseData = responseText ? JSON.parse(responseText) : {};
+      } catch (e) {
+        responseData = { message: responseText };
       }
 
-      Alert.alert("Success", data.message);
-      setImageUri(null);
-      setCaption("");
-      loadPosts(); // Refresh the feed
-    } catch (error) {
-      console.error("Upload error:", error);
-      const message =
-        error instanceof Error ? error.message : "Failed to upload photo";
-      Alert.alert("Error", message);
+      if (res.ok) {
+        Alert.alert("Success", "Photo uploaded!");
+        setImageUri(null);
+        setCaption("");
+        loadPosts();
+      } else {
+        Alert.alert(
+          "Upload failed",
+          responseData.message || "Please try again."
+        );
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Something went wrong."
+      );
     }
   };
 
