@@ -30,6 +30,15 @@ export const fetchMushroomById = (mushroomId: Number) => {
   });
 };
 
+export const fetchMushroomMarkerLocations = (mushroomId: Number) => {
+  return capCheckApi.get(`/mushroom/${mushroomId}/location`).then((res) => {
+
+    return res.data.results;
+  });
+}
+
+
+
 export const fetchPhotosById = (userId: Number) => {
     return capCheckApi.get(`/users/${userId}/userphotos`).then((res) => {
       return res.data.userphotos;
@@ -47,6 +56,7 @@ export const fetchComments = async (photoId: number) => {
     params: { photoId },
   });
 };
+
 
 export const postComment = async ({
   photoId,
