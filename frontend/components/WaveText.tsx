@@ -8,7 +8,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import { ThemedText } from '@/components/ThemedText';
 import { BodyText } from './BodyText';
 
 export function HelloWave() {
@@ -27,7 +26,7 @@ export function HelloWave() {
 
   return (
     <Animated.View style={animatedStyle}>
-      <BodyText style={styles.text}>Dear Forager,
+      <BodyText style={styles.text}>🍄🍄🍄🍄🍄🍄🍄🍄🍄🍄🍄
       </BodyText>
     </Animated.View>
   );
