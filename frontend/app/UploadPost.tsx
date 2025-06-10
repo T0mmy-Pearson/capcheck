@@ -1,6 +1,6 @@
-import { CameraView, useCameraPermissions } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
-import { useRef, useState } from 'react';
+import { CameraView, useCameraPermissions } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Button,
@@ -8,15 +8,22 @@ import {
   Text,
   TouchableOpacity,
   View,
+
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
 export default function CameraScreen() {
   const navigation = useNavigation();
-  const [facing, setFacing] = useState<'front' | 'back'>('back');
+  const [facing, setFacing] = useState<"front" | "back">("back");
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
+  const [mediaPermission, requestMediaPermission] =
+    MediaLibrary.usePermissions();
   const [uploading, setUploading] = useState(false);
   const cameraRef = useRef<CameraView>(null);
 
@@ -40,7 +47,7 @@ export default function CameraScreen() {
   }
 
   function toggleCameraFacing() {
-    setFacing(current => (current === 'back' ? 'front' : 'back'));
+    setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
   async function takePicture() {
@@ -49,31 +56,41 @@ export default function CameraScreen() {
     try {
       setUploading(true);
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.5 });
-
-      // Save to camera roll
       await MediaLibrary.saveToLibraryAsync(photo.uri);
-      console.log('Photo saved to camera roll.');
 
-      // Upload
+      const userId = await AsyncStorage.getItem("userId");
+      if (!userId) throw new Error("Missing userId");
+
       const formData = new FormData();
-      formData.append('photo', {
+      formData.append("photo", {
         uri: photo.uri,
-        name: 'photo.jpg',
-        type: 'image/jpg',
-      } as unknown as Blob);
+        name: "upload.jpg",
+        type: "image/jpeg",
+      } as any);
+      formData.append("latitude", "53.38176");
+      formData.append("longitude", "-1.71751");
+      formData.append("mushroomId", "2");
 
-      const response = await fetch('https://capcheck.onrender.com/api/userphotos', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await fetch(
+        `https://capcheck.onrender.com/api/users/${userId}/userphotos`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      if (response.ok) {
-        console.log('Photo uploaded successfully');
-      } 
-    }  finally {
+      const text = await response.text();
+      if (!response.ok) {
+        console.error("Failed to upload:", text);
+      } else {
+        console.log("Upload success:", text);
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+    } finally {
       setUploading(false);
     }
   }
@@ -81,18 +98,22 @@ export default function CameraScreen() {
   return (
     <View style={styles.container}>
       {/* 🔙 Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
         <Text style={styles.backButtonText}>← Back</Text>
       </TouchableOpacity>
 
       <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
 
-  {/* Flip Camera Button Top Right */}
+
+
   <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
     <Text style={styles.flipText}>🔄</Text>
   </TouchableOpacity>
 
-  {/* Capture Button Bottom Center */}
+  
   <View style={styles.captureContainer}>
     <TouchableOpacity
       style={styles.captureButton}
@@ -104,6 +125,23 @@ export default function CameraScreen() {
   </View>
   
 </CameraView>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+            <Text style={styles.text}>Flip Camera</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={takePicture}
+            disabled={uploading}
+          >
+            <Text style={styles.text}>
+              {uploading ? "Uploading..." : "Take & Save"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </CameraView>
+
 
       {uploading && (
         <View style={styles.loadingOverlay}>
@@ -117,10 +155,10 @@ export default function CameraScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   message: {
-    textAlign: 'center',
+    textAlign: "center",
     paddingBottom: 40,
   },
   camera: {
@@ -128,40 +166,40 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'transparent',
+    flexDirection: "row",
+    backgroundColor: "transparent",
     margin: 64,
   },
   button: {
     flex: 1,
-    alignSelf: 'flex-end',
-    alignItems: 'center',
+    alignSelf: "flex-end",
+    alignItems: "center",
   },
   text: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   loadingOverlay: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 50,
     left: 0,
     right: 0,
-    alignItems: 'center',
+    alignItems: "center",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 50,
     left: 20,
     zIndex: 10,
     padding: 10,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 8,
   },
   backButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   flipButton: {
     position: 'absolute',

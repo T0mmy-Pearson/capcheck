@@ -3,9 +3,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from "@react-navigation/native";
+
+
 // type EditAccountScreenProps = {
 //   navigation: NativeStackNavigationProp<any>;
 // };
+
+
 export default function EditAccountScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

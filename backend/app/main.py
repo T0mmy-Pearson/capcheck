@@ -12,6 +12,8 @@ from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import UploadFile, File, Form
+from fastapi.responses import JSONResponse
 
 
 env = os.getenv("ENV", "production")
@@ -221,7 +223,7 @@ async def fetch_mushroom_location(mushroomId: int):
         record[column.name] = result[i]
     scientific_name = "%20".join(record["scientificName"].split(" "))
     species_code = requests.get("https://api.gbif.org/v1/species/match?scientificName=%s"%scientific_name).json()
-    location_data = requests.get("https://api.gbif.org/v1/occurrence/search?taxonKey=%s&country=GB"%species_code["usageKey"]).json()
+    location_data = requests.get("https://api.gbif.org/v1/occurrence/search?taxonKey=%s&country=GB&limit=300"%species_code["usageKey"]).json()
     location_list = []
     for result in location_data['results']:
         location_list.append([result["decimalLatitude"], result["decimalLongitude"]])
@@ -327,3 +329,30 @@ async def get_photo_likes(photoId: int):
         "likeCount": like_count,
         "likedBy": users_list
     }
+
+@app.post("/api/userphotos", status_code=201)
+async def post_user_photo_direct(
+    photo: UploadFile = File(...),
+    mushroomId: int = Form(...),
+    userId: int = Form(...)
+):
+    try:
+        photo_url = f"https://capcheck.onrender.com/static/uploads/{photo.filename}" 
+        save_path = f"static/uploads/{photo.filename}"
+        with open(save_path, "wb") as f:
+            f.write(await photo.read())
+
+        session = Session(bind=engine)
+        new_photo = UserPhotos(
+            photo=photo_url,
+            mushroomId=mushroomId,
+            userId=userId
+        )
+        session.add(new_photo)
+        session.commit()
+        session.close()
+
+        return {"message": "Photo uploaded successfully"}
+    except Exception as e:
+        print("Upload error:", e)
+        return JSONResponse(status_code=500, content={"error": "Upload failed"})

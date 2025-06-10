@@ -54,10 +54,17 @@ export default function CommunityScreen() {
   };
 
   const pickImage = async () => {
+
   const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: "images", // updated
+    mediaTypes: "images", 
     quality: 0.7,
   });
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: "images",
+      quality: 0.7,
+    });
+
 
   if (!result.canceled && result.assets.length > 0) {
     setImageUri(result.assets[0].uri);
@@ -65,16 +72,14 @@ export default function CommunityScreen() {
 };
 
   const handleUpload = async () => {
-    if (!imageUri || !caption) {
-      Alert.alert(
-        "Missing fields",
-        "Please select an image and add a caption."
-      );
+    if (!imageUri) {
+      Alert.alert("Missing image", "Please select an image first.");
       return;
     }
 
     const storedUserId = await AsyncStorage.getItem("userId");
     const formData = new FormData();
+
 
     formData.append("photo", {
   uri: imageUri,
@@ -83,21 +88,39 @@ export default function CommunityScreen() {
 } as any);
 
     formData.append("caption", caption);
+
+    const filename = imageUri.split("/").pop() || "upload.jpg";
+    const match = /\.(\w+)$/.exec(filename);
+    const type = match ? `image/${match[1]}` : "image/jpeg";
+
+    formData.append("photo", {
+      uri: imageUri,
+      name: filename,
+      type,
+    } as any);
+
+    formData.append("mushroomId", "1"); // Default mushroom ID
+
     formData.append("userId", storedUserId || "1");
 
     try {
       const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
         method: "POST",
         body: formData,
+
         // DO NOT manually set Content-Type!
+
+
       });
 
+      const response = await res.json();
+
       if (res.ok) {
-        Alert.alert("Success", "Photo uploaded!");
+        Alert.alert("Success", response.message || "Photo uploaded!");
         setImageUri(null);
-        setCaption("");
         loadPosts();
       } else {
+
         const errorText = await res.text();
         console.error("Upload failed:", errorText);
         Alert.alert("Upload failed", "Server rejected the upload.");
@@ -105,6 +128,13 @@ export default function CommunityScreen() {
     } catch (err) {
       console.error("Upload error:", err);
       Alert.alert("Error", "Something went wrong during upload.");
+
+        Alert.alert("Error", response.error || "Upload failed");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      Alert.alert("Error", "Network request failed");
+
     }
   };
 
