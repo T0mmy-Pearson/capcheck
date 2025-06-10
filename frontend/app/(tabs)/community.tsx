@@ -147,17 +147,22 @@ export default function TabTwoScreen() {
         </Button>
 
         <View style={styles.uploadSection}>
-          <Button onPress={pickImage}>Choose Image</Button>
+          <View  style={styles.greybutton}>
+            <Button color="black" onPress={pickImage}>Choose Image</Button>
+          </View>
           {imageUri && <Image source={{ uri: imageUri }} style={styles.preview} />}
           <TextInput
             placeholder="Enter caption..."
+            placeholderTextColor="#666"
             value={caption}
             onChangeText={setCaption}
             style={styles.input}
           />
-          <Button onPress={handleUpload} disabled={!imageUri || !caption}>
-            Upload
-          </Button>
+          <View style={styles.greybutton}>
+            <Button color="black" onPress={handleUpload} disabled={!imageUri || !caption}>
+              Upload
+            </Button>
+          </View>
         </View>
 
         <ThemedText style={styles.intro}>
@@ -167,12 +172,14 @@ export default function TabTwoScreen() {
         {loading ? (
           <ActivityIndicator size="large" style={{ marginTop: 30 }} />
         ) : (
+          <View style={styles.shadow}>
           <FlatList
             data={posts}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => <CommunityPost post={item} />}
             contentContainerStyle={{ paddingBottom: 100 }}
           />
+          </View>
         )}
       </View>
     </ParallaxScrollView>
@@ -180,11 +187,20 @@ export default function TabTwoScreen() {
 }
 
 const styles = StyleSheet.create({
+  shadow: {
+    marginTop: 0,
+    marginBottom: 20,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+  },
   container: {
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#e8e8e8",
   },
   intro: {
     marginVertical: 12,
@@ -201,21 +217,41 @@ const styles = StyleSheet.create({
 
   },
   uploadSection: {
-    marginTop: 20,
+     marginTop: 20,
+    padding: 16,
     gap: 10,
+    backgroundColor: "#f5f5f5",
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   input: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 5,
-    padding: 8,
+    borderRadius: 10,
+    padding: 10,
     backgroundColor: "#fff",
+    color: "#222222",             
+    fontSize: 16,              
+    fontWeight: "500", 
   },
   preview: {
     width: "100%",
     height: 200,
     borderRadius: 10,
     marginVertical: 10,
-
+    backgroundColor: "#ccc"
   },
+  buttonTitle: {
+    color: "#f5f5f5"
+  },
+  greybutton: {
+    backgroundColor: "#f5f5f5"
+  }
 });

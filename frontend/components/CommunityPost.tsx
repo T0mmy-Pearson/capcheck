@@ -1,55 +1,90 @@
-import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchComments, postComment } from "../utils/api"; // adjust path if needed
 export interface Post {
-  id: number;
-  photoUrl: string;
-  user: {
-    username: string;
-    avatarUrl: string;
-  };
+  photoId: number;
+  photo: string;
+  userId: number;
+  username: string;
+  avatar_url: string;
   caption: string;
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   mushroomId: number;
   likes: number;
   liked: boolean;
-  timestamp: string;
-  comments: { id: number; text: string }[];
 }
-
+interface Comment {
+  commentId: number;
+  comment: string;
+  username: string;
+}
 interface Props {
   post: Post;
 }
-
 const CommunityPost: React.FC<Props> = ({ post }) => {
   const [liked, setLiked] = useState(post.liked);
   const [likesCount, setLikesCount] = useState(post.likes);
-
-  const toggleLike = () => {
-    const userId = 1; // 🔐 Replace with logged-in user ID later
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const toggleLike = async () => {
+    const userId = 1; // :closed_lock_with_key: Replace with real user ID from context
     const method = liked ? "DELETE" : "POST";
-    const url = `https://capcheck.onrender.com/api/userphotos/${post.id}/like?user_id=${userId}`;
-
-    fetch(url, { method })
-      .then(() => {
-        setLiked((prev) => !prev);
-        setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
-      })
-      .catch((err) => console.error("Error toggling like:", err));
+    const url = `https://capcheck.onrender.com/api/userphotos/${post.photoId}/like?user_id=${userId}`;
+    try {
+      await fetch(url, { method });
+      setLiked((prev) => !prev);
+      setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
+    } catch (err) {
+      console.error("Error toggling like:", err);
+    }
   };
-
+  const loadComments = async () => {
+    try {
+      const res = await fetchComments(post.photoId);
+      setComments(res.data.comments);
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+    }
+  };
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) return;
+    const userId = await AsyncStorage.getItem("userId");
+    if (!userId) return;
+    try {
+      await postComment({
+        photoId: post.photoId,
+        userId: Number(userId),
+        comment: newComment.trim(),
+      });
+      setNewComment("");
+      loadComments();
+    } catch (err) {
+      console.error("Error posting comment:", err);
+    }
+  };
+  useEffect(() => {
+    loadComments();
+  }, []);
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Image source={{ uri: post.user.avatarUrl }} style={styles.avatar} />
-        <Text style={styles.username}>{post.user.username}</Text>
-        <Text style={styles.timestamp}> · {post.timestamp}</Text>
+        <Image source={{ uri: post.avatar_url }} style={styles.avatar} />
+        <Text style={styles.username}>{post.username}</Text>
       </View>
-
-      <Image source={{ uri: post.photoUrl }} style={styles.photo} />
-
+      {/* Photo */}
+      <Image source={{ uri: post.photo }} style={styles.photo} />
+      {/* Actions */}
       <View style={styles.actions}>
         <TouchableOpacity onPress={toggleLike}>
           <FontAwesome
@@ -58,23 +93,35 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
             color="red"
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => console.log("Open comments")}>
-          <FontAwesome name="comment-o" size={22} style={styles.commentIcon} />
-        </TouchableOpacity>
+        <FontAwesome name="comment-o" size={22} style={styles.commentIcon} />
       </View>
-
+      {/* Caption */}
       <Text style={styles.caption}>{post.caption}</Text>
       <Text style={styles.likes}>{likesCount} likes</Text>
-
-      <TouchableOpacity>
-        <Text style={styles.viewComments}>
-          View all {post.comments.length} comments
-        </Text>
-      </TouchableOpacity>
+      {/* Comments List */}
+      <View style={styles.comments}>
+        {comments.map((c) => (
+          <Text key={c.commentId} style={styles.commentText}>
+            <Text style={styles.commentUser}>{c.username}: </Text>
+            {c.comment}
+          </Text>
+        ))}
+      </View>
+      {/* Add New Comment */}
+      <View style={styles.commentForm}>
+        <TextInput
+          value={newComment}
+          onChangeText={setNewComment}
+          placeholder="Add a comment..."
+          style={styles.commentInput}
+        />
+        <TouchableOpacity onPress={handleCommentSubmit}>
+          <Text style={styles.commentButton}>Post</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
@@ -103,11 +150,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#333",
   },
-  timestamp: {
-    fontSize: 12,
-    color: "#888",
-    marginLeft: 6,
-  },
   photo: {
     width: "100%",
     height: 240,
@@ -132,11 +174,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#222",
   },
-  viewComments: {
-    marginTop: 4,
-    color: "#777",
+  comments: {
+    marginTop: 8,
+  },
+  commentText: {
     fontSize: 13,
+    color: "#333",
+    marginBottom: 4,
+  },
+  commentUser: {
+    fontWeight: "bold",
+  },
+  commentForm: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  commentInput: {
+    flex: 1,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 6,
+    marginRight: 10,
+    backgroundColor: "#F9F9F9",
+  },
+  commentButton: {
+    color: "#007AFF",
+    fontWeight: "bold",
   },
 });
-
 export default CommunityPost;
