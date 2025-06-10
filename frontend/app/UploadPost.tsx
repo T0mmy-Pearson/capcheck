@@ -8,9 +8,15 @@ import {
   Text,
   TouchableOpacity,
   View,
+
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function CameraScreen() {
   const navigation = useNavigation();
@@ -100,6 +106,26 @@ export default function CameraScreen() {
       </TouchableOpacity>
 
       <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+
+
+
+  <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
+    <Text style={styles.flipText}>🔄</Text>
+  </TouchableOpacity>
+
+  
+  <View style={styles.captureContainer}>
+    <TouchableOpacity
+      style={styles.captureButton}
+      onPress={takePicture}
+      disabled={uploading}
+    >
+      <View style={styles.innerCircle} />
+    </TouchableOpacity>
+  </View>
+  
+</CameraView>
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <Text style={styles.text}>Flip Camera</Text>
@@ -115,6 +141,7 @@ export default function CameraScreen() {
           </TouchableOpacity>
         </View>
       </CameraView>
+
 
       {uploading && (
         <View style={styles.loadingOverlay}>
@@ -173,5 +200,39 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  flipButton: {
+    position: 'absolute',
+    top: 43,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    padding: 10,
+    borderRadius: 25,
+    zIndex: 10,
+  },
+  flipText: {
+    fontSize: 28,
+    color: 'white',
+  },
+  captureContainer: {
+    position: 'absolute',
+    bottom: 40,
+    alignSelf: 'center',
+  },
+  captureButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 5,
+    borderColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
+  innerCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'white',
   },
 });
