@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -55,6 +53,7 @@ export default function CommunityScreen() {
 
   const pickImage = async () => {
 
+
   const result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: "images", 
     quality: 0.7,
@@ -63,10 +62,10 @@ export default function CommunityScreen() {
    
 
 
-  if (!result.canceled && result.assets.length > 0) {
-    setImageUri(result.assets[0].uri);
-  }
-};
+    if (!result.canceled && result.assets.length > 0) {
+      setImageUri(result.assets[0].uri);
+    }
+  };
 
   const handleUpload = async () => {
     if (!imageUri) {
@@ -76,6 +75,7 @@ export default function CommunityScreen() {
 
 const formData = new FormData();
 const userId = (await AsyncStorage.getItem("userId")) || "1";
+
 
 const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
 const filetype =
@@ -126,6 +126,25 @@ formData.append("mushroomId", "1"); // Default mushroom ID
       Alert.alert("Error", "Network request failed");
 
 
+    // File data
+    const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
+    const filetype =
+      filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
+
+    formData.append("photo", {
+      uri: imageUri,
+      name: filename,
+      type: filetype,
+    } as any);
+
+    // Required fields with defaults
+    formData.append("userId", userId);
+    formData.append("caption", caption);
+    formData.append("latitude", "0"); // Default - replace with real GPS later
+    formData.append("longitude", "0"); // Default
+    formData.append("mushroomId", "1"); // Default mushroom ID
+
+
     try {
       const response = await fetch(
         "https://capcheck.onrender.com/api/userphotos",
@@ -147,8 +166,9 @@ formData.append("mushroomId", "1"); // Default mushroom ID
       loadPosts(); // Refresh the feed
     } catch (error) {
       console.error("Upload error:", error);
-      Alert.alert("Error", error.message || "Failed to upload photo");
-
+      const message =
+        error instanceof Error ? error.message : "Failed to upload photo";
+      Alert.alert("Error", message);
     }
   };
 
@@ -285,4 +305,3 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
 });
-
