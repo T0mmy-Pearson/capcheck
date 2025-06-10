@@ -2,8 +2,9 @@
 from fastapi import FastAPI
 import psycopg2 
 import os
+import requests
 from typing import Union
-from fastapi import requests, Query
+from fastapi import Query
 from pydantic import BaseModel
 from app.data.db import engine
 from app.data.models import UserPhotos, UserComments, Users, UserLikes
