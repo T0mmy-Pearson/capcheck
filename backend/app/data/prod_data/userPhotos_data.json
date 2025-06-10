@@ -1,42 +1,42 @@
 {
   "userphotos": [
     {
-      "photo": "photo_url",
+      "photo": "https://www.google.com/url?sa=i&url=http%3A%2F%2Fnatures-restaurant-online.com%2FHorseMushroom.html&psig=AOvVaw2pBDbhERFA0EB8fPCsMbxQ&ust=1749634206725000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJDjjcLF5o0DFQAAAAAdAAAAABAE",
       "userId": 1,
       "latitude": "53.38176",
       "longitude": "-1.71751",
       "mushroomId": 2
     },
     {
-      "photo": "photo2_url",
+      "photo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.wildfooduk.com%2Fmushroom-guide%2Fcommon-inkcap%2F&psig=AOvVaw05zeP3Ydhd5m3qAbNZH6Ps&ust=1749634143284000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCMDGhqrF5o0DFQAAAAAdAAAAABAE",
       "userId": 2,
       "latitude": "53.46",
       "longitude": "2.00",
       "mushroomId": 89
     },
     {
-      "photo": "photo3_url",
+      "photo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.wildfooduk.com%2Fmushroom-guide%2Ffrosted-chanterelle%2F&psig=AOvVaw3DVQ0yOC9BYYZxQ8iN2BG3&ust=1749634084804000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCICvyo_F5o0DFQAAAAAdAAAAABAE",
       "userId": 3,
       "latitude": "2.43",
       "longitude": "53.12",
       "mushroomId": 75
     },
     {
-      "photo": "photo5_url",
+      "photo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FCoprinopsis_atramentaria&psig=AOvVaw3P6-9nHPRtowp42IilW8-D&ust=1749634043008000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPCuk-_E5o0DFQAAAAAdAAAAABAU",
       "userId": 4,
       "latitude": "-2.17°",
       "longitude": "53.78",
       "mushroomId": 9
     },
     {
-      "photo": "photo5_url",
+      "photo": "https://www.google.com/url?sa=i&url=http%3A%2F%2Fwww.english-country-garden.com%2Ffungus%2Fthe-blusher.htm&psig=AOvVaw13ywvjNuTuWKrgltRqzftb&ust=1749633998216000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKiJjdzE5o0DFQAAAAAdAAAAABAE",
       "userId": 5,
       "latitude": "54.39996",
       "longitude": "-2.96216",
       "mushroomId": 27
     },
     {
-      "photo": "https://www.wildfooduk.com/wp-content/uploads/2018/01/Boletus-Albidus-1.jpg",
+      "photo": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.inaturalist.org%2Ftaxa%2F507493-Caloboletus-radicans&psig=AOvVaw0h3VLYp7DkCZNxDoAjX6eJ&ust=1749634261465000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCIji6NfF5o0DFQAAAAAdAAAAABAE",
       "userId": 6,
       "latitude": "54.39996",
       "longitude": "-2.96216",
