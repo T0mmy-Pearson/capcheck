@@ -13,8 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
@@ -122,26 +121,8 @@ export default function CameraScreen() {
     >
       <View style={styles.innerCircle} />
     </TouchableOpacity>
-  </View>
-  
+  </View> 
 </CameraView>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={takePicture}
-            disabled={uploading}
-          >
-            <Text style={styles.text}>
-              {uploading ? "Uploading..." : "Take & Save"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </CameraView>
-
 
       {uploading && (
         <View style={styles.loadingOverlay}>

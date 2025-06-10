@@ -60,10 +60,7 @@ export default function CommunityScreen() {
     quality: 0.7,
   });
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images",
-      quality: 0.7,
-    });
+   
 
 
   if (!result.canceled && result.assets.length > 0) {
@@ -77,42 +74,24 @@ export default function CommunityScreen() {
       return;
     }
 
-    const formData = new FormData();
-    const userId = (await AsyncStorage.getItem("userId")) || "1";
+const formData = new FormData();
+const userId = (await AsyncStorage.getItem("userId")) || "1";
 
+const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
+const filetype =
+  filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
 
-    formData.append("photo", {
+formData.append("photo", {
   uri: imageUri,
-  type: "image/jpeg",
-  name: "upload.jpg",
+  name: filename,
+  type: filetype,
 } as any);
 
-    formData.append("caption", caption);
-
-    const filename = imageUri.split("/").pop() || "upload.jpg";
-    const match = /\.(\w+)$/.exec(filename);
-    const type = match ? `image/${match[1]}` : "image/jpeg";
-    // File data
-    const filename = imageUri.split("/").pop() || `photo_${Date.now()}.jpg`;
-    const filetype =
-      filename.split(".").pop() === "png" ? "image/png" : "image/jpeg";
-
-
-    formData.append("photo", {
-      uri: imageUri,
-      name: filename,
-      type: filetype,
-    } as any);
-
-    // Required fields with defaults
-    formData.append("userId", userId);
-    formData.append("caption", caption); // Now supported by backend
-    formData.append("latitude", "0"); // Default - replace with real GPS later
-    formData.append("longitude", "0"); // Default
-    formData.append("mushroomId", "1"); // Default mushroom ID
-
-
-    formData.append("userId", storedUserId || "1");
+formData.append("userId", userId);
+formData.append("caption", caption); // Now supported by backend
+formData.append("latitude", "0"); // Default - replace with real GPS later
+formData.append("longitude", "0"); // Default
+formData.append("mushroomId", "1"); // Default mushroom ID
 
     try {
       const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
