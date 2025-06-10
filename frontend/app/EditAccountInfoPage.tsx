@@ -1,12 +1,15 @@
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
-
-
-export default function EditAccountScreen({ navigation }) {
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from "@react-navigation/native";
+// type EditAccountScreenProps = {
+//   navigation: NativeStackNavigationProp<any>;
+// };
+export default function EditAccountScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-
+  const navigation = useNavigation<any>()
   useEffect(() => {
     (async () => {
       const storedName = await AsyncStorage.getItem("userName");
@@ -24,6 +27,9 @@ export default function EditAccountScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text style={{ color: 'white' }}>← Back</Text>
+        </TouchableOpacity>
       <Text style={styles.label}>Name</Text>
       <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Enter your name" placeholderTextColor="#aaa" />
       <Text style={styles.label}>Email</Text>
@@ -45,7 +51,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   input: {
-    backgroundColor: "#1e1e1e",
+    backgroundColor: "#1E1E1E",
     color: "white",
     padding: 10,
     borderRadius: 5,
