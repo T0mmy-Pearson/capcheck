@@ -335,27 +335,22 @@ async def get_photo_likes(photoId: int):
 async def create_user_photo(
     photo: UploadFile = File(...),
     userId: int = Form(...),
-    caption: str = Form(None),  # Make optional
-    latitude: str = Form("0"),  # Default value
-    longitude: str = Form("0"), # Default value
-    mushroomId: int = Form(1)   # Default value
+    caption: str = Form(None),  
+    latitude: str = Form("0"),  
+    longitude: str = Form("0"), 
+    mushroomId: int = Form(1)   
 ):
     try:
-        # Generate unique filename
         file_ext = photo.filename.split(".")[-1]
         unique_filename = f"{uuid.uuid4()}.{file_ext}"
         photo_url = f"https://capcheck.onrender.com/static/uploads/{unique_filename}"
         save_path = f"static/uploads/{unique_filename}"
-        
-        # Save file
         with open(save_path, "wb") as f:
             f.write(await photo.read())
-
-        # Create database record
         session = Session(bind=engine)
         new_photo = UserPhotos(
             photo=photo_url,
-            caption=caption,  # Now stored in DB
+            caption=caption,  
             latitude=latitude,
             longitude=longitude,
             mushroomId=mushroomId,
