@@ -37,10 +37,17 @@
     },
     {
       "photo": "https://www.wildfooduk.com/wp-content/uploads/2018/01/Boletus-Albidus-1-720x540.jpg",
-      "userId": 6,
+      "userId": 1,
       "latitude": "54.39996",
       "longitude": "-2.96216",
       "mushroomId": 38
+    },
+    {
+      "photo": "https://www.wildfooduk.com/wp-content/uploads/2017/06/Parasitic-Bolete-6.jpg",
+      "userId": 1,
+      "latitude": "53.39996",
+      "longitude": "-2.96216",
+      "mushroomId": 40
     }
   ]
 }
