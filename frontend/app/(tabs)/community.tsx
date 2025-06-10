@@ -110,7 +110,11 @@ export default function CommunityScreen() {
       loadPosts(); // Refresh the feed
     } catch (error) {
       console.error("Upload error:", error);
-      Alert.alert("Error", error.message || "Failed to upload photo");
+      const message =
+        error && typeof error === "object" && "message" in error
+          ? (error as { message?: string }).message
+          : "Failed to upload photo";
+      Alert.alert("Error", message || "Failed to upload photo");
     }
   };
 
