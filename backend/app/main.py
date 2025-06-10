@@ -221,7 +221,7 @@ async def fetch_mushroom_location(mushroomId: int):
         record[column.name] = result[i]
     scientific_name = "%20".join(record["scientificName"].split(" "))
     species_code = requests.get("https://api.gbif.org/v1/species/match?scientificName=%s"%scientific_name).json()
-    location_data = requests.get("https://api.gbif.org/v1/occurrence/search?taxonKey=%s&country=GB"%species_code["usageKey"]).json()
+    location_data = requests.get("https://api.gbif.org/v1/occurrence/search?taxonKey=%s&country=GB&limit=300"%species_code["usageKey"]).json()
     location_list = []
     for result in location_data['results']:
         location_list.append([result["decimalLatitude"], result["decimalLongitude"]])
