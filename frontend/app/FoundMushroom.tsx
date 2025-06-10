@@ -2,8 +2,13 @@ import { View, Text, FlatList, Image, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+type Mushroom = {
+  name: string;
+  image: string;
+};
+
 export default function FoundMushrooms() {
-  const [mushrooms, setMushrooms] = useState([]);
+  const [mushrooms, setMushrooms] = useState<Mushroom[]>([]);
 
   useEffect(() => {
     const loadMushrooms = async () => {

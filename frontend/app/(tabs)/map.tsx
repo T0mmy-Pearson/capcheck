@@ -1,6 +1,6 @@
 // import MapView, { Marker, MapPressEvent, Region, Geojson, UrlTile } from "react-native-maps";
 // import { useState, useEffect } from "react";
-// import { StyleSheet, View, Alert, Text, Switch } from "react-native"; // <-- import Switch
+// import { StyleSheet, View, Alert, Text, Switch } from "react-native";
 // import * as Location from "expo-location"
 // import { HelloWave } from "@/components/WaveText";
 

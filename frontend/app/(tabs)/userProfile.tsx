@@ -15,6 +15,8 @@ import { useContext } from "react";
 import { fetchUserById } from "@/utils/api";
 
 
+
+
 interface UserObject{
   avatar: string;
   username: string;
@@ -22,38 +24,52 @@ interface UserObject{
   score: number;
 }
 
+const DUMMY_USER_ID = 1
+
 export default function UserProfile() {
-    const {defaultValue: userId} = useContext(SessionContext);
-    const [userObject, setUserObject] = useState({});
+    const { defaultValue: userId } = useContext(SessionContext);
+    const [userObject, setUserObject] = useState<UserObject>({
+    avatar: '',
+    username: '',
+    userId: 0,
+    score: 0,
+  });
+
+    // const {defaultValue: userId} = useContext(SessionContext);
+    // const [userObject, setUserObject] = useState({});
+
+
     const [bio, setBio] = useState("");
     const [editing, setEditing] = useState(false);
     const [bioInput, setBioInput] = useState("");
     const [mushroom, setMushroom] = useState(false);
-
-    const colorScheme = useColorScheme();
     const router = useRouter();  
 
-    useEffect(() => {
-      setUserObject(() => {
-      fetchUserById(userId)
-      .then(res => {
-        const newUserObject = res
-        console.log(newUserObject)
-        return newUserObject
-      })
-      });
-
-        (async () => {
-            const savedBio = await AsyncStorage.getItem("userBio")
-            if (savedBio) setBio(savedBio)
-        })()
-    }, [])
+    const colorScheme = useColorScheme();
 
     const handleSave = async () => {
-        await AsyncStorage.setItem("userBio", bioInput)
-        setBio(bioInput)
-        setEditing(false)
+        await AsyncStorage.setItem("userBio", bioInput);
+        setBio(bioInput);
+        setEditing(false);
+    };
+
+  useEffect(() => {
+    const loadUser = async () => {
+        const idToUse = userId ?? DUMMY_USER_ID;
+      try {
+        const userData = await fetchUserById(idToUse);
+        setUserObject(userData);
+        console.log("Loaded user:", userData);
+    } catch (err) {
+        console.error("Failed to fetch user", err);
     }
+    };
+    loadUser();
+    (async () => {
+        const savedBio = await AsyncStorage.getItem("userBio");
+      if (savedBio) setBio(savedBio);
+    })();
+}, []);
 
     return (
         <ParallaxScrollViewUserProfile
@@ -62,10 +78,10 @@ export default function UserProfile() {
                 <Image />
             }
         >
-            <UserAvatar userObject = {userObject} />
+            <UserAvatar {...userObject} />
             <Pressable
                 style={styles.rowLink}
-                onPress={() => router.push("EditAccountInfoPage")} 
+                onPress={() => router.push("/EditAccountInfoPage")} 
             >
                 <Text style={styles.linkText}>Edit Account Info</Text>
                 <Ionicons name="chevron-forward" size={20} color="white" />

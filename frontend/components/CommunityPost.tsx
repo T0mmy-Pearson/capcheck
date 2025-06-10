@@ -28,7 +28,7 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
   const [likesCount, setLikesCount] = useState(post.likes);
 
   const toggleLike = () => {
-    const userId = 1; // 🔐 Replace with logged-in user ID later
+    const userId = 1; // Replace with logged-in user ID later
     const method = liked ? "DELETE" : "POST";
     const url = `https://capcheck.onrender.com/api/userphotos/${post.id}/like?user_id=${userId}`;
 

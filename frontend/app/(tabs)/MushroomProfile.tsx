@@ -1,6 +1,5 @@
 import { BodyText } from "@/components/BodyText";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
-import React from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 
 export default function MushroomProfile() {

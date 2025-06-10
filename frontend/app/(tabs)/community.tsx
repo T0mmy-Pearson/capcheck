@@ -59,8 +59,6 @@ export default function TabTwoScreen() {
   };
 
   useEffect(() => {
-
-  useEffect(() => {
     const loadPosts = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem("userId");

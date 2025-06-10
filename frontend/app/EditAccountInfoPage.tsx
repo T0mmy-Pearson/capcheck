@@ -1,11 +1,22 @@
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from "@react-navigation/native";
 
 
-export default function EditAccountScreen({ navigation }) {
+
+
+
+// type EditAccountScreenProps = {
+//   navigation: NativeStackNavigationProp<any>;
+// };
+
+export default function EditAccountScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  const navigation = useNavigation<any>()
 
   useEffect(() => {
     (async () => {
@@ -24,6 +35,9 @@ export default function EditAccountScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text style={{ color: 'white' }}>← Back</Text>
+        </TouchableOpacity>
       <Text style={styles.label}>Name</Text>
       <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Enter your name" placeholderTextColor="#aaa" />
       <Text style={styles.label}>Email</Text>
