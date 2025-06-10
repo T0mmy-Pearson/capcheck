@@ -53,7 +53,7 @@ export default function CommunityScreen() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: "images",
       quality: 0.7,
     });
 
@@ -63,44 +63,46 @@ export default function CommunityScreen() {
   };
 
   const handleUpload = async () => {
-    if (!imageUri || !caption) {
-      Alert.alert(
-        "Missing fields",
-        "Please select an image and add a caption."
-      );
+    if (!imageUri) {
+      Alert.alert("Missing image", "Please select an image first.");
       return;
     }
 
     const storedUserId = await AsyncStorage.getItem("userId");
     const formData = new FormData();
+
+    // File data
+    const filename = imageUri.split("/").pop() || "upload.jpg";
+    const match = /\.(\w+)$/.exec(filename);
+    const type = match ? `image/${match[1]}` : "image/jpeg";
+
     formData.append("photo", {
       uri: imageUri,
-      name: "upload.jpg",
-      type: "image/jpeg",
+      name: filename,
+      type,
     } as any);
-    formData.append("caption", caption);
+
+    formData.append("mushroomId", "1"); // Default mushroom ID
     formData.append("userId", storedUserId || "1");
 
     try {
       const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
         method: "POST",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       });
 
+      const response = await res.json();
+
       if (res.ok) {
-        Alert.alert("Success", "Photo uploaded!");
+        Alert.alert("Success", response.message || "Photo uploaded!");
         setImageUri(null);
-        setCaption("");
         loadPosts();
       } else {
-        Alert.alert("Upload failed", "Please try again.");
+        Alert.alert("Error", response.error || "Upload failed");
       }
     } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Something went wrong.");
+      console.error("Upload error:", err);
+      Alert.alert("Error", "Network request failed");
     }
   };
 
