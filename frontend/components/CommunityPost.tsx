@@ -43,7 +43,6 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
   const [likesCount, setLikesCount] = useState(post.likes);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [showComments, setShowComments] = useState(false);
 
   const handleToggleLike = async () => {
     const userId = await AsyncStorage.getItem("userId");
@@ -109,11 +108,12 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
       </View>
       <Text style={styles.caption}>{post.caption}</Text>
       <Text style={styles.likes}>{likesCount} likes</Text>
-      <TouchableOpacity onPress={() => setShowComments(true)}>
-        <Text style={styles.viewComments}>
-          View all {comments.length} comments
+      {comments.map((c) => (
+        <Text key={c.commentId} style={styles.commentLine}>
+          <Text style={styles.commentUser}>{c.username}: </Text>
+          {c.text}
         </Text>
-      </TouchableOpacity>
+      ))}
       <View style={styles.commentForm}>
         <TextInput
           value={newComment}
