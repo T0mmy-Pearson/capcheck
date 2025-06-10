@@ -13,13 +13,17 @@ import { useRouter } from "expo-router";
 import { SessionContext } from "../contexts/SessionContext";
 import { useContext } from "react";
 import { fetchUserById } from "@/utils/api";
+
+
 interface UserObject{
   avatar: string;
   username: string;
   userId: number;
   score: number;
 }
+
 const DUMMY_USER_ID = 1
+
 export default function UserProfile() {
     const { defaultValue: userId } = useContext(SessionContext);
     const [userObject, setUserObject] = useState<UserObject>({
