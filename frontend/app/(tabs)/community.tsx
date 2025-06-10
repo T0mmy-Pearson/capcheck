@@ -22,7 +22,7 @@ type RootStackParamList = {
   UploadPost: undefined;
 };
 
-eexport default function CommunityScreen() {
+export default function CommunityScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -184,10 +184,10 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginBottom: 20,
     borderRadius: 10,
-    shadowColor: "#000",
+    shadowColor: "#4e5249",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
+    shadowOpacity: 5.4,
+    shadowRadius: 10,
   },
   container: {
     flex: 1,
@@ -228,6 +228,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     marginTop: 10,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
   },
   preview: {
     width: "100%",
@@ -241,5 +246,14 @@ const styles = StyleSheet.create({
   },
   greybutton: {
     marginVertical: 6,
+    shadowColor: "#000",
+    shadowOpacity: 2.5,
+    shadowRadius: 20,
+    borderColor: "#000",
+    borderWidth: 0.4,
+    borderRadius: 120
   },
 });
+
+
+
