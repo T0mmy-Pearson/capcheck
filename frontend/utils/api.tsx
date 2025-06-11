@@ -32,12 +32,9 @@ export const fetchMushroomById = (mushroomId: Number) => {
 
 export const fetchMushroomMarkerLocations = (mushroomId: Number) => {
   return capCheckApi.get(`/mushroom/${mushroomId}/location`).then((res) => {
-
     return res.data.results;
   });
-}
-
-
+};
 
 export const fetchPhotosById = (userId: Number) => {
   return capCheckApi.get(`/users/${userId}/userphotos`).then((res) => {
@@ -45,10 +42,9 @@ export const fetchPhotosById = (userId: Number) => {
   });
 };
 
-export const fetchPhotos = async ({ userId }: { userId: number }) => {
-  return axios.get("https://capcheck.onrender.com/api/userphotos", {
-    params: { user_id: userId },
-  });
+export const fetchPhotos = (params?: { userId?: number }) => {
+  const query = params?.userId ? `?user_id=${params.userId}` : "";
+  return axios.get(`https://capcheck.onrender.com/api/userphotos${query}`);
 };
 
 export const fetchComments = async (photoId: number) => {
@@ -56,7 +52,6 @@ export const fetchComments = async (photoId: number) => {
     `https://capcheck.onrender.com/api/userphotos/${photoId}/usercomments`
   );
 };
-
 
 export const postComment = async ({
   userId,

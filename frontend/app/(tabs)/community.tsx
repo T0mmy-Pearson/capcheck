@@ -43,7 +43,7 @@ export default function CommunityScreen() {
     try {
       const storedUserId = await AsyncStorage.getItem("userId");
       if (!storedUserId) return;
-      const res = await fetchPhotos({ userId: Number(storedUserId) });
+      const res = await fetchPhotos();
       setPosts(res.data.userphotos);
     } catch (err) {
       console.error("Error loading posts:", err);
