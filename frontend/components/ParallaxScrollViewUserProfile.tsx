@@ -68,6 +68,7 @@ export default function ParallaxScrollViewUserProfile({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000',
   },
   header: {
     overflow: 'hidden',
@@ -77,5 +78,6 @@ const styles = StyleSheet.create({
     padding: 32,
     gap: 16,
     overflow: 'hidden',
+    backgroundColor: '#000',
   },
 });
