@@ -163,6 +163,7 @@ async def fetch_user_photos(user_id: int = Query(1)):
                 "id": record["photoId"],
                 "photoUrl": record["photo"],
                 "user": {
+                    "userId": record["user_id"],  
                     "username": record["username"],
                     "avatarUrl": record["avatar_url"]
                 },

@@ -17,6 +17,7 @@ export interface Post {
   id: number;
   photoUrl: string;
   user: {
+    userId: number;
     username: string;
     avatarUrl: string;
   };
@@ -150,7 +151,7 @@ const CommunityPost: React.FC<Props> = ({ post, onPostDeleted }) => {
       </TouchableOpacity>
 
       {/* 👇 Only show for owner */}
-      {userId === post.userId && (
+      {userId === post.user.userId && (
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={handleDeletePost}
