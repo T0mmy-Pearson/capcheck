@@ -1,16 +1,16 @@
 import { Image } from "expo-image";
 import ParallaxScrollViewUserProfile from "@/components/ParallaxScrollViewUserProfile";
 import { ThemedText } from "@/components/ThemedText";
-import { Button } from "react-native";
-import { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, StyleSheet, useColorScheme, Pressable, Dimensions } from "react-native";
+import { Button, View, Text, TextInput, StyleSheet, useColorScheme, Pressable, Dimensions } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UserAvatar from "@/components/UserAvatar";
 import PhotoCarousel from "@/components/PhotoCarousel";
 import { useRouter } from "expo-router";
+import { useState, useEffect, useContext } from "react";
 import { SessionContext } from "../contexts/SessionContext";
 import { fetchUserById } from "@/utils/api";
 import FoundMushroomList from "@/components/FoundMushroomList";
+import { Checkbox } from 'react-native-paper'; 
 
 interface UserObject {
   avatar: string;
@@ -33,6 +33,7 @@ export default function UserProfile() {
   const [bio, setBio] = useState("");
   const [editing, setEditing] = useState(false);
   const [bioInput, setBioInput] = useState("");
+  const [mushroomChecked, setMushroomChecked] = useState(false); 
   const router = useRouter();
   const colorScheme = useColorScheme();
 
@@ -53,7 +54,9 @@ export default function UserProfile() {
         console.error("Failed to fetch user", err);
       }
     };
+
     loadUser();
+
     (async () => {
       const savedBio = await AsyncStorage.getItem("userBio");
       if (savedBio) setBio(savedBio);
@@ -61,15 +64,14 @@ export default function UserProfile() {
   }, []);
 
   return (
-
     <View style={styles.pageContainer}>
       <ParallaxScrollViewUserProfile
         headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
         headerImage={<Image />}
-        style={{ backgroundColor: "transparent" }} 
+        style={{ backgroundColor: "transparent" }}
       >
         <UserAvatar {...userObject} />
-        
+
         <View style={styles.avatarSeparator} />
 
         <Text style={styles.sectionHeader}>About Me</Text>
@@ -105,79 +107,32 @@ export default function UserProfile() {
           )}
         </View>
 
-        <View style={styles.avatarSeparator} /> 
+        <View style={styles.avatarSeparator} />
 
         <Text style={styles.sectionHeader}>My Mushrooms</Text>
         <PhotoCarousel />
 
-        <View style={styles.fullWidthSeparator} /> 
+        <View style={styles.fullWidthSeparator} />
 
         <ThemedText style={{ color: 'white', marginTop: 20 }}>post photo functionality</ThemedText>
 
         <Button title="View Found Mushrooms" onPress={() => router.push("/AddMushroom")} />
         <Button title="Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
+
+        <View style={{ marginTop: 20 }}>
+          <Checkbox.Item
+            label="Mushroom1 move this around, maybe on to the mushroom profile page"
+            status={mushroomChecked ? 'checked' : 'unchecked'}
+            onPress={() => setMushroomChecked(!mushroomChecked)}
+            labelStyle={{ color: 'white' }}
+          />
+        </View>
+
+        <View style={{ marginTop: 20 }}>
+          <FoundMushroomList />
+        </View>
       </ParallaxScrollViewUserProfile>
     </View>
-=======
-    <ParallaxScrollViewUserProfile
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={<Image />}
-    >
-      <UserAvatar {...userObject} />
-      <View style={styles.bioBox}>
-        {editing ? (
-          <>
-            <TextInput
-              style={styles.bioInput}
-              value={bioInput}
-              onChangeText={setBioInput}
-              placeholder="Write your bio"
-              placeholderTextColor="#888"
-              multiline
-            />
-            <Button style={styles.button} onPress={handleSave}>
-              <Text style={styles.text}>Save</Text>
-            </Button>
-          </>
-        ) : (
-          <>
-            <ThemedText style={styles.bioText}>{bio || "Write your bio here..."}</ThemedText>
-            <Button
-              style={styles.button}
-              onPress={() => {
-                setBioInput(bio);
-                setEditing(true);
-              }}
-            >
-              <Text style={styles.text}>Edit Bio</Text>
-            </Button>
-          </>
-        )}
-      </View>
-
-      <ThemedText>POINTS SCORE</ThemedText>
-
-      <ThemedText>Checklist/stats box links to other page</ThemedText>
-
-      <PhotoCarousel />
-
-      <ThemedText>post photo functionality</ThemedText>
-
-      <Button title="View Found Mushrooms" onPress={() => router.push("/AddMushroom")} />
-      <Button title="Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
-
-      <View style={styles.container}>
-        <CheckBox
-          onPress={() => setMushroom(!mushroom)}
-          title="Mushroom1 move this around, maybe on to the mushroom profile page"
-          isChecked={mushroom}
-        />
-      </View>
-      <View style={styles.container}>
-        <FoundMushroomList/>
-      </View>
-    </ParallaxScrollViewUserProfile>
-
   );
 }
 
@@ -187,12 +142,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
   },
   bioBox: {
-    backgroundColor: "#0000",  
+    backgroundColor: "#0000",
     borderRadius: 16,
     padding: 16,
     marginVertical: 12,
     borderWidth: 1,
-    borderColor: "#0000", 
+    borderColor: "#0000",
     shadowColor: "#0a84ff",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -200,9 +155,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   bioText: {
-    color: "#ffff", 
+    color: "#ffff",
     fontSize: 16,
-    textAlign: "justify", 
+    textAlign: "justify",
   },
   bioInput: {
     color: "#cce4ff",
@@ -210,7 +165,7 @@ const styles = StyleSheet.create({
     minHeight: 80,
     textAlignVertical: "top",
     padding: 8,
-    backgroundColor: "#0000", 
+    backgroundColor: "#0000",
     marginBottom: 12,
     borderRadius: 8,
     borderWidth: 1,
@@ -249,6 +204,6 @@ const styles = StyleSheet.create({
     marginVertical: 18,
     borderRadius: 1,
     opacity: 0.6,
-    width: "100%", 
+    width: "100%",
   },
 });

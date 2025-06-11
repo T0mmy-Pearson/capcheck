@@ -51,32 +51,30 @@ function PhotoCarousel() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.carouselWrapper}>
-        <Carousel
-          ref={ref}
-          width={width - 60}
-          height={width - 100}
-          data={photoArray}
-          onProgressChange={progress}
-          renderItem={({ index }) => {
-            const photoUri = photoArray[index]?.photo;
-            return (
-              <View style={styles.carouselItem}>
-                {photoUri ? (
-                  <Image source={{ uri: photoUri }} style={styles.carouselImage} />
-                ) : (
-                  <ThemedText style={styles.noImageText}>No Image</ThemedText>
-                )}
-              </View>
-            );
-          }}
-        />
-      </View>
-
+      <Carousel
+        ref={ref}
+        width={width - 60}
+        height={width - 100}
+        data={photoArray}
+        onProgressChange={progress}
+        renderItem={({ index }) => {
+          const photoUri = photoArray[index]?.photo;
+          return (
+            <View style={styles.carouselItem}>
+              {photoUri ? (
+                <Image source={{ uri: photoUri }} style={styles.carouselImage} />
+              ) : (
+                <ThemedText style={styles.noImageText}>No Image</ThemedText>
+              )}
+            </View>
+          );
+        }}
+      />
       <Pagination.Basic
         progress={progress}
         data={photoArray}
         dotStyle={styles.dotStyle}
+        dotActiveStyle={styles.dotActiveStyle}
         containerStyle={styles.paginationContainer}
         onPress={onPressPagination}
       />
@@ -87,8 +85,6 @@ function PhotoCarousel() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  carouselWrapper: {
     alignItems: "center",
     justifyContent: "center",
   },
@@ -117,14 +113,22 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   dotStyle: {
-    backgroundColor: "rgba(236, 236, 236, 0.72)",
+    backgroundColor: "grey",
     borderRadius: 50,
+    width: 10,
+    height: 10,
+    marginHorizontal: 3,
+  },
+  dotActiveStyle: {
+    backgroundColor: "white",
+    width: 12,
+    height: 12,
+    borderRadius: 50,
+    marginHorizontal: 3,
   },
   paginationContainer: {
-    gap: 5,
     marginTop: 10,
   },
 });
 
 export default PhotoCarousel;
-
