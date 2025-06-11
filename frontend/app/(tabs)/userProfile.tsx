@@ -11,6 +11,7 @@ import PhotoCarousel from "@/components/PhotoCarousel";
 import { useRouter } from "expo-router";
 import { SessionContext } from "../contexts/SessionContext";
 import { fetchUserById } from "@/utils/api";
+import FoundMushroomList from "@/components/FoundMushroomList";
 
 interface UserObject {
   avatar: string;
@@ -115,6 +116,9 @@ export default function UserProfile() {
           title="Mushroom1 move this around, maybe on to the mushroom profile page"
           isChecked={mushroom}
         />
+      </View>
+      <View style={styles.container}>
+        <FoundMushroomList/>
       </View>
     </ParallaxScrollViewUserProfile>
   );
