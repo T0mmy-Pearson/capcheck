@@ -146,10 +146,7 @@ export default function MushroomList() {
                 <BodyText style={styles.scientificName}>{item.scientificName}</BodyText>
                 <BodyText>{edibleIcon(item)}</BodyText>
                 <BodyText style={styles.seasons}>
-                  {formatSeasonValue(item.start)}
-                  {item.start !== "All" && item.end !== "All"
-                    ? `${item.start} until ${item.end}`
-                    : "All Year Round"}
+                  {formatSeasonValue(item)}
                 </BodyText>
               </View>
               <Image
