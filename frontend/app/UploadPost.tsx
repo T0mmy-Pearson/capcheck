@@ -1,4 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { router } from "expo-router";
 import * as MediaLibrary from "expo-media-library";
 import * as ImageManipulator from "expo-image-manipulator";
 import { useRef, useState } from "react";
@@ -123,7 +124,7 @@ export default function CameraScreen() {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => navigation.goBack()}
+        onPress={() => router.push("/community")}
       >
         <Text style={styles.backButtonText}>← Back</Text>
       </TouchableOpacity>
