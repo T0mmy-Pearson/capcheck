@@ -53,8 +53,8 @@ function PhotoCarousel() {
     <View style={styles.container}>
       <Carousel
         ref={ref}
-        width={width - 60}
-        height={width - 100}
+        width={width -30}
+        height={width -100}
         data={photoArray}
         onProgressChange={progress}
         renderItem={({ index }) => {
