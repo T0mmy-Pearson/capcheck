@@ -8,14 +8,11 @@ import {
   Text,
   TouchableOpacity,
   View,
-
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 
 export default function CameraScreen() {
   const navigation = useNavigation();
@@ -58,6 +55,7 @@ export default function CameraScreen() {
       await MediaLibrary.saveToLibraryAsync(photo.uri);
 
       const userId = await AsyncStorage.getItem("userId");
+      console.log("userId:", userId); // ✅ Debug
       if (!userId) throw new Error("Missing userId");
 
       const formData = new FormData();
@@ -69,24 +67,29 @@ export default function CameraScreen() {
       formData.append("latitude", "53.38176");
       formData.append("longitude", "-1.71751");
       formData.append("mushroomId", "2");
+      formData.append("userId", userId);
+      formData.append("caption", "Taken from camera");
 
       const response = await fetch(
-        `https://capcheck.onrender.com/api/users/${userId}/userphotos`,
+        "https://capcheck.onrender.com/api/userphotos",
         {
           method: "POST",
           body: formData,
           headers: {
-            "Content-Type": "multipart/form-data",
+            Accept: "application/json", // ✅ KEEP ONLY THIS
+            // Do not add Content-Type
           },
         }
       );
 
-      const text = await response.text();
+      const result = await response.json();
+
       if (!response.ok) {
-        console.error("Failed to upload:", text);
-      } else {
-        console.log("Upload success:", text);
+        console.error("Failed to upload:", result);
+        throw new Error(result?.message || "Upload failed");
       }
+
+      console.log("Upload success:", result);
     } catch (err) {
       console.error("Upload error:", err);
     } finally {
@@ -105,24 +108,23 @@ export default function CameraScreen() {
       </TouchableOpacity>
 
       <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+        <TouchableOpacity
+          style={styles.flipButton}
+          onPress={toggleCameraFacing}
+        >
+          <Text style={styles.flipText}>🔄</Text>
+        </TouchableOpacity>
 
-
-
-  <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
-    <Text style={styles.flipText}>🔄</Text>
-  </TouchableOpacity>
-
-  
-  <View style={styles.captureContainer}>
-    <TouchableOpacity
-      style={styles.captureButton}
-      onPress={takePicture}
-      disabled={uploading}
-    >
-      <View style={styles.innerCircle} />
-    </TouchableOpacity>
-  </View> 
-</CameraView>
+        <View style={styles.captureContainer}>
+          <TouchableOpacity
+            style={styles.captureButton}
+            onPress={takePicture}
+            disabled={uploading}
+          >
+            <View style={styles.innerCircle} />
+          </TouchableOpacity>
+        </View>
+      </CameraView>
 
       {uploading && (
         <View style={styles.loadingOverlay}>
@@ -183,37 +185,37 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   flipButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 43,
     right: 20,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: "rgba(0,0,0,0.3)",
     padding: 10,
     borderRadius: 25,
     zIndex: 10,
   },
   flipText: {
     fontSize: 28,
-    color: 'white',
+    color: "white",
   },
   captureContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 40,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   captureButton: {
     width: 80,
     height: 80,
     borderRadius: 40,
     borderWidth: 5,
-    borderColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.3)",
   },
   innerCircle: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
 });
