@@ -349,21 +349,31 @@ async def create_user_photo(
 ):
     session = Session()
     try:
-   
+        print("=== Incoming Upload ===")
+        print("userId:", userId)
+        print("caption:", caption)
+        print("latitude:", latitude)
+        print("longitude:", longitude)
+        print("mushroomId:", mushroomId)
+        print("file:", photo.filename, photo.content_type)
+
         file_ext = photo.filename.split(".")[-1].lower()
         if file_ext not in ['jpg', 'jpeg', 'png']:
             raise HTTPException(400, "Only JPG/PNG images allowed")
-            
+        
         unique_filename = f"{uuid.uuid4()}.{file_ext}"
         file_path = f"{UPLOAD_DIR}/{unique_filename}"
-        photo_url = f"/static/uploads/{unique_filename}"  
+        photo_url = f"/static/uploads/{unique_filename}"
+
+        print("Saving file to:", file_path)
+
+        content = await photo.read()
         with open(file_path, "wb") as f:
-            content = await photo.read()
             f.write(content)
 
         new_photo = UserPhotos(
             userId=userId,
-            photo=photo_url, 
+            photo=f"https://capcheck.onrender.com{photo_url}",
             caption=caption,
             latitude=latitude,
             longitude=longitude,
@@ -381,7 +391,8 @@ async def create_user_photo(
 
     except Exception as e:
         session.rollback()
+        print("❌ ERROR during upload:", str(e))  # Add this
         raise HTTPException(500, detail=str(e))
-        
+
     finally:
         session.close()
