@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   dotStyle: {
-    backgroundColor: "rgba(0, 0, 0, 0.72)",
+    backgroundColor: "rgba(236, 236, 236, 0.72)",
     borderRadius: 50,
   },
   paginationContainer: {

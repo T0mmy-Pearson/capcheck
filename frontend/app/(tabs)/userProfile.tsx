@@ -1,12 +1,11 @@
 import { Image } from "expo-image";
 import ParallaxScrollViewUserProfile from "@/components/ParallaxScrollViewUserProfile";
 import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@react-navigation/elements";
+import { Button } from "react-native";
 import { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, StyleSheet, useColorScheme } from "react-native";
+import { View, Text, TextInput, StyleSheet, useColorScheme, Pressable, Dimensions } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UserAvatar from "@/components/UserAvatar";
-import CheckBox from "@/components/CheckBox";
 import PhotoCarousel from "@/components/PhotoCarousel";
 import { useRouter } from "expo-router";
 import { SessionContext } from "../contexts/SessionContext";
@@ -34,7 +33,6 @@ export default function UserProfile() {
   const [bio, setBio] = useState("");
   const [editing, setEditing] = useState(false);
   const [bioInput, setBioInput] = useState("");
-  const [mushroom, setMushroom] = useState(false);
   const router = useRouter();
   const colorScheme = useColorScheme();
 
@@ -63,6 +61,64 @@ export default function UserProfile() {
   }, []);
 
   return (
+
+    <View style={styles.pageContainer}>
+      <ParallaxScrollViewUserProfile
+        headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+        headerImage={<Image />}
+        style={{ backgroundColor: "transparent" }} 
+      >
+        <UserAvatar {...userObject} />
+        
+        <View style={styles.avatarSeparator} />
+
+        <Text style={styles.sectionHeader}>About Me</Text>
+        <View style={styles.bioBox}>
+          {editing ? (
+            <>
+              <TextInput
+                style={styles.bioInput}
+                value={bioInput}
+                onChangeText={setBioInput}
+                placeholder="Write your bio"
+                placeholderTextColor="#888"
+                multiline
+                scrollEnabled={false}
+              />
+              <Pressable onPress={handleSave} style={styles.textButton}>
+                <Text style={styles.textButtonText}>Save</Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <ThemedText style={styles.bioText}>{bio || "Write your bio here..."}</ThemedText>
+              <Pressable
+                onPress={() => {
+                  setBioInput(bio);
+                  setEditing(true);
+                }}
+                style={styles.textButton}
+              >
+                <Text style={styles.textButtonText}>Edit Bio</Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+
+        <View style={styles.avatarSeparator} /> 
+
+        <Text style={styles.sectionHeader}>My Mushrooms</Text>
+        <PhotoCarousel />
+
+        <View style={styles.fullWidthSeparator} /> 
+
+        <ThemedText style={{ color: 'white', marginTop: 20 }}>post photo functionality</ThemedText>
+
+        <Button title="View Found Mushrooms" onPress={() => router.push("/AddMushroom")} />
+        <Button title="Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
+      </ParallaxScrollViewUserProfile>
+    </View>
+=======
     <ParallaxScrollViewUserProfile
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={<Image />}
@@ -121,82 +177,78 @@ export default function UserProfile() {
         <FoundMushroomList/>
       </View>
     </ParallaxScrollViewUserProfile>
+
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  button: {
-    color: "white",
-    backgroundColor: "#948781",
-  },
-  text: {
-    color: "white",
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    width: 630,
-    height: 300,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-  container: {
+  pageContainer: {
     flex: 1,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#000000",
   },
-  rowLink: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#444",
-    paddingHorizontal: 10,
-  },
-  linkText: {
-    color: "white",
-    fontSize: 16,
-  },
-
-    bioBox: {
-    backgroundColor: "#000",
+  bioBox: {
+    backgroundColor: "#0000",  
     borderRadius: 16,
     padding: 16,
     marginVertical: 12,
     borderWidth: 1,
-    borderColor: 'white',
-
-    shadowColor: "#000",
+    borderColor: "#0000", 
+    shadowColor: "#0a84ff",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-
-    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
   },
   bioText: {
-    color: "#fff", 
+    color: "#ffff", 
     fontSize: 16,
+    textAlign: "justify", 
   },
   bioInput: {
-    color: "#fff", 
+    color: "#cce4ff",
     fontSize: 16,
     minHeight: 80,
     textAlignVertical: "top",
     padding: 8,
-    borderWidth: 1,
-    borderColor: "#444",
-    borderRadius: 12,
-    backgroundColor: "#000",
+    backgroundColor: "#0000", 
     marginBottom: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#0a84ff",
+  },
+
+  sectionHeader: {
+    color: "#ffff",
+    fontSize: 20,
+    fontWeight: "600",
+    marginTop: 20,
+  },
+
+  textButton: {
+    marginTop: 8,
+  },
+
+  textButtonText: {
+    color: "#0a84ff",
+    fontSize: 16,
+    textDecorationLine: "none",
+  },
+
+  avatarSeparator: {
+    height: 1.5,
+    backgroundColor: "#ffff",
+    marginVertical: 18,
+    marginHorizontal: 4,
+    borderRadius: 1,
+    opacity: 0.6,
+  },
+
+  fullWidthSeparator: {
+    height: 1.5,
+    backgroundColor: "#ffff",
+    marginVertical: 18,
+    borderRadius: 1,
+    opacity: 0.6,
+    width: "100%", 
   },
 });
