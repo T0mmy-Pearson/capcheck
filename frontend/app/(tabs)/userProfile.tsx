@@ -10,6 +10,7 @@ import PhotoCarousel from "@/components/PhotoCarousel";
 import { useRouter } from "expo-router";
 import { SessionContext } from "../contexts/SessionContext";
 import { fetchUserById } from "@/utils/api";
+import FoundMushroomList from "@/components/FoundMushroomList";
 
 interface UserObject {
   avatar: string;
