@@ -1,5 +1,7 @@
 import os
-os.makedirs("static/uploads", exist_ok=True)
+UPLOAD_DIR = "static/uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.chmod(UPLOAD_DIR, 0o777)  # Make writable
 from fastapi import FastAPI
 import psycopg2 
 import requests
@@ -345,20 +347,23 @@ async def create_user_photo(
     longitude: str = Form("0"),
     mushroomId: int = Form(1)
 ):
+    session = Session()
     try:
-        file_ext = photo.filename.split(".")[-1]
+   
+        file_ext = photo.filename.split(".")[-1].lower()
+        if file_ext not in ['jpg', 'jpeg', 'png']:
+            raise HTTPException(400, "Only JPG/PNG images allowed")
+            
         unique_filename = f"{uuid.uuid4()}.{file_ext}"
-        file_path = f"static/uploads/{unique_filename}"
-        photo_url = f"https://capcheck.onrender.com/{file_path}"
-
+        file_path = f"{UPLOAD_DIR}/{unique_filename}"
+        photo_url = f"/static/uploads/{unique_filename}"  
         with open(file_path, "wb") as f:
-            f.write(await photo.read())
+            content = await photo.read()
+            f.write(content)
 
-        # Save metadata to DB
-        session = Session()
         new_photo = UserPhotos(
             userId=userId,
-            photo=photo_url,
+            photo=photo_url, 
             caption=caption,
             latitude=latitude,
             longitude=longitude,
@@ -370,12 +375,13 @@ async def create_user_photo(
 
         return {
             "message": "Photo uploaded successfully",
-            "photo_url": photo_url,
+            "photo_url": f"https://capcheck.onrender.com{photo_url}",
             "photo_id": new_photo.photoId
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
+        session.rollback()
+        raise HTTPException(500, detail=str(e))
+        
     finally:
         session.close()

@@ -53,7 +53,7 @@ export default function CommunityScreen() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: "Images",
       quality: 0.7,
     });
 
@@ -63,63 +63,56 @@ export default function CommunityScreen() {
   };
 
   const handleUpload = async () => {
-    if (!imageUri || !caption) {
-      Alert.alert(
-        "Missing fields",
-        "Please select an image and add a caption."
-      );
+    if (!imageUri) {
+      Alert.alert("Error", "Please select an image first");
       return;
     }
 
-    const storedUserId = await AsyncStorage.getItem("userId");
-    const formData = new FormData();
-
-    // Get the filename from the URI
-    const filename = imageUri.split("/").pop() || "upload.jpg";
-    const type = "image/jpeg"; // Force JPEG type to simplify
-
-    formData.append("photo", {
-      uri: imageUri,
-      name: filename,
-      type,
-    } as any);
-
-    formData.append("caption", caption);
-    formData.append("userId", storedUserId || "1");
-
     try {
-      const res = await fetch("https://capcheck.onrender.com/api/userphotos", {
-        method: "POST",
-        body: formData,
-      });
+      const formData = new FormData();
+      const filename = imageUri.split("/").pop();
+      const filetype = filename?.split(".").pop() || "jpg";
 
-      // First read as text to handle both JSON and non-JSON responses
-      const responseText = await res.text();
+      formData.append("photo", {
+        uri: imageUri,
+        name: `upload.${filetype}`,
+        type: `image/${filetype}`,
+      } as any);
 
-      // Try to parse as JSON if possible
-      let responseData;
-      try {
-        responseData = responseText ? JSON.parse(responseText) : {};
-      } catch (e) {
-        responseData = { message: responseText };
+      formData.append("userId", (await AsyncStorage.getItem("userId")) || "1");
+      formData.append("caption", caption || "");
+      formData.append("latitude", "0");
+      formData.append("longitude", "0");
+      formData.append("mushroomId", "1");
+
+      const response = await fetch(
+        "https://capcheck.onrender.com/api/userphotos",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Upload failed");
       }
 
-      if (res.ok) {
-        Alert.alert("Success", "Photo uploaded!");
-        setImageUri(null);
-        setCaption("");
-        loadPosts();
-      } else {
-        Alert.alert(
-          "Upload failed",
-          responseData.message || "Please try again."
-        );
-      }
-    } catch (err) {
-      console.error("Upload error:", err);
+      Alert.alert("Success", "Photo uploaded!");
+      setImageUri(null);
+      setCaption("");
+      loadPosts();
+    } catch (error) {
+      console.error("Upload error:", error);
       Alert.alert(
         "Error",
-        err instanceof Error ? err.message : "Something went wrong."
+        error instanceof Error
+          ? error.message
+          : "Upload failed. Please try again."
       );
     }
   };
