@@ -17,7 +17,6 @@ export default function MapScreen() {
   const [showRain, setShowRain] = useState(true);
   const [search, setSearch] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [mushroomMarkers, setMushroomMarkers] = useState([]);
   const [filteredMarkers, setFilteredMarkers] = useState([]);
   const [selectedMushroomId, setSelectedMushroomId] = useState<number | null>(null);
   const [allMushrooms, setAllMushrooms] = useState([]);
@@ -70,8 +69,8 @@ export default function MapScreen() {
     const selectedMushroom = allMushrooms.find(m => m.id === selectedMushroomId);
     fetchMushroomMarkerLocations(selectedMushroomId)
       .then((data) => {
-        // Limit to the first 100 markers for performance
-        const limited = data.slice(0, 100);
+
+        const limited = data.slice(0, 50);
         const markers = limited.map((arr, idx) => ({
           id: idx,
           latitude: arr[0],
@@ -90,7 +89,7 @@ export default function MapScreen() {
 }, [selectedMushroomId]);
 
   // Filter markers AFTER search
-  useEffect(() => {
+/*   useEffect(() => {
     if (search.length === 0) {
       setFilteredMarkers(mushroomMarkers);
 
@@ -101,7 +100,7 @@ export default function MapScreen() {
         )
       );
     }
-  }, [search, mushroomMarkers]);
+  }, [search, mushroomMarkers]); */
 
 
 
@@ -128,8 +127,8 @@ keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
               <TouchableOpacity
                 onPress={() => {
                   setSearch(item.name || "Mushroom");
-                  setShowSuggestions(false);
                   setSelectedMushroomId(item.mushroomId);
+                  
                 }}
               >
                 <Text style={styles.suggestionItem}>{item.name || "Mushroom"}</Text>
@@ -142,7 +141,7 @@ keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
     key={m.id}
     coordinate={{ latitude: m.latitude, longitude: m.longitude }}
     title={m.name || "Mushroom"}
-    image={require("/Users/t.person/Northcoders/projects/capcheck/frontend/assets/images/icon-1.png")}
+    image={require("../../assets/images/icon-1.png")}
   />
 ))}
    <View style={{ position: "absolute", bottom: 40, right: 30, zIndex: 300 }}>
@@ -190,7 +189,7 @@ keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
               style={styles.markerImg}
               coordinate={{ latitude: m.latitude, longitude: m.longitude }}
               title={m.name || "Mushroom"}
-              image={require("/Users/t.person/Northcoders/projects/capcheck/frontend/assets/images/icon-1.png")}
+              image={require("../../assets/images/icon-1.png")}
             />
           ))}
           {showRain && (
