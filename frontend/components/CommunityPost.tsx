@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TextInput,
   Modal,
+  Alert,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,6 +28,7 @@ export interface Post {
   liked: boolean;
   timestamp: string;
   comments: { id: number; text: string }[];
+  userId?: number; // 👈 optional if passed from API
 }
 
 interface Comment {
@@ -37,22 +39,23 @@ interface Comment {
 
 interface Props {
   post: Post;
+  onPostDeleted?: (postId: number) => void; // 👈 optional callback to remove from list
 }
 
-const CommunityPost: React.FC<Props> = ({ post }) => {
+const CommunityPost: React.FC<Props> = ({ post, onPostDeleted }) => {
   const [liked, setLiked] = useState(post.liked);
   const [likesCount, setLikesCount] = useState(post.likes);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
 
-  const handleToggleLike = async () => {
-    const userId = await AsyncStorage.getItem("userId");
-    if (!userId) return;
-    await toggleLike({ userId: Number(userId), photoId: post.id, liked });
-    setLiked((prev) => !prev);
-    setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
-  };
+  useEffect(() => {
+    AsyncStorage.getItem("userId").then((id) => {
+      if (id) setUserId(Number(id));
+      loadComments();
+    });
+  }, []);
 
   const loadComments = async () => {
     try {
@@ -67,6 +70,14 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
     } catch (err) {
       console.error("Error loading comments:", err);
     }
+  };
+
+  const handleToggleLike = async () => {
+    const userId = await AsyncStorage.getItem("userId");
+    if (!userId) return;
+    await toggleLike({ userId: Number(userId), photoId: post.id, liked });
+    setLiked((prev) => !prev);
+    setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
   };
 
   const handleCommentSubmit = async () => {
@@ -86,9 +97,25 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
     }
   };
 
-  useEffect(() => {
-    loadComments();
-  }, []);
+  const handleDeletePost = async () => {
+    try {
+      const response = await fetch(
+        `https://capcheck.onrender.com/api/users/${userId}/userphotos/${post.id}`,
+        { method: "DELETE" }
+      );
+
+      if (response.status === 204) {
+        Alert.alert("Deleted", "Your post has been removed.");
+        if (onPostDeleted) onPostDeleted(post.id); // notify parent
+      } else {
+        const error = await response.json();
+        throw new Error(error.detail || "Failed to delete post");
+      }
+    } catch (err) {
+      console.error("Error deleting post:", err);
+      Alert.alert("Error", "Could not delete post.");
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -97,7 +124,9 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
         <Text style={styles.username}>{post.user.username}</Text>
         <Text style={styles.timestamp}> · {post.timestamp}</Text>
       </View>
+
       <Image source={{ uri: post.photoUrl }} style={styles.photo} />
+
       <View style={styles.actions}>
         <TouchableOpacity onPress={handleToggleLike}>
           <FontAwesome
@@ -110,6 +139,7 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
           <FontAwesome name="comment-o" size={22} style={styles.commentIcon} />
         </TouchableOpacity>
       </View>
+
       <Text style={styles.caption}>{post.caption}</Text>
       <Text style={styles.likes}>{likesCount} likes</Text>
 
@@ -118,6 +148,16 @@ const CommunityPost: React.FC<Props> = ({ post }) => {
           View all {comments.length} comments
         </Text>
       </TouchableOpacity>
+
+      {/* 👇 Only show for owner */}
+      {userId === post.userId && (
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={handleDeletePost}
+        >
+          <Text style={styles.deleteButtonText}>Delete Post</Text>
+        </TouchableOpacity>
+      )}
 
       <View style={styles.commentForm}>
         <TextInput
@@ -183,6 +223,17 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   commentButton: { color: "#007AFF", fontWeight: "bold" },
+  deleteButton: {
+    marginTop: 10,
+    backgroundColor: "#ff3b30",
+    padding: 6,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+  },
+  deleteButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
   modalContainer: { flex: 1, padding: 20, backgroundColor: "#fff" },
   modalTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 12 },
   modalClose: { color: "#007AFF", marginBottom: 12 },
