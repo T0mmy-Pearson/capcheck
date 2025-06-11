@@ -4,7 +4,22 @@ import { useState, useEffect } from "react";
 import { StyleSheet, View, Alert, Text, Button, TextInput, FlatList, TouchableOpacity } from "react-native";
 import * as Location from "expo-location"
 import { fetchMushroomMarkerLocations, fetchMushrooms } from "@/utils/api";
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons';
+import { ActivityIndicator } from "react-native";
+
+interface Mushroom {
+  id: number;
+  name: string;
+  mushroomId?: number;
+}
+
+interface MarkerType {
+  id: number;
+  latitude: number;
+  longitude: number;
+  name: string;
+}
+
 
 
 export default function MapScreen() {
@@ -18,12 +33,15 @@ export default function MapScreen() {
   const [showRain, setShowRain] = useState(true);
   const [search, setSearch] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredMarkers, setFilteredMarkers] = useState([]);
+  const [filteredMarkers, setFilteredMarkers] = useState<MarkerType[]>([]);
   const [selectedMushroomId, setSelectedMushroomId] = useState<number | null>(null);
-  const [allMushrooms, setAllMushrooms] = useState([]);
+  const [allMushrooms, setAllMushrooms] = useState<Mushroom[]>([]);
   const [deviceLocation, setDeviceLocation] = useState<{ latitude: number; longitude: number; } | null>(null);
+  const [loadingMushrooms, setLoadingMushrooms] = useState(true);
+  const [loadingMarkers, setLoadingMarkers] = useState(true);
+  const [pendingMushroom, setPendingMushroom] = useState<Mushroom | null>(null);
 
-  
+
   /* Permissions */
 
 
@@ -48,12 +66,16 @@ export default function MapScreen() {
     })()
   }, [])
 
-  // Fetch all mushrooms for suggestions 
+
   useEffect(() => {
+    setLoadingMushrooms(true);
     fetch("https://capcheck.onrender.com/api/mushroom/")
       .then((res) => res.json())
       .then((data) => {
         setAllMushrooms(data.mushrooms);
+      })
+      .finally(() => {
+        setLoadingMushrooms(false);
       });
   }, []);
 
@@ -66,72 +88,81 @@ export default function MapScreen() {
 
 
 
-  // Fetch and transform markers ON LOADING, could be random number 1-257
- useEffect(() => {
-  if (selectedMushroomId !== null) {
-    const selectedMushroom = allMushrooms.find(m => m.id === selectedMushroomId);
-    fetchMushroomMarkerLocations(selectedMushroomId)
-      .then((data) => {
+  // Fetch and transform markers ON SEARCH, could be random number 1-257??
+  useEffect(() => {
+    if (selectedMushroomId !== null) {
+      setLoadingMarkers(true)
+      const selectedMushroom = allMushrooms.find(m => m.id === selectedMushroomId);
+      fetchMushroomMarkerLocations(selectedMushroomId)
+        .then((data) => {
 
-        const limited = data.slice(0, 50);
-        const markers = limited.map((arr, idx) => ({
-          id: idx,
-          latitude: arr[0],
-          longitude: arr[1],
- name: selectedMushroom ? selectedMushroom.name : `Mushroom ${selectedMushroomId}`
-        }));
-        setFilteredMarkers(markers);
-        console.log("Markers set:", markers);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch mushroom markers", err);
-      });
-  } else {
-    setFilteredMarkers([]); 
-  }
-}, [selectedMushroomId]);
-
-  // Filter markers AFTER search
-/*   useEffect(() => {
-    if (search.length === 0) {
-      setFilteredMarkers(mushroomMarkers);
-
+          const limited = data.slice(0, 50);
+          const markers = limited.map((arr, idx) => ({
+            id: idx,
+            latitude: arr[0],
+            longitude: arr[1],
+            name: selectedMushroom /* ? selectedMushroom.name : `Mushroom ${selectedMushroomId}` */
+          }));
+          setFilteredMarkers(markers);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch mushroom markers", err);
+        })
+        .finally(() => {
+          setLoadingMarkers(false);
+        });
     } else {
-      setFilteredMarkers(
-        mushroomMarkers.filter((m) =>
-          (m.name || "Mushroom").toLowerCase().includes(search.toLowerCase())
-        )
-      );
+      setFilteredMarkers([]);
     }
-  }, [search, mushroomMarkers]); */
-
-
+  }, [selectedMushroomId]);
 
   return (
     <>
       <View style={styles.searchBarContainer}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Look for a mushroom...!"
-          value={search}
-          onChangeText={text => {
-            setSearch(text);
-            setShowSuggestions(true);
-          }}
-          onFocus={() => setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
-        />
-        {showSuggestions && search.length > 0 && filteredSuggestions.length > 0 && (
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TextInput
+            style={[styles.searchBar, { flex: 1 }]}
+            placeholder="Look for a mushroom...!"
+            value={search}
+            onChangeText={text => {
+              setSearch(text);
+              setShowSuggestions(true);
+              setPendingMushroom(null);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+          />
+          <TouchableOpacity
+            style={{ marginLeft: 8, padding: 8 }}
+            onPress={() => {
+              if (pendingMushroom) {
+                setSelectedMushroomId(pendingMushroom.id);
+                setShowSuggestions(false);
+              }
+            }}
+            disabled={!pendingMushroom}
+          >
+            <Ionicons name="search" size={24} color={pendingMushroom ? "#333" : "#ffffff"} />
+          </TouchableOpacity>
+        </View>
+         {loadingMushrooms && (
+          <View style={{ padding: 10, alignItems: "center" }}>
+            <ActivityIndicator size="small" color="#333" />
+            <Text>Loading mushrooms...</Text>
+          </View>
+        )}
+        {showSuggestions && !loadingMushrooms && search.length > 0 && filteredSuggestions.length > 0 && (
           <FlatList
             style={styles.suggestions}
             data={filteredSuggestions}
-keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
+            keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => {
                   setSearch(item.name || "Mushroom");
+                  setShowSuggestions(false);
+                  setPendingMushroom(item);
                   setSelectedMushroomId(item.mushroomId);
-                  
                 }}
               >
                 <Text style={styles.suggestionItem}>{item.name || "Mushroom"}</Text>
@@ -139,38 +170,42 @@ keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
             )}
           />
         )}
+        
+
         {filteredMarkers.map((m) => (
-  <Marker
-    key={m.id}
-    coordinate={{ latitude: m.latitude, longitude: m.longitude }}
-    title={m.name || "Mushroom"}
-    image={require("../../assets/images/icon-1.png")}
-  />
-))}
-   <View style={{ position: "absolute", bottom: 40, right: 30, zIndex: 300 }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "transparent",
-            borderRadius: 25,
-            padding: 12,
-            elevation: 4,
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          onPress={() => {
-            if (deviceLocation) {
-              setRegion(region => region && ({
-                ...region,
-                latitude: deviceLocation.latitude,
-                longitude: deviceLocation.longitude,
-              }));
-            }
-          }}
-        >
-          <Ionicons name="locate" size={28} color="#333" />
-        </TouchableOpacity>
+          <Marker
+            key={m.id}
+            coordinate={{ latitude: m.latitude, longitude: m.longitude }}
+            title={m.name || "Mushroom"}
+            image={require("../../assets/images/icon-1.png")}
+          />
+        ))}
+        {/* <View style={{ position: "absolute", bottom: 40, right: 30, zIndex: 300 }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "transparent",
+              borderRadius: 25,
+              padding: 12,
+              elevation: 4,
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            onPress={() => {
+              if (deviceLocation) {
+                setRegion(region => region && ({
+                  ...region,
+                  latitude: deviceLocation.latitude,
+                  longitude: deviceLocation.longitude,
+                }));
+              }
+            }}
+          >
+            <Ionicons name="locate" size={28} color="#333" />
+          </TouchableOpacity>
+        </View> */}
       </View>
-      </View>
+
+
       {/* UrlTile OVerlay */}
       <View style={{ flex: 1 }}>
         <View style={styles.toggleContainer}>
@@ -195,6 +230,14 @@ keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
               image={require("../../assets/images/icon-1.png")}
             />
           ))}
+        {!loadingMarkers && filteredMarkers.map((m) => (
+          <Marker
+            key={m.id}
+            coordinate={{ latitude: m.latitude, longitude: m.longitude }}
+            title={m.name || "Mushroom"}
+            image={require("../../assets/images/icon-1.png")}
+          />
+        ))}
           {showRain && (
             <UrlTile
               urlTemplate={"https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=cede26dda2a03494927af0171d3c0b2a"}
@@ -269,15 +312,17 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     zIndex: 200,
+
   },
   searchBar: {
     backgroundColor: "#fff",
-    color: "#000",
+    color: "#000000",
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
     fontSize: 16,
     elevation: 2,
+    shadowColor: "#000",
   },
   suggestions: {
     backgroundColor: "#fff",
