@@ -1,7 +1,7 @@
 import { SessionContext } from "@/app/contexts/SessionContext";
 import { fetchMushroomById, fetchPhotosById } from "@/utils/api";
 import { useContext, useEffect, useState } from "react";
-import { FlatList, View, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 
 interface MushroomObject {
@@ -40,39 +40,33 @@ const FoundMushroomList = ()=>{
                     mushroomIdArray.push(photoData["mushroomId"]);
                   }
                 });
-                mushroomIdArray.forEach((mushroomId:number)=>{
-                    fetchMushroomById(mushroomId)
-                    .then(res=>{
-                        res.forEach((mushroomData: MushroomData)=>{
-                            newMushroomArray.push({
-                                scientificName: mushroomData.scientificName, 
-                                mushroomId: mushroomData.mushroomId
-                            })
-                        })
-                    })
+            mushroomIdArray.forEach((mushroomId:number)=>{
+                fetchMushroomById(mushroomId)
+                .then(res=>{
+                  console.log(res)
+                    newMushroomArray.push({
+                        scientificName: res.scientificName, 
+                        mushroomId: res.mushroomId
+                    }) 
                 })
+            })
             setMushroomArray(newMushroomArray)
         });
         console.log(mushroomArray)
       }, [userId]);
     return <>
-    <FlatList
-            contentContainerStyle={{ paddingBottom: 20 }}
-            data={mushroomArray}
-            keyExtractor={(item) => item.mushroomId.toString()}
-        renderItem={({ item }) => (
-            <View>
-                <ThemedText style={styles.bioText}>{item.scientificName}</ThemedText>
-            </View>
-        )}
-        />
-        <ThemedText style={styles.bioText}>some text</ThemedText>
+    
+      {mushroomArray.map(mushroom=>{
+        return <ThemedText style={styles.bioText}>{mushroom.scientificName}</ThemedText>
+      })}
+    
+       
         </>
 }
 
 const styles=StyleSheet.create({
     bioText: {
-        color: "#fff", 
+        color: "#000", 
         fontSize: 16,
       }
 })
