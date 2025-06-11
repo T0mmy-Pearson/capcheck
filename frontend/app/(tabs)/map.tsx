@@ -36,10 +36,11 @@ export default function MapScreen() {
   const [filteredMarkers, setFilteredMarkers] = useState<MarkerType[]>([]);
   const [selectedMushroomId, setSelectedMushroomId] = useState<number | null>(null);
   const [allMushrooms, setAllMushrooms] = useState<Mushroom[]>([]);
+
   const [deviceLocation, setDeviceLocation] = useState<{ latitude: number; longitude: number; } | null>(null);
   const [loadingMushrooms, setLoadingMushrooms] = useState(true);
   const [loadingMarkers, setLoadingMarkers] = useState(true);
-  const [pendingMushroom, setPendingMushroom] = useState<Mushroom | null>(null);
+
 
 
   /* Permissions */
@@ -72,8 +73,14 @@ export default function MapScreen() {
     fetch("https://capcheck.onrender.com/api/mushroom/")
       .then((res) => res.json())
       .then((data) => {
-        setAllMushrooms(data.mushrooms);
-      })
+
+      setAllMushrooms(
+        data.mushrooms.map((m: any) => ({
+          id: m.mushroomId ?? m.id, 
+          name: m.name,
+        }))
+      );
+    })
       .finally(() => {
         setLoadingMushrooms(false);
       });
@@ -101,7 +108,7 @@ export default function MapScreen() {
             id: idx,
             latitude: arr[0],
             longitude: arr[1],
-            name: selectedMushroom /* ? selectedMushroom.name : `Mushroom ${selectedMushroomId}` */
+            name: selectedMushroom ? selectedMushroom.name : `Mushroom ${selectedMushroomId}`
           }));
           setFilteredMarkers(markers);
         })
@@ -121,58 +128,58 @@ export default function MapScreen() {
      <View style={styles.searchBarContainer}>
   <View style={{ flexDirection: 'row', alignItems: 'center', position: 'relative' }}>
     <TextInput
-      style={[styles.searchBar, { flex: 1, paddingRight: 70 }]}
-      placeholder="Look for a mushroom...!"
-      value={search}
-      onChangeText={text => {
-        setSearch(text);
-        setShowSuggestions(true);
-        setPendingMushroom(null); 
-      }}
-      onFocus={() => setShowSuggestions(true)}
-      onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
-    />
-    {/* CLEAR SEARCH BAR */}
-    {search.length > 0 && (
-      <TouchableOpacity
-        onPress={() => {
-          setSearch('');
-          setPendingMushroom(null);
-          setShowSuggestions(false);
-        }}
-        style={{
-          position: 'absolute',
-          right: 40,
-          top: 0,
-          bottom: 0,
-          justifyContent: 'center',
-          padding: 8,
-        }}
-        accessibilityLabel="Clear search"
-      >
-        <Ionicons name="close" size={22} color="#888" />
-      </TouchableOpacity>
-    )}
-    {/* SEARCH BUTTON */}
-    <TouchableOpacity
-      onPress={() => {
-        if (pendingMushroom) {
-          setSelectedMushroomId(pendingMushroom.mushroomId);
-          setShowSuggestions(false);
-        }
-      }}
-      disabled={!pendingMushroom}
-      style={{
-        position: 'absolute',
-        right: 4,
-        top: 0,
-        bottom: 0,
-        justifyContent: 'center',
-        padding: 8,
-      }}
-    >
-      <Ionicons name="search" size={24} color={pendingMushroom ? "#333" : "#ccc"} />
-    </TouchableOpacity>
+  style={[styles.searchBar, { flex: 1, paddingRight: 70 }]}
+  placeholder="Look for a mushroom...!"
+  value={search}
+  onChangeText={text => {
+    setSearch(text);
+    setShowSuggestions(true);
+  }}
+  onFocus={() => setShowSuggestions(true)}
+ /*  onBlur={() => setTimeout(() => setShowSuggestions(false), 100)} */
+/>
+  {/* CLEAR SEARCH BAR */}
+{search.length > 0 && (
+  <TouchableOpacity
+    onPress={() => {
+      setSearch('');
+      setShowSuggestions(false);
+      setSelectedMushroomId(null);
+    }}
+    style={{
+      position: 'absolute',
+      right: 40,
+      top: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      padding: 8,
+    }}
+    accessibilityLabel="Clear search"
+  >
+    <Ionicons name="close" size={22} color="#888" />
+  </TouchableOpacity>
+)}
+{/* SEARCH BUTTON */}
+<TouchableOpacity
+  onPress={() => {
+
+    const found = allMushrooms.find(m => m.name.toLowerCase() === search.toLowerCase());
+    if (found) {
+      setSelectedMushroomId(found.id);
+    }
+    setShowSuggestions(false);
+  }}
+  style={{
+    position: 'absolute',
+    right: 4,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    padding: 8,
+  }}
+>
+  <Ionicons name="search" size={24} color={search ? "#333" : "#ccc"} />
+</TouchableOpacity>
   </View>
   {loadingMushrooms && (
     <View style={{ padding: 10, alignItems: "center" }}>
@@ -182,66 +189,34 @@ export default function MapScreen() {
   )}
 
   {/* Dropdown List items */}
-  {showSuggestions && !loadingMushrooms && search.length > 0 && filteredSuggestions.length > 0 && (
-    <FlatList
-      style={styles.suggestions}
-      data={filteredSuggestions}
-      keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
-      renderItem={({ item }) => (
-          <Pressable
-          hitSlop={{ top: 10, bottom: 10, left: 40, right: 40 }}
-           style={{
-      paddingVertical: 24,
-      paddingHorizontal: 32,
-      marginVertical: 4,
-      borderRadius: 10,
-      backgroundColor: "#fffde9",
-      justifyContent: "center",
-      alignItems: "flex-start",
-    }}
-    onPress={() => {
-              setShowSuggestions(false);
-              setSearch(item.name);
-              setPendingMushroom(item);
-              setSelectedMushroomId(item.mushroomId);
-            }}
-          >
-            <Text style={styles.suggestionItem}>{item.name || "Mushroom"}</Text>
-          </Pressable>
-      )}
-    />
-  )}
-       {/*  {filteredMarkers.map((m) => (
-          <Marker
-            key={m.id}
-            coordinate={{ latitude: m.latitude, longitude: m.longitude }}
-            title={m.name || "Mushroom"}
-            image={require("../../assets/images/icon-1.png")}
-          />
-        ))} */}
-        {/* <View style={{ position: "absolute", bottom: 40, right: 30, zIndex: 300 }}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "transparent",
-              borderRadius: 25,
-              padding: 12,
-              elevation: 4,
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            onPress={() => {
-              if (deviceLocation) {
-                setRegion(region => region && ({
-                  ...region,
-                  latitude: deviceLocation.latitude,
-                  longitude: deviceLocation.longitude,
-                }));
-              }
-            }}
-          >
-            <Ionicons name="locate" size={28} color="#333" />
-          </TouchableOpacity>
-        </View> */}
+ {showSuggestions && !loadingMushrooms && search.length > 0 && filteredSuggestions.length > 0 && (
+  <FlatList
+    style={styles.suggestions}
+    data={filteredSuggestions}
+    keyExtractor={item => item.id.toString()}
+    renderItem={({ item }) => (
+      <Pressable
+        hitSlop={{ top: 10, bottom: 10, left: 40, right: 40 }}
+        style={{
+          paddingVertical: 24,
+          paddingHorizontal: 32,
+          marginVertical: 4,
+          borderRadius: 10,
+          backgroundColor: "#fffde9",
+          justifyContent: "center",
+          alignItems: "flex-start",
+        }}
+        onPress={() => {
+          setShowSuggestions(false);
+          setSearch(item.name);
+          setSelectedMushroomId(item.id);
+        }}
+      >
+        <Text style={styles.suggestionItem}>{item.name || "Mushroom"}</Text>
+      </Pressable>
+    )}
+  />
+)}
       </View>
 
 
@@ -346,7 +321,7 @@ const styles = StyleSheet.create({
   },
   searchBarContainer: {
     position: "absolute",
-    color: "#000",
+    color: "#000000",
     top: 50,
     left: 20,
     right: 20,
