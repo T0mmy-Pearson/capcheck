@@ -39,6 +39,7 @@ const FoundMushroomList = () => {
           }
         });
 
+
         const mushroomIdArray = Array.from(mushroomIdSet);
 
         return Promise.all(
@@ -122,6 +123,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
 
 
 export default FoundMushroomList;
