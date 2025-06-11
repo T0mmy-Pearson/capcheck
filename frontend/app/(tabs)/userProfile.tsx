@@ -10,6 +10,7 @@ import PhotoCarousel from "@/components/PhotoCarousel";
 import { useRouter } from "expo-router";
 import { SessionContext } from "../contexts/SessionContext";
 import { fetchUserById } from "@/utils/api";
+import FoundMushroomList from "@/components/FoundMushroomList";
 
 interface UserObject {
   avatar: string;
@@ -60,6 +61,7 @@ export default function UserProfile() {
   }, []);
 
   return (
+
     <View style={styles.pageContainer}>
       <ParallaxScrollViewUserProfile
         headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -116,6 +118,66 @@ export default function UserProfile() {
         <Button title="Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
       </ParallaxScrollViewUserProfile>
     </View>
+=======
+    <ParallaxScrollViewUserProfile
+      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+      headerImage={<Image />}
+    >
+      <UserAvatar {...userObject} />
+      <View style={styles.bioBox}>
+        {editing ? (
+          <>
+            <TextInput
+              style={styles.bioInput}
+              value={bioInput}
+              onChangeText={setBioInput}
+              placeholder="Write your bio"
+              placeholderTextColor="#888"
+              multiline
+            />
+            <Button style={styles.button} onPress={handleSave}>
+              <Text style={styles.text}>Save</Text>
+            </Button>
+          </>
+        ) : (
+          <>
+            <ThemedText style={styles.bioText}>{bio || "Write your bio here..."}</ThemedText>
+            <Button
+              style={styles.button}
+              onPress={() => {
+                setBioInput(bio);
+                setEditing(true);
+              }}
+            >
+              <Text style={styles.text}>Edit Bio</Text>
+            </Button>
+          </>
+        )}
+      </View>
+
+      <ThemedText>POINTS SCORE</ThemedText>
+
+      <ThemedText>Checklist/stats box links to other page</ThemedText>
+
+      <PhotoCarousel />
+
+      <ThemedText>post photo functionality</ThemedText>
+
+      <Button title="View Found Mushrooms" onPress={() => router.push("/AddMushroom")} />
+      <Button title="Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
+
+      <View style={styles.container}>
+        <CheckBox
+          onPress={() => setMushroom(!mushroom)}
+          title="Mushroom1 move this around, maybe on to the mushroom profile page"
+          isChecked={mushroom}
+        />
+      </View>
+      <View style={styles.container}>
+        <FoundMushroomList/>
+      </View>
+    </ParallaxScrollViewUserProfile>
+
   );
 }
 

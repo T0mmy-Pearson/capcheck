@@ -1,44 +1,43 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { router } from "expo-router";
 import * as MediaLibrary from "expo-media-library";
 import * as ImageManipulator from "expo-image-manipulator";
 import { useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Button,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 export default function CameraScreen() {
-  const navigation = useNavigation();
   const [facing, setFacing] = useState<"front" | "back">("back");
+  const [flash, setFlash] = useState<"off" | "on">("off");
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
-  const [uploading, setUploading] = useState(false);
-  const [previewUri, setPreviewUri] = useState<string | null>(null);
-  const [saveStatus, setSaveStatus] = useState<"save" | "saved">("save");
+  const [mediaPermission, requestMediaPermission] =
+    MediaLibrary.usePermissions();
+
+  const [saving, setSaving] = useState(false);
+  const [capturedPhotoUri, setCapturedPhotoUri] = useState<string | null>(null);
   const cameraRef = useRef<CameraView>(null);
 
   if (!cameraPermission || !mediaPermission) return <View />;
-
   if (!cameraPermission.granted || !mediaPermission.granted) {
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
           We need your permission to use the camera and save photos.
         </Text>
-        <Button
+        <TouchableOpacity
           onPress={() => {
             requestCameraPermission();
             requestMediaPermission();
           }}
-          title="Grant Permissions"
-        />
+        >
+          <Text style={styles.grantText}>Grant Permissions</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -47,128 +46,149 @@ export default function CameraScreen() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
+  function toggleFlash() {
+    setFlash((prev) => (prev === "off" ? "on" : "off"));
+  }
+
   async function takePicture() {
     if (!cameraRef.current) return;
 
     try {
-      setUploading(true);
-      setSaveStatus("save");
-      const photo = await cameraRef.current.takePictureAsync({ quality: 0.5 });
+      setSaving(true);
 
-      let finalPhoto = photo;
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: 0.5,
+        skipProcessing: true,
+      });
+
+      let finalUri = photo.uri;
 
       if (facing === "front") {
-        const flipped = await ImageManipulator.manipulateAsync(
+        const manipulated = await ImageManipulator.manipulateAsync(
           photo.uri,
           [{ flip: ImageManipulator.FlipType.Horizontal }],
-          { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+          { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
         );
-        finalPhoto = flipped;
+        finalUri = manipulated.uri;
       }
 
-      setPreviewUri(finalPhoto.uri);
+      setCapturedPhotoUri(finalUri);
     } catch (err) {
-      console.error("Error taking picture:", err);
+      console.error("Capture error:", err);
     } finally {
-      setUploading(false);
+      setSaving(false);
     }
   }
 
   async function savePhoto() {
-    if (!previewUri) return;
+    if (!capturedPhotoUri) return;
 
     try {
-      setUploading(true);
-      await MediaLibrary.saveToLibraryAsync(previewUri);
-      console.log("Photo saved to camera roll");
-      setSaveStatus("saved");
+      setSaving(true);
+      await MediaLibrary.saveToLibraryAsync(capturedPhotoUri);
+      alert("Photo saved to camera roll!");
+      setCapturedPhotoUri(null); 
     } catch (err) {
       console.error("Save error:", err);
     } finally {
-      setUploading(false);
+      setSaving(false);
     }
   }
 
-  if (previewUri) {
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => setPreviewUri(null)}
-        >
-          <Text style={styles.backButtonText}>← Retake</Text>
-        </TouchableOpacity>
-
-        <Image source={{ uri: previewUri }} style={{ flex: 1 }} resizeMode="cover" />
-
-        <TouchableOpacity
-          style={[styles.captureButton, { alignSelf: "center", margin: 20 }]}
-          onPress={savePhoto}
-          disabled={uploading || saveStatus === "saved"}
-        >
-          <Text style={{ color: "#000", fontWeight: "bold" }}>
-            {uploading ? "Saving..." : saveStatus === "saved" ? "Saved" : "Save"}
-          </Text>
-        </TouchableOpacity>
-
-        {uploading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#fff" />
-          </View>
-        )}
-      </View>
-    );
+  function handleRetake() {
+    setCapturedPhotoUri(null);
   }
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => router.push("/community")}
-      >
-        <Text style={styles.backButtonText}>← Back</Text>
-      </TouchableOpacity>
+      {capturedPhotoUri ? (
+        <>
+          {/* Photo Preview */}
+          <Image source={{ uri: capturedPhotoUri }} style={styles.camera} />
 
-      <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
-        <TouchableOpacity
-          style={styles.flipButton}
-          onPress={toggleCameraFacing}
-        >
-          <Text style={styles.flipText}>🔄</Text>
-        </TouchableOpacity>
-
-        <View style={styles.captureContainer}>
-          <TouchableOpacity
-            style={styles.captureButton}
-            onPress={takePicture}
-            disabled={uploading}
-          >
-            <View style={styles.innerCircle} />
+          {/* Retake Button */}
+          <TouchableOpacity style={styles.backButton} onPress={handleRetake}>
+            <Text style={styles.backButtonText}>↺ Retake</Text>
           </TouchableOpacity>
-        </View>
-      </CameraView>
 
-      {uploading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#fff" />
-        </View>
+          {/* Save Button */}
+          <View style={styles.captureContainer}>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={savePhoto}
+              disabled={saving}
+            >
+              <View style={styles.innerCircle} />
+            </TouchableOpacity>
+            <Text style={styles.saveText}>{saving ? "Saving..." : "Save"}</Text>
+          </View>
+        </>
+      ) : (
+        <>
+          {/* Back Button */}
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.push("/community")}
+          >
+            <Text style={styles.backButtonText}>← Back</Text>
+          </TouchableOpacity>
+
+          <CameraView
+            style={styles.camera}
+            facing={facing}
+            flash={flash}
+            ref={cameraRef}
+          >
+            {/* Flash Button */}
+            <TouchableOpacity
+              style={[
+                styles.flashButton,
+                flash === "on" ? styles.flashOn : styles.flashOff,
+              ]}
+              onPress={toggleFlash}
+            >
+              <Text style={styles.flashEmoji}>⚡️</Text>
+            </TouchableOpacity>
+
+            {/* Flip Camera Button */}
+            <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
+              <Text style={styles.flipText}>🔄</Text>
+            </TouchableOpacity>
+
+            {/* Capture Button */}
+            <View style={styles.captureContainer}>
+              <TouchableOpacity
+                style={styles.captureButton}
+                onPress={takePicture}
+                disabled={saving}
+              >
+                <View style={styles.innerCircle} />
+              </TouchableOpacity>
+              <Text style={styles.saveText}>Take Photo</Text>
+            </View>
+          </CameraView>
+
+          {saving && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#fff" />
+            </View>
+          )}
+        </>
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  message: {
+  container: { flex: 1, justifyContent: "center" },
+  message: { textAlign: "center", paddingBottom: 40 },
+  grantText: {
+    color: "#007AFF",
     textAlign: "center",
-    paddingBottom: 40,
+    fontSize: 18,
+    fontWeight: "500",
   },
-  camera: {
-    flex: 1,
-  },
+  camera: { flex: 1 },
   loadingOverlay: {
     position: "absolute",
     bottom: 50,
@@ -192,7 +212,7 @@ const styles = StyleSheet.create({
   },
   flipButton: {
     position: "absolute",
-    top: 43,
+    top: 50,
     right: 20,
     backgroundColor: "rgba(0,0,0,0.3)",
     padding: 10,
@@ -203,10 +223,29 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: "white",
   },
+  flashButton: {
+    position: "absolute",
+    top: 50,
+    left: "50%",
+    marginLeft: -20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  flashOn: { backgroundColor: "#948781" },
+  flashOff: { backgroundColor: "transparent" },
+  flashEmoji: {
+    fontSize: 24,
+    color: "white",
+  },
   captureContainer: {
     position: "absolute",
     bottom: 40,
     alignSelf: "center",
+    alignItems: "center",
   },
   captureButton: {
     width: 80,
@@ -223,5 +262,11 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     backgroundColor: "white",
+  },
+  saveText: {
+    marginTop: 10,
+    color: "white",
+    fontSize: 18,
+    fontWeight: "600",
   },
 });
