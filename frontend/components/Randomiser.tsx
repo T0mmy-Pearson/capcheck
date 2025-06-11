@@ -102,9 +102,13 @@ const Randomiser = (): JSX.Element => {
 
   return (
     <View style={styles.titleContainer}>
-      <Image source={{ uri: correctedImgUrl }} style={styles.image} />
+     <View style={styles.imageWrapper}>
+  <Image source={{ uri: correctedImgUrl }} style={styles.image} />
+</View>
+      <View style={styles.nameBox}>
       <Text style={styles.title}>{mushroom.name}</Text>
       <BodyText style={styles.scientific}>{mushroom.scientificName}</BodyText>
+    </View>
 <View style={{flexDirection: "row", flexWrap: "wrap"}}>
 <BodyText style={styles.text}>{mushroom.edible}</BodyText>
       <BodyText style={styles.text}>{edibleIcon()}</BodyText>
@@ -123,11 +127,15 @@ const styles = StyleSheet.create({
   titleContainer: {
     borderWidth: 2,
     borderRadius: 10,
-    width: 350,
+    width: "100%", 
+    maxWidth: 400, 
+    alignSelf: "center",
     alignItems: "center",
     borderColor: "white",
+    backgroundColor: "#f5f5f5",
+    padding: 10,
   },
-  title: { fontSize: 20, fontWeight: "bold", color: "#ffffff", gap: 10 },
+  title: { fontSize: 20, fontWeight: "bold", color: "#000", gap: 10 },
   scientific: {
     fontSize: 16,
     fontStyle: "italic",
@@ -135,19 +143,45 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   image: {
-    width: "90%",
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 16,
-    marginTop: 16,
+    width: "100%",
+    height: "100%",
+    borderRadius: 1,
+    resizeMode: "cover", 
   },
     label: {
       fontWeight: "bold",
       marginTop: 2,
       paddingBottom: 10,
-      color: "#ffffff",
+      color: "#000",
     },
-    text: { fontSize: 16, marginTop: 2, paddingBottom: 10, marginLeft: 5, marginRight: 5, color: "#ffffff" },
+    text: { fontSize: 16, marginTop: 2, paddingBottom: 10, marginLeft: 5, marginRight: 5, color: "#000" },
+    nameBox: {
+    backgroundColor: "#ffffff",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3, 
+},
+imageWrapper: {
+ width: "100%",
+  aspectRatio: 2, 
+  borderRadius: 10,
+  marginVertical: 15,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.8,
+  shadowRadius: 20,
+  elevation: 5, 
+  backgroundColor: "#fff",
+  alignSelf: "center",
+  overflow: "hidden",
+},
 });
 
 export default Randomiser;

@@ -12,32 +12,37 @@ export default function HomeScreen() {
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
-        <Image
-          source={require("@/assets/images/1000_F_370951245_vWF0oLH6WRDT5kb9Anvl4HbLCJBBX3XI.jpg")}
-          style={styles.reactLogo}
-        />
+        <View style={styles.logoContainer}>
+  <Image
+    source={require("@/assets/images/image.png")}
+    style={styles.reactLogo}
+  />
+</View>
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Cap Check 🍄</ThemedText>
+        <ThemedText type="title">CAP CHECK 🍄</ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">
-          Map feature with extended drop down features possibly
+      Is your pocket guide to mushroom foraging fun! Snap, log, and share your fungi finds while connecting with fellow fungi finders on the community page. Whether you're spotting something strange or showing off a rare cap, CapCheck makes mushroom adventures even more magical.
         </ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">community based pop feature</ThemedText>
-      </ThemedView>
+      
       <View style={styles.mushroomFact}>
         <Randomiser />
       </View>
-      <OpenMeteoWeather></OpenMeteoWeather>
+      <View style={{ width: "100%" }}>
+      <OpenMeteoWeather />
+      </View>
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  widget: {
+    width: "100%"
+  },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -53,10 +58,15 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   reactLogo: {
-    width: 630,
-    height: 300,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
+  width: 200, 
+  height: 200,
+  resizeMode: "cover", 
+  alignSelf: "center",
+  marginTop: 40,
+},
+logoContainer: {
+  backgroundColor: "#f5f5f5", 
+  alignItems: "center",
+  paddingVertical: 10,
+},
 });
