@@ -1,26 +1,26 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
+import * as ImageManipulator from "expo-image-manipulator";
 import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Button,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CameraScreen() {
   const navigation = useNavigation();
   const [facing, setFacing] = useState<"front" | "back">("back");
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [mediaPermission, requestMediaPermission] =
-    MediaLibrary.usePermissions();
+  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [uploading, setUploading] = useState(false);
+  const [previewUri, setPreviewUri] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<"save" | "saved">("save");
   const cameraRef = useRef<CameraView>(null);
 
   if (!cameraPermission || !mediaPermission) return <View />;
@@ -51,55 +51,76 @@ export default function CameraScreen() {
 
     try {
       setUploading(true);
+      setSaveStatus("save");
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.5 });
-      await MediaLibrary.saveToLibraryAsync(photo.uri);
 
-      const userId = await AsyncStorage.getItem("userId");
-      console.log("userId:", userId); // ✅ Debug
-      if (!userId) throw new Error("Missing userId");
+      let finalPhoto = photo;
 
-      const formData = new FormData();
-      formData.append("photo", {
-        uri: photo.uri,
-        name: "upload.jpg",
-        type: "image/jpeg",
-      } as any);
-      formData.append("latitude", "53.38176");
-      formData.append("longitude", "-1.71751");
-      formData.append("mushroomId", "2");
-      formData.append("userId", userId);
-      formData.append("caption", "Taken from camera");
-
-      const response = await fetch(
-        "https://capcheck.onrender.com/api/userphotos",
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            Accept: "application/json", // ✅ KEEP ONLY THIS
-            // Do not add Content-Type
-          },
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        console.error("Failed to upload:", result);
-        throw new Error(result?.message || "Upload failed");
+      if (facing === "front") {
+        const flipped = await ImageManipulator.manipulateAsync(
+          photo.uri,
+          [{ flip: ImageManipulator.FlipType.Horizontal }],
+          { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+        );
+        finalPhoto = flipped;
       }
 
-      console.log("Upload success:", result);
+      setPreviewUri(finalPhoto.uri);
     } catch (err) {
-      console.error("Upload error:", err);
+      console.error("Error taking picture:", err);
     } finally {
       setUploading(false);
     }
   }
 
+  async function savePhoto() {
+    if (!previewUri) return;
+
+    try {
+      setUploading(true);
+      await MediaLibrary.saveToLibraryAsync(previewUri);
+      console.log("Photo saved to camera roll");
+      setSaveStatus("saved");
+    } catch (err) {
+      console.error("Save error:", err);
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  if (previewUri) {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setPreviewUri(null)}
+        >
+          <Text style={styles.backButtonText}>← Retake</Text>
+        </TouchableOpacity>
+
+        <Image source={{ uri: previewUri }} style={{ flex: 1 }} resizeMode="cover" />
+
+        <TouchableOpacity
+          style={[styles.captureButton, { alignSelf: "center", margin: 20 }]}
+          onPress={savePhoto}
+          disabled={uploading || saveStatus === "saved"}
+        >
+          <Text style={{ color: "#000", fontWeight: "bold" }}>
+            {uploading ? "Saving..." : saveStatus === "saved" ? "Saved" : "Save"}
+          </Text>
+        </TouchableOpacity>
+
+        {uploading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#fff" />
+          </View>
+        )}
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* 🔙 Back Button */}
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}
@@ -146,22 +167,6 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    margin: 64,
-  },
-  button: {
-    flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
   },
   loadingOverlay: {
     position: "absolute",
