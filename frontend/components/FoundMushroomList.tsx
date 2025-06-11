@@ -5,9 +5,8 @@ import { ScrollView, View, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 
 
-
 interface MushroomObject {
-  scientificName: string;
+  name: string;
   mushroomId: number;
 }
 
@@ -45,7 +44,7 @@ const FoundMushroomList = () => {
         return Promise.all(
           mushroomIdArray.map((mushroomId) =>
             fetchMushroomById(mushroomId).then((res) => ({
-              scientificName: res.scientificName,
+              name: res.name,
               mushroomId: res.mushroomId,
             }))
           )
@@ -74,7 +73,7 @@ const FoundMushroomList = () => {
         mushroomArray.map((mushroom) => (
           <View key={mushroom.mushroomId} style={styles.card}>
             <ThemedText style={styles.mushroomName}>
-              {mushroom.scientificName}
+              {mushroom.name}
             </ThemedText>
           </View>
         ))

@@ -47,7 +47,6 @@ export default function UserProfile() {
       try {
         const userData = await fetchUserById(idToUse);
         setUserObject(userData);
-        console.log("Loaded user:", userData);
       } catch (err) {
         console.error("Failed to fetch user", err);
       }
@@ -110,10 +109,16 @@ export default function UserProfile() {
 
         <View style={styles.fullWidthSeparator} /> {/* Full width separator below carousel */}
 
+
         <ThemedText style={{ color: 'white', marginTop: 20 }}>post photo functionality</ThemedText>
 
         <Button title="View Found Mushrooms" onPress={() => router.push("/AddMushroom")} />
         <Button title="Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
+
+        <View style={{ marginTop: 20 }}>
+          <FoundMushroomList />
+        </View>
+
       </ParallaxScrollViewUserProfile>
     </View>
   );
