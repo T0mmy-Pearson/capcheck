@@ -38,6 +38,7 @@ class Users(Base):
 class UserPhotos(Base):
     __tablename__ = "userphotos"
     photo = Column(String)
+    caption = Column(String)
     photoId = Column(Integer, primary_key=True)
     userId = Column(Integer, ForeignKey("users.userId", ondelete="CASCADE"))
     latitude = Column(String)
