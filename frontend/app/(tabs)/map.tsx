@@ -1,4 +1,12 @@
 
+import MapView, { Marker, MapPressEvent, UrlTile } from "react-native-maps";
+import { useState, useEffect } from "react";
+import { StyleSheet, View, Alert, Text, Button, TextInput, FlatList, TouchableOpacity } from "react-native";
+import * as Location from "expo-location"
+import { fetchMushroomMarkerLocations, fetchMushrooms } from "@/utils/api";
+import { Ionicons } from '@expo/vector-icons'; 
+
+
 export default function MapScreen() {
   const [region, setRegion] = useState<{
     latitude: number;
@@ -15,6 +23,46 @@ export default function MapScreen() {
   const [allMushrooms, setAllMushrooms] = useState([]);
   const [deviceLocation, setDeviceLocation] = useState<{ latitude: number; longitude: number; } | null>(null);
 
+  
+  /* Permissions */
+
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== "granted") {
+        Alert.alert("access denied")
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({})
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 5,
+        longitudeDelta: 5
+      });
+      setDeviceLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      })
+    })()
+  }, [])
+
+  // Fetch all mushrooms for suggestions 
+  useEffect(() => {
+    fetch("https://capcheck.onrender.com/api/mushroom/")
+      .then((res) => res.json())
+      .then((data) => {
+        setAllMushrooms(data.mushrooms);
+      });
+  }, []);
+
+
+  const filteredSuggestions = search.length === 0
+    ? []
+    : allMushrooms.filter(m =>
+      (m.name || "Mushroom").toLowerCase().includes(search.toLowerCase())
+    );
 
 
 
@@ -188,3 +236,59 @@ keyExtractor={item => (item.id ? item.id.toString() : Math.random().toString())}
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  map: {
+    flex: 1,
+    width: "100%",
+    height: "100%"
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  toggleContainer: {
+    flexDirection: "row",
+    color: "#000",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 33,
+    padding: 10,
+    bottom: 100,
+    left: 250,
+    backgroundColor: "#fff",
+    gap: 10,
+    position: "absolute",
+    zIndex: 100,
+  },
+  searchBarContainer: {
+    position: "absolute",
+    color: "#000",
+    top: 50,
+    left: 20,
+    right: 20,
+    zIndex: 200,
+  },
+  searchBar: {
+    backgroundColor: "#fff",
+    color: "#000",
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    fontSize: 16,
+    elevation: 2,
+  },
+  suggestions: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginTop: 2,
+    maxHeight: 120,
+  },
+  suggestionItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+});
+
