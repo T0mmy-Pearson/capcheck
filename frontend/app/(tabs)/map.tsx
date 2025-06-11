@@ -6,6 +6,7 @@ import * as Location from "expo-location"
 import { fetchMushroomMarkerLocations, fetchMushrooms } from "@/utils/api";
 import { Ionicons } from '@expo/vector-icons';
 import { ActivityIndicator } from "react-native";
+import Searchbar from "react-native-elements";
 
 interface Mushroom {
   id: number;
@@ -125,20 +126,22 @@ export default function MapScreen() {
 
   return (
     <>
+    {/* SearchBar */}
      <View style={styles.searchBarContainer}>
   <View style={{ flexDirection: 'row', alignItems: 'center', position: 'relative' }}>
     <TextInput
   style={[styles.searchBar, { flex: 1, paddingRight: 70 }]}
-  placeholder="Look for a mushroom...!"
+  placeholder="search for a mushroom..."
+  placeholderTextColor="#777"
   value={search}
   onChangeText={text => {
     setSearch(text);
     setShowSuggestions(true);
   }}
   onFocus={() => setShowSuggestions(true)}
- /*  onBlur={() => setTimeout(() => setShowSuggestions(false), 100)} */
+  onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
 />
-  {/* CLEAR SEARCH BAR */}
+{/* CLEAR SEARCH BAR */}
 {search.length > 0 && (
   <TouchableOpacity
     onPress={() => {
@@ -166,6 +169,9 @@ export default function MapScreen() {
     const found = allMushrooms.find(m => m.name.toLowerCase() === search.toLowerCase());
     if (found) {
       setSelectedMushroomId(found.id);
+      setShowSuggestions(false);
+      setSearch('');
+
     }
     setShowSuggestions(false);
   }}
@@ -218,8 +224,6 @@ export default function MapScreen() {
   />
 )}
       </View>
-
-
       {/* UrlTile OVerlay */}
       <View style={{ flex: 1 }}>
         <View style={styles.toggleContainer}>
