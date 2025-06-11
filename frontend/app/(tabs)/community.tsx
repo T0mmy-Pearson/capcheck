@@ -23,8 +23,8 @@ type RootStackParamList = {
 };
 
 export default function CommunityScreen() {
-
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +54,7 @@ export default function CommunityScreen() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "Images",
+      mediaTypes: "images",
       quality: 0.7,
     });
 
@@ -259,9 +259,6 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     borderColor: "#000",
     borderWidth: 0.4,
-    borderRadius: 120
+    borderRadius: 120,
   },
 });
-
-
-
