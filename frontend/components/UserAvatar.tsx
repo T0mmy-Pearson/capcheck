@@ -1,27 +1,31 @@
 import { Avatar } from 'react-native-elements';
-import * as ImagePicker from 'expo-image-picker'
-import { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Alert, Image, Pressable } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
+import { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Pressable, TouchableOpacity } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-
-interface UserObject{
+interface UserObject {
   avatar: string;
   username: string;
-  userId: number;
+  userId: number;  // make sure this is passed in!
   score: number;
 }
-const UserAvatar = ({ avatar, username, score }: UserObject) => {
+
+const UserAvatar = ({ avatar, username, userId, score }: UserObject) => {
   const [localAvatar, setLocalAvatar] = useState('https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg');
-    useEffect(() => {
-      const loadAvatar = async () => {
-        try {
-          const savedAvatar = await AsyncStorage.getItem("userAvatar");
-          console.log(avatar)
-          if (savedAvatar) {
-            setLocalAvatar(savedAvatar);
-          } else if (avatar) {
+
+  // Create unique key per user
+  const storageKey = `userAvatar_${userId}`;
+
+  useEffect(() => {
+    const loadAvatar = async () => {
+      try {
+        const savedAvatar = await AsyncStorage.getItem(storageKey);
+        if (savedAvatar) {
+          setLocalAvatar(savedAvatar);
+        } else if (avatar) {
           setLocalAvatar(avatar);
         }
       } catch (error) {
@@ -29,10 +33,11 @@ const UserAvatar = ({ avatar, username, score }: UserObject) => {
       }
     };
     loadAvatar();
-  }, [avatar]);
+  }, [avatar, storageKey]);
+
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -41,68 +46,68 @@ const UserAvatar = ({ avatar, username, score }: UserObject) => {
       const uri = result.assets[0].uri;
       setLocalAvatar(uri);
       try {
-        await AsyncStorage.setItem("userAvatar", uri);
+        await AsyncStorage.setItem(storageKey, uri);
       } catch (error) {
         console.error("Avatar not saved", error);
       }
     }
   };
+
   return (
     <View style={styles.container}>
-      <View style={styles.avatar}>
+      <View style={styles.avatarWrapper}>
         <Avatar
           size="large"
           rounded
-          source={{ uri: avatar }}
+          source={{ uri: localAvatar }}
         />
-        <Avatar.Accessory
-          size={30}
-          onPress={handlePickImage}
-        />
+        <TouchableOpacity onPress={handlePickImage} style={styles.cameraIconWrapper} activeOpacity={0.7}>
+          <Ionicons name="camera" size={20} color="#0a84ff" />
+        </TouchableOpacity>
       </View>
+
       <Text style={styles.name}>{username}</Text>
+
       <Pressable onPress={() => router.push("/EditAccountInfoPage")}>
-      <Text style={styles.editLink}>Edit Account Info</Text>
+        <Text style={styles.editLink}>Edit Account Info</Text>
       </Pressable>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-    image: {
-    },
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#121212',
-        padding: 20,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        color: 'white',
-    },
-    avatar: {
-        marginBottom: 20,
-    },
-    name: {
-        fontSize: 18,
-        fontWeight: '600',
-        marginTop: 10,
-        color: 'white',
-    },
-    email: {
-        fontSize: 16,
-        color: 'gray',
-    },
-    editLink: {
-        color: '#4F8EF7',
-        fontSize: 16,
-        marginTop: 10,
-    }
-})
-
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginBottom: 20,
+  },
+  cameraIconWrapper: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 12,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: '#0a84ff',
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 10,
+    color: 'white',
+  },
+  editLink: {
+    color: '#4F8EF7',
+    fontSize: 16,
+    marginTop: 10,
+  },
+});
 
 export default UserAvatar;
+
