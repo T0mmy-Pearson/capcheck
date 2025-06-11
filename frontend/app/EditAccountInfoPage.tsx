@@ -31,7 +31,7 @@ export default function EditAccountScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginBottom: 20 }}>
         <Text style={{ color: 'white' }}>← Back</Text>
         </TouchableOpacity>
       <Text style={styles.label}>Name</Text>

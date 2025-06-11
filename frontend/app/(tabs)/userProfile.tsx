@@ -110,7 +110,8 @@ export default function UserProfile() {
 
         <Text style={styles.sectionHeader}>My Mushrooms</Text>
         <PhotoCarousel />
-        <View style={{ marginTop: 20 }}>
+        <View style={{ marginTop: 0 }}>
+          <View style={styles.avatarSeparator} />
           <FoundMushroomList />
         </View>
       </ParallaxScrollViewUserProfile>
@@ -126,15 +127,12 @@ const styles = StyleSheet.create({
   bioBox: {
     backgroundColor: "#0000",
     borderRadius: 16,
-    padding: 16,
-    marginVertical: 12,
     borderWidth: 1,
     borderColor: "#0000",
     shadowColor: "#0a84ff",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 4,
   },
   bioText: {
     color: "#ffff",
@@ -144,34 +142,17 @@ const styles = StyleSheet.create({
   bioInput: {
     color: "#cce4ff",
     fontSize: 16,
-    minHeight: 80,
-    textAlignVertical: "top",
-    padding: 8,
     backgroundColor: "#0000",
-    marginBottom: 12,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#0a84ff",
   },
-    heading: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginTop: 20,
-    marginBottom: 12,
-    color: "#fff",
-    paddingHorizontal: 0, 
-  },
-
   sectionHeader: {
     color: "#ffff",
     fontSize: 20,
-    fontWeight: "600",
-    marginTop: 20,
+    fontWeight: 400,
   },
 
-  textButton: {
-    marginTop: 8,
-  },
 
   textButtonText: {
     color: "#0a84ff",
@@ -182,8 +163,6 @@ const styles = StyleSheet.create({
   avatarSeparator: {
     height: 1.5,
     backgroundColor: "#ffff",
-    marginVertical: 18,
-    marginHorizontal: 4,
     borderRadius: 1,
     opacity: 0.6,
   },
@@ -191,7 +170,6 @@ const styles = StyleSheet.create({
   fullWidthSeparator: {
     height: 1.5,
     backgroundColor: "#ffff",
-    marginVertical: 18,
     borderRadius: 1,
     opacity: 0.6,
     width: "100%",

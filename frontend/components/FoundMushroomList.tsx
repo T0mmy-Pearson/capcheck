@@ -1,8 +1,9 @@
 import { SessionContext } from "@/app/contexts/SessionContext";
 import { fetchMushroomById, fetchPhotosById } from "@/utils/api";
 import { useContext, useEffect, useState } from "react";
-import { ScrollView, View, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
+import { useNavigation } from "@react-navigation/native";
 
 
 interface MushroomObject {
@@ -26,6 +27,7 @@ const FoundMushroomList = () => {
   const userId = userIdFromContext ?? DUMMY_USER_ID;
   const [mushroomArray, setMushroomArray] = useState<MushroomObject[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     setLoading(true);
@@ -64,7 +66,7 @@ const FoundMushroomList = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <ThemedText type="title" style={styles.heading}>
-        Mushrooms You've Found
+        Mushrooms I've Found
       </ThemedText>
       {loading ? (
         <ThemedText style={styles.loadingText}>Loading...</ThemedText>
@@ -72,11 +74,19 @@ const FoundMushroomList = () => {
         <ThemedText style={styles.loadingText}>No mushrooms found.</ThemedText>
       ) : (
         mushroomArray.map((mushroom) => (
-          <View key={mushroom.mushroomId} style={styles.card}>
+          <TouchableOpacity
+            key={mushroom.mushroomId}
+            style={styles.card}
+            onPress={() =>
+              navigation.navigate("MushroomProfile", {
+                mushroomId: mushroom.mushroomId,
+              })
+            }
+          >
             <ThemedText style={styles.mushroomName}>
               {mushroom.name}
             </ThemedText>
-          </View>
+          </TouchableOpacity>
         ))
       )}
     </ScrollView>
@@ -86,17 +96,15 @@ const FoundMushroomList = () => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
-    paddingHorizontal: 24,
+    paddingHorizontal: 8,
     backgroundColor: "#000000",
     minHeight: "100%",
   },
   heading: {
-    fontSize: 22,
-    fontWeight: "700",
+    fontSize: 20,
+    color: "#ffff",
+    fontWeight: "400",
     marginBottom: 20,
-    color: "#E0E0E0",
-    paddingHorizontal: 4,
-    textAlign: "center",
   },
   loadingText: {
     textAlign: "center",

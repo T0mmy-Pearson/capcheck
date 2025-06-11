@@ -57,12 +57,12 @@ const UserAvatar = ({ avatar, username, userId, score }: UserObject) => {
     <View style={styles.container}>
       <View style={styles.avatarWrapper}>
         <Avatar
-          size="large"
+          size={120}
           rounded
           source={{ uri: localAvatar }}
         />
         <TouchableOpacity onPress={handlePickImage} style={styles.cameraIconWrapper} activeOpacity={0.7}>
-          <Ionicons name="camera" size={20} color="#0a84ff" />
+          <Ionicons name="camera" size={25} color="#0a84ff" />
         </TouchableOpacity>
       </View>
 
@@ -80,16 +80,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: 5,
   },
   avatarWrapper: {
     position: 'relative',
-    marginBottom: 20,
   },
   cameraIconWrapper: {
     position: 'absolute',
-    bottom: 4,
-    right: 4,
+    bottom: -10,
+    right: -10,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 12,
     padding: 4,
