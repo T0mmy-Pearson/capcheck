@@ -114,20 +114,6 @@ export default function UserProfile() {
 
         <View style={styles.fullWidthSeparator} />
 
-        <ThemedText style={{ color: 'white', marginTop: 20 }}>post photo functionality</ThemedText>
-
-        <Button title="View Found Mushrooms" onPress={() => router.push("/AddMushroom")} />
-        <Button title="Add Mushroom" onPress={() => router.push("/FoundMushroom")} />
-
-        <View style={{ marginTop: 20 }}>
-          <Checkbox.Item
-            label="Mushroom1 move this around, maybe on to the mushroom profile page"
-            status={mushroomChecked ? 'checked' : 'unchecked'}
-            onPress={() => setMushroomChecked(!mushroomChecked)}
-            labelStyle={{ color: 'white' }}
-          />
-        </View>
-
         <View style={{ marginTop: 20 }}>
           <FoundMushroomList />
         </View>
