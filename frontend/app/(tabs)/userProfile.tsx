@@ -171,6 +171,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#0a84ff",
   },
+    heading: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginTop: 20,
+    marginBottom: 12,
+    color: "#fff",
+    paddingHorizontal: 0, 
+  },
 
   sectionHeader: {
     color: "#ffff",
