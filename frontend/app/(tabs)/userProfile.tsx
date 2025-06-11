@@ -49,7 +49,6 @@ export default function UserProfile() {
       try {
         const userData = await fetchUserById(idToUse);
         setUserObject(userData);
-        console.log("Loaded user:", userData);
       } catch (err) {
         console.error("Failed to fetch user", err);
       }
