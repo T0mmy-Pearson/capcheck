@@ -74,7 +74,6 @@ function PhotoCarousel() {
         progress={progress}
         data={photoArray}
         dotStyle={styles.dotStyle}
-        dotActiveStyle={styles.dotActiveStyle}
         containerStyle={styles.paginationContainer}
         onPress={onPressPagination}
       />
