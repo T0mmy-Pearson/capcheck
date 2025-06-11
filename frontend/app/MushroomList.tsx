@@ -25,6 +25,17 @@ export default function MushroomList() {
   const [monthFilter, setMonthFilter] = useState<string | null>(null);
   const navigation = useNavigation<any>();
 
+  interface Mushroom {
+  mushroomId: number;
+  name: string;
+  scientificName: string;
+  imgUrl: string;
+  start: string;
+  end: string;
+  edible: string;
+  // add any other fields you use
+}
+
   useEffect(() => {
     fetch("https://capcheck.onrender.com/api/mushroom/")
       .then((res) => res.json())
@@ -72,14 +83,13 @@ export default function MushroomList() {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-                      <Text style={{ color: "white", fontSize: "36", paddingBottom: "20" }}>←</Text>
+                      <Text style={{ color: "white", fontSize: 36, paddingBottom: 20 }}>←</Text>
                     </TouchableOpacity>
       {/* Search Bar */}
       <SearchBar
         value={search}
         onChangeText={setSearch}
         placeholder="Search mushrooms..."
-        style={styles.searchBar}
       />
       {/* Filter Bar */}
       <View style={styles.filterBar}>
@@ -192,15 +202,7 @@ const styles = StyleSheet.create({
   filterButtonTextActive: {
     color: "#000000",
   },
-  searchBar: {
-    backgroundColor: "#222",
-    color: "#fff",
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginBottom: 12,
-    fontSize: 16,
-  },
+
   name: {
     color: "white",
     fontSize: 18,

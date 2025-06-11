@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    fontSize: 16,
+    fontSize: 16, 
   },
 });
