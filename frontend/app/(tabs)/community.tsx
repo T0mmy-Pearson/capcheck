@@ -129,24 +129,32 @@ export default function CommunityScreen() {
       }
     >
       <View style={styles.container}>
-        <View style={styles.greybutton}>
-          <Button
+     <View style={styles.introContainer}>   
+      <ThemedText style={styles.intro}>
+          Welcome to the community!
+        </ThemedText>
+        <ThemedText style={styles.intro}>Like, comment, and explore mushrooms found
+          by others.
+        </ThemedText>
+      </View>
+
+        <View style={styles.uploadSection}>
+           <Button
             color="black"
             onPress={() => navigation.navigate("UploadPost")}
           >
-            Go to Upload Page
+            Take Photo
           </Button>
-        </View>
-
-        <View style={styles.uploadSection}>
           <View style={styles.greybutton}>
             <Button color="black" onPress={pickImage}>
-              Choose Image
+              Choose Image from Library
             </Button>
           </View>
           {imageUri && (
             <Image source={{ uri: imageUri }} style={styles.preview} />
           )}
+          <View style={styles.greybutton}>
+        </View>
           <TextInput
             placeholder="Enter caption..."
             placeholderTextColor="#666"
@@ -164,11 +172,7 @@ export default function CommunityScreen() {
             </Button>
           </View>
         </View>
-
-        <ThemedText style={styles.intro}>
-          Welcome to the community! Like, comment, and explore mushrooms found
-          by others.
-        </ThemedText>
+        
 
         {loading ? (
           <ActivityIndicator size="large" style={{ marginTop: 30 }} />
@@ -178,7 +182,7 @@ export default function CommunityScreen() {
               data={posts}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => <CommunityPost post={item} />}
-              contentContainerStyle={{ paddingBottom: 100 }}
+              contentContainerStyle={{ paddingBottom: 50 }}
             />
           </View>
         )}
@@ -190,7 +194,6 @@ export default function CommunityScreen() {
 const styles = StyleSheet.create({
   shadow: {
     marginTop: 0,
-    marginBottom: 20,
     borderRadius: 10,
     shadowColor: "#4e5249",
     shadowOffset: { width: 0, height: 4 },
@@ -202,24 +205,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 20,
     backgroundColor: "#e8e8e8",
+    borderRadius: 16,
+    justifyContent: "center",
+  },
+  introContainer: {
+    padding: 20,
+
   },
   intro: {
-    marginVertical: 12,
-    fontSize: 16,
+    fontSize: 20,
     color: "#555",
-    textAlign: "center",
-  },
-  reactLogo: {
-    width: "100%",
-    height: 220,
-    resizeMode: "cover",
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+
   },
   uploadSection: {
-    marginTop: 20,
+    marginTop: 5,
     padding: 16,
-    backgroundColor: "#f5f5f5",
     borderRadius: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
