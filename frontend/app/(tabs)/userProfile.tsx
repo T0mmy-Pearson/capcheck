@@ -32,7 +32,6 @@ export default function UserProfile() {
   const [bio, setBio] = useState("");
   const [editing, setEditing] = useState(false);
   const [bioInput, setBioInput] = useState("");
-  const [mushroomChecked, setMushroomChecked] = useState(false); 
   const router = useRouter();
   const colorScheme = useColorScheme();
 
@@ -81,25 +80,28 @@ export default function UserProfile() {
                 value={bioInput}
                 onChangeText={setBioInput}
                 placeholder="Write your bio"
-                placeholderTextColor="#888"
+                placeholderTextColor="#aaa"
                 multiline
-                scrollEnabled={false}
               />
-              <Pressable onPress={handleSave} style={styles.textButton}>
-                <Text style={styles.textButtonText}>Save</Text>
+              <Pressable onPress={handleSave} style={styles.iconButton}>
+                <Text style={styles.icon}>💾</Text>
+                <Text style={styles.iconButtonText}>Save</Text>
               </Pressable>
             </>
           ) : (
             <>
-              <ThemedText style={styles.bioText}>{bio || "Write your bio here..."}</ThemedText>
+              <ThemedText style={styles.bioText}>
+                {bio || "Write your bio here..."}
+              </ThemedText>
               <Pressable
                 onPress={() => {
                   setBioInput(bio);
                   setEditing(true);
                 }}
-                style={styles.textButton}
+                style={styles.iconButton}
               >
-                <Text style={styles.textButtonText}>Edit Bio</Text>
+                <Text style={styles.icon}>✏️</Text>
+                <Text style={styles.iconButtonText}>Edit Bio</Text>
               </Pressable>
             </>
           )}
@@ -124,62 +126,63 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
   },
   bioBox: {
-    backgroundColor: "#0000",
+    backgroundColor: "#0a84ff20",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#0000",
+    borderColor: "#0a84ff",
+    padding: 16,
+    marginBottom: 12,
     shadowColor: "#0a84ff",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
     shadowRadius: 6,
   },
   bioText: {
-    color: "#ffff",
+    color: "#fff",
     fontSize: 16,
     textAlign: "justify",
   },
   bioInput: {
-    color: "#cce4ff",
+    color: "#fff",
     fontSize: 16,
-    backgroundColor: "#0000",
-    borderRadius: 8,
+    backgroundColor: "#1a1a1a",
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: "#0a84ff",
+    padding: 12,
+    textAlignVertical: "top",
+    minHeight: 80,
+  },
+  iconButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginTop: 10,
+    backgroundColor: "#0a84ff40",
+    borderRadius: 8,
+    alignSelf: "flex-start",
+  },
+  iconButtonText: {
+    color: "#0a84ff",
+    fontSize: 16,
+  },
+  icon: {
+    fontSize: 18,
+    color: "#0a84ff",
   },
   sectionHeader: {
     color: "#ffff",
     fontSize: 20,
-    fontWeight: 400,
+    fontWeight: "400",
+    marginBottom: 8,
   },
-
-
-  textButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    backgroundColor: "transparent",
-    alignItems: "center",
-    marginTop: 8,
-  },
-
-  textButtonText: {
-    color: "#0a84ff",
-    fontSize: 16,
-    textDecorationLine: "none",
-  },
-
   avatarSeparator: {
     height: 1.5,
     backgroundColor: "#ffff",
     borderRadius: 1,
     opacity: 0.6,
-  },
-
-  fullWidthSeparator: {
-    height: 1.5,
-    backgroundColor: "#ffff",
-    borderRadius: 1,
-    opacity: 0.6,
-    width: "100%",
+    marginVertical: 12,
   },
 });
