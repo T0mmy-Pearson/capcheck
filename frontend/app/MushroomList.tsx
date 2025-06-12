@@ -90,6 +90,10 @@ export default function MushroomList() {
         value={search}
         onChangeText={setSearch}
         placeholder="Search mushrooms..."
+        onBlur={() => {
+    setFilter("All");
+    setMonthFilter(null);
+  }}
       />
       {/* Filter Bar */}
       <View style={styles.filterBar}>
@@ -100,7 +104,10 @@ export default function MushroomList() {
               styles.filterButton,
               filter === type && styles.filterButtonActive,
             ]}
-            onPress={() => setFilter(type)}
+            onPress={() => {
+              setFilter(type);
+              setMonthFilter(null);
+            }}
           >
             <Text
               style={[
@@ -209,10 +216,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   scientificName: {
-    color: "#000000",
+    color: "#cdff8f",
     fontStyle: "italic",
     fontSize: 13,
     textAlign: "left",
+    paddingBottom: 10,
   },
   seasons: {
     color: "#ffffff",
