@@ -33,7 +33,7 @@ export default function MushroomList() {
   start: string;
   end: string;
   edible: string;
-  // add any other fields you use
+
 }
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function MushroomList() {
       .then((data) => setMushrooms(data.mushrooms));
   }, []);
 
-  // doesn't display the range - but can do it with the index
+
   const FILTERS = ["All", "Edible", "Inedible", "Poisonous", "In Season"];
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const currentMonth = new Date().toLocaleString("default", { month: "short" });

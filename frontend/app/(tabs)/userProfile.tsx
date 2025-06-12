@@ -67,7 +67,6 @@ export default function UserProfile() {
       <ParallaxScrollViewUserProfile
         headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
         headerImage={<Image />}
-        style={{ backgroundColor: "transparent" }}
       >
         <UserAvatar {...userObject} />
 
@@ -153,6 +152,15 @@ const styles = StyleSheet.create({
     fontWeight: 400,
   },
 
+
+  textButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: "transparent",
+    alignItems: "center",
+    marginTop: 8,
+  },
 
   textButtonText: {
     color: "#0a84ff",

@@ -98,7 +98,7 @@ export default function MapScreen() {
 
 
 
-  // Fetch and transform markers ON SEARCH, could be random number 1-257??
+  
   useEffect(() => {
     if (selectedMushroomId !== null) {
       setLoadingMarkers(true)
