@@ -250,11 +250,11 @@ export default function MapScreen() {
               image={require("../../assets/images/icon-1.png")}
             >
               <Callout
-                onPress={() => navigation.navigate("MushroomProfile", { mushroomName: m.name })}
-                style={{ padding: 8, maxWidth: 200 }}
+                /* onPress={() => navigation.navigate("MushroomProfile", { mushroomName: m.name })} */
+                style={{ padding: 0, maxWidth: 200 }}
               >
-                <Text style={{ fontWeight: "bold", fontSize: 16 }}>{m.name || "Mushroom"}</Text>
-                <Text style={{ color: "#000000", marginTop: 4 }}>View Profile</Text>
+                <Text style={{ fontWeight: "", fontSize: 16}}>{m.name || "Mushroom"}</Text>
+                {/* <Text style={{ color: "#000000", marginTop: 4 }}>View Profile</Text> */}
               </Callout>
             </Marker>
           ))}
