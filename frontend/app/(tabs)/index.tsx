@@ -40,14 +40,16 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  blackText: {
-    color: 'black',
-    textAlign: 'justify',
-  },
+blackText: {
+  color: 'black',
+  textAlign: 'left',
+  lineHeight: 22,
+  letterSpacing: 0.2,
+},
   widget: {
     width: "100%"
   },
-  titleContainer: {
+    titleContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
@@ -74,14 +76,17 @@ logoContainer: {
   paddingVertical: 10,
 },
 textBox: {
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3, 
-    width: '100%',
-  },
+  backgroundColor: '#f5f5f5',
+  paddingHorizontal: 20,
+  paddingVertical: 16,
+  borderRadius: 12,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 3,
+  width: '100%',         
+  alignSelf: 'center',   
+  maxWidth: 400,         
+},
 });

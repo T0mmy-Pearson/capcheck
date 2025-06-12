@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 
 interface MushroomObject {
@@ -19,15 +20,19 @@ interface PhotoData {
   longitude: string;
   mushroomId: number;
 }
-
 const DUMMY_USER_ID = 1;
+
+
+type RootStackParamList = {
+  MushroomProfile: { mushroomId: number };
+};
 
 const FoundMushroomList = () => {
   const { defaultValue: userIdFromContext } = useContext(SessionContext);
   const userId = userIdFromContext ?? DUMMY_USER_ID;
   const [mushroomArray, setMushroomArray] = useState<MushroomObject[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     setLoading(true);
