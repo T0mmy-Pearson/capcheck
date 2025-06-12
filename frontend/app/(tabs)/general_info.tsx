@@ -3,9 +3,9 @@ import { StyleSheet } from 'react-native';
 import { Collapsible } from '@/components/Collapsible';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+
 import { Button } from '@react-navigation/elements';
-import { HelloWave } from '@/components/WaveText';
+
 import { BodyText } from '@/components/BodyText';
 import { useNavigation } from '@react-navigation/native';
 

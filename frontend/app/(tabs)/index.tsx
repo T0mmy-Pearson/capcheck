@@ -1,39 +1,49 @@
 import { Image } from "expo-image";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Pressable, View, TouchableOpacity } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import Randomiser from "@/components/Randomiser";
 import OpenMeteoWeather from "@/components/OpenMeteo";
 
+import { useNavigation } from "@react-navigation/native";
+
 
 export default function HomeScreen() {
+  const navigation = useNavigation<any>();
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
       headerImage={
         <View style={styles.logoContainer}>
-  <Image
-    source={require("@/assets/images/image.png")}
-    style={styles.reactLogo}
-  />
-</View>
+          <Image
+            source={require("@/assets/images/image.png")}
+            style={styles.reactLogo}
+          />
+        </View>
       }
     >
-      
+
       <ThemedView style={styles.stepContainer}>
-  <View style={styles.textBox}>
-    <ThemedText type="subtitle" style={styles.blackText}>
-      This is your pocket guide to mushroom foraging fun! Snap, log, and share your fungi finds while connecting with fellow fungi finders on the community page. Whether you're spotting something strange or showing off a rare cap, CapCheck makes mushroom adventures even more magical.
-    </ThemedText>
-  </View>
-</ThemedView>
-      
+        <View style={styles.textBox}>
+          <ThemedText type="subtitle" style={styles.blackText}>
+            This is your pocket guide to mushroom foraging fun! Snap, log, and share your fungi finds while connecting with fellow fungi finders on the community page. Whether you're spotting something strange or showing off a rare cap, CapCheck makes mushroom adventures even more magical.
+          </ThemedText>
+        </View>
+      </ThemedView>
+
       <View style={styles.mushroomFact}>
         <Randomiser />
       </View>
+      <View>
+       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("MushroomList")}>
+        <ThemedText style={{ color: "#fff", fontWeight: "light", textAlign: "center" }} >Explore our Mushroom Database...
+          </ThemedText>
+        </TouchableOpacity>
+       </View>
       <View style={{ width: "100%" }}>
-      <OpenMeteoWeather />
+        <OpenMeteoWeather />
       </View>
     </ParallaxScrollView>
   );
@@ -62,18 +72,31 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   reactLogo: {
-  width: 200, 
-  height: 200,
-  resizeMode: "cover", 
-  alignSelf: "center",
-  marginTop: 40,
-},
-logoContainer: {
-  backgroundColor: "#fdf8ef", 
-  alignItems: "center",
-  paddingVertical: 10,
-},
-textBox: {
+    width: 200,
+    height: 200,
+    resizeMode: "cover",
+    alignSelf: "center",
+    marginTop: 40,
+  },
+  button: {
+    width: '100%',
+    alignSelf: 'center',
+    backgroundColor: '#000',
+    padding: 16,
+
+    borderRadius: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 16,
+    marginTop: 16,
+  },
+  logoContainer: {
+    backgroundColor: "#fdf8ef",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  textBox: {
     backgroundColor: '#f5f5f5',
     padding: 16,
     borderRadius: 12,
@@ -81,7 +104,7 @@ textBox: {
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3, 
+    elevation: 3,
     width: '100%',
   },
 });

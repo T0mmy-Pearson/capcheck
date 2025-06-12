@@ -122,7 +122,7 @@ export default function MushroomList() {
         ))}
       </View>
       {/* Filter by season Bar */}
-      <View style={{ flexDirection: "row", marginBottom: 8, marginTop: 4, flexWrap: "wrap" }}>
+      <View style={{ flexDirection: "row", marginBottom: 8, marginTop: 4, paddingHorizontal: 15, flexWrap: "wrap" }}>
         {MONTHS.map((m) => (
           <Pressable
             key={m}
@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     width: "100%",
     marginBottom: 8,
+    paddingHorizontal: 15,
     marginTop: 8,
     gap: 8,
   },
